@@ -20,7 +20,9 @@
  --yellow:#ffd36a;
 }
 
-*{box-sizing:border-box}
+*{
+ box-sizing:border-box;
+}
 
 html,body{
  margin:0;
@@ -35,10 +37,14 @@ html,body{
 #app{
  height:100%;
  display:grid;
- grid-template-rows:48px 1fr;
+ grid-template-rows:58px 1fr;
  gap:var(--gap);
  padding:var(--gap);
 }
+
+/* =========================
+   TOP BAR
+========================= */
 
 header{
  display:flex;
@@ -48,29 +54,70 @@ header{
  border:1px solid var(--line);
  border-radius:10px;
  padding:5px 8px;
+ min-width:0;
 }
 
 header strong{
- font-size:16px;
- white-space:nowrap;
-}
-
-.status{
- margin-left:auto;
- font-size:11px;
- color:var(--muted);
+ font-size:15px;
  white-space:nowrap;
 }
 
 input{
- width:145px;
- min-width:80px;
+ width:110px;
+ min-width:70px;
  border:1px solid var(--line);
  background:#0e141c;
  color:white;
  border-radius:7px;
- padding:6px 7px;
+ padding:6px;
  font-size:11px;
+}
+
+.chip{
+ height:38px;
+ display:flex;
+ align-items:center;
+ border:1px solid var(--line);
+ border-radius:8px;
+ padding:0 8px;
+ background:#0e141c;
+ white-space:nowrap;
+ font-size:12px;
+}
+
+#timer{
+ font-variant-numeric:tabular-nums;
+}
+
+#questionAlert{
+ display:none;
+ color:#ffb2b2;
+ border-color:#7b3434;
+}
+
+#nextSpeak{
+ flex:1;
+ min-width:150px;
+ max-width:430px;
+ display:block;
+ padding:4px 9px;
+ cursor:pointer;
+}
+
+.small{
+ font-size:9px;
+ color:var(--muted);
+ line-height:1;
+}
+
+#nextSpeakText{
+ font-size:14px;
+ color:#8fbdff;
+ font-weight:750;
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+ margin-top:3px;
 }
 
 button{
@@ -78,13 +125,31 @@ button{
  background:#202a37;
  color:white;
  border-radius:8px;
- padding:6px 10px;
- font-size:13px;
+ padding:6px 9px;
+ font-size:12px;
+ white-space:nowrap;
 }
 
-.primary{background:#245db8}
-.stop{background:#713333}
-button:disabled{opacity:.45}
+.primary{
+ background:#245db8;
+}
+
+.stop{
+ background:#713333;
+}
+
+.save{
+ background:#255c46;
+}
+
+button:disabled{
+ opacity:.45;
+}
+
+
+/* =========================
+   MAIN LAYOUT
+========================= */
 
 main{
  min-height:0;
@@ -134,11 +199,21 @@ main{
  -webkit-overflow-scrolling:touch;
 }
 
+
+/* =========================
+   ENGLISH
+========================= */
+
 #raw{
  white-space:pre-wrap;
  font-size:16px;
  line-height:1.35;
 }
+
+
+/* =========================
+   JAPANESE
+========================= */
 
 #translation{
  font-size:18px;
@@ -146,44 +221,47 @@ main{
 }
 
 .translation-line{
- margin:0 0 4px 0;
- padding:0;
+ margin:0 0 4px;
 }
+
+
+/* =========================
+   SUMMARY
+========================= */
 
 #summary{
  padding:6px 9px;
 }
 
 .topic{
- margin:0;
- padding:4px 0 5px 0;
+ padding:4px 0 5px;
  border-bottom:1px solid #27313d;
 }
 
 .topic-title{
- margin:0 0 1px 0;
  font-size:15px;
- line-height:1.2;
  font-weight:750;
  color:#d9e7ff;
 }
 
 .topic-description{
- margin:0;
  font-size:13px;
  line-height:1.25;
  color:#e0e5ec;
 }
 
+
+/* =========================
+   PREDICTION
+========================= */
+
 #prediction{
  padding:5px 7px;
- display:block;
 }
 
 .prediction-card{
- display:block;
- margin:0 0 4px 0;
- padding:5px 7px;
+ margin:0 0 3px;
+ padding:4px 7px;
  border-left:3px solid var(--accent);
  background:#101720;
  border-radius:4px;
@@ -203,10 +281,9 @@ main{
 
 .pred-top{
  display:flex;
- align-items:center;
  gap:5px;
- margin:0 0 2px 0;
- line-height:1.1;
+ align-items:center;
+ line-height:1.08;
 }
 
 .number{
@@ -216,37 +293,32 @@ main{
 
 .chance{
  font-size:11px;
- font-weight:700;
  color:var(--muted);
+ font-weight:700;
 }
 
 .situation{
- display:inline;
  font-size:13px;
- line-height:1.15;
  font-weight:650;
- color:#f3f6fa;
 }
 
 .question{
- margin:2px 0 1px 0;
+ margin:1px 0;
  font-size:14px;
- line-height:1.18;
- color:#f3f6fa;
+ line-height:1.15;
 }
 
 .answer{
- margin:2px 0 1px 0;
+ margin:1px 0;
  font-size:17px;
- line-height:1.18;
+ line-height:1.15;
  font-weight:750;
  color:#c9dcff;
 }
 
 .jp{
- margin:0;
  font-size:12px;
- line-height:1.15;
+ line-height:1.12;
  color:var(--muted);
 }
 
@@ -254,47 +326,134 @@ main{
  color:var(--muted);
 }
 
+
+/* =========================
+   SMALL SCREEN
+========================= */
+
+@media(max-width:1000px){
+
+ header strong{
+  font-size:13px;
+ }
+
+ input{
+  width:90px;
+ }
+
+ .chip{
+  padding:0 5px;
+ }
+
+ #nextSpeak{
+  max-width:330px;
+ }
+
+ button{
+  padding:6px 7px;
+ }
+
+}
+
 @media(orientation:portrait){
+
  main{
   grid-template-columns:1fr;
   grid-template-rows:1fr 1fr;
  }
+
 }
+
 </style>
 </head>
+
 
 <body>
 
 <div id="app">
 
+
+<!-- =========================
+     TOP BAR
+========================= -->
+
 <header>
 
-<strong>🎙 Meeting AI</strong>
+<strong>
+🎙 Meeting AI
+</strong>
 
 <input
  id="apiKey"
  type="password"
- placeholder="OpenAI API Key"
+ placeholder="API Key"
  autocomplete="off"
 >
 
-<span class="status" id="status">
-待機中
-</span>
+<div
+ class="chip"
+ id="timer"
+>
+⏱ 00:00:00
+</div>
 
-<button class="primary" id="start">
+<div
+ class="chip"
+ id="questionAlert"
+>
+❓ QUESTION
+</div>
+
+<div
+ class="chip"
+ id="nextSpeak"
+ title="タップでコピー"
+>
+
+<div class="small">
+⭐ 次の発言（タップでコピー）
+</div>
+
+<div id="nextSpeakText">
+—
+</div>
+
+</div>
+
+<button
+ class="primary"
+ id="start"
+>
 開始
 </button>
 
-<button class="stop" id="stop" disabled>
+<button
+ class="stop"
+ id="stop"
+ disabled
+>
 停止
+</button>
+
+<button
+ class="save"
+ id="finish"
+>
+会議終了・保存
 </button>
 
 </header>
 
+
+<!-- =========================
+     MAIN
+========================= -->
+
 <main>
 
+
 <div class="left">
+
 
 <section class="panel">
 
@@ -302,10 +461,15 @@ main{
 🎙 English
 </div>
 
-<div class="content" id="raw">
+<div
+ class="content"
+ id="raw"
+>
+
 <span class="muted">
 English transcript...
 </span>
+
 </div>
 
 </section>
@@ -317,18 +481,25 @@ English transcript...
 🇯🇵 リアルタイム日本語訳
 </div>
 
-<div class="content" id="translation">
+<div
+ class="content"
+ id="translation"
+>
+
 <span class="muted">
 日本語訳を順番に追加します。
 </span>
+
 </div>
 
 </section>
+
 
 </div>
 
 
 <div class="right">
+
 
 <section class="panel">
 
@@ -336,10 +507,15 @@ English transcript...
 📝 会議概要
 </div>
 
-<div class="content" id="summary">
+<div
+ class="content"
+ id="summary"
+>
+
 <span class="muted">
 大きな話題ごとに概要を残します。
 </span>
+
 </div>
 
 </section>
@@ -351,15 +527,22 @@ English transcript...
 🔮 発言予測・回答候補
 </div>
 
-<div class="content" id="prediction">
+<div
+ class="content"
+ id="prediction"
+>
+
 <span class="muted">
 会話に合わせて更新します。
 </span>
+
 </div>
 
 </section>
 
+
 </div>
+
 
 </main>
 
@@ -368,307 +551,542 @@ English transcript...
 
 <script>
 
+/* =========================
+   ELEMENTS
+========================= */
+
+const $ =
+ id =>
+ document.getElementById(id);
+
+
 const rawEl =
- document.getElementById("raw");
+ $("raw");
 
 const translationEl =
- document.getElementById("translation");
+ $("translation");
 
 const summaryEl =
- document.getElementById("summary");
+ $("summary");
 
 const predictionEl =
- document.getElementById("prediction");
-
-const statusEl =
- document.getElementById("status");
+ $("prediction");
 
 const keyEl =
- document.getElementById("apiKey");
+ $("apiKey");
 
 const startBtn =
- document.getElementById("start");
+ $("start");
 
 const stopBtn =
- document.getElementById("stop");
+ $("stop");
 
+const finishBtn =
+ $("finish");
+
+const timerEl =
+ $("timer");
+
+const questionAlert =
+ $("questionAlert");
+
+const nextSpeak =
+ $("nextSpeak");
+
+const nextSpeakText =
+ $("nextSpeakText");
+
+
+/* =========================
+   VARIABLES
+========================= */
 
 let recognition = null;
+
 let running = false;
 
 let transcript = "";
+
 let interimText = "";
 
 let pendingEnglish = [];
 
 let translating = false;
+
 let analyzing = false;
 
 let analysisTimer = null;
 
 let topicHistory = [];
+
 let currentTopicTitle = "";
 
 let lastPredictionTranscript = "";
 
-let analysisCount = 0;
+let meetingStart = null;
 
+let timerInterval = null;
+
+let translationHistory = [];
+
+
+/* =========================
+   API KEY
+========================= */
 
 keyEl.value =
- localStorage.getItem("meeting_ai_key") || "";
+ localStorage.getItem(
+  "meeting_ai_key"
+ ) || "";
 
 
-keyEl.addEventListener(
- "change",
+keyEl.onchange =
  ()=>{
 
-   localStorage.setItem(
-     "meeting_ai_key",
-     keyEl.value.trim()
-   );
+  localStorage.setItem(
+   "meeting_ai_key",
+   keyEl.value.trim()
+  );
 
- }
-);
+ };
 
+
+/* =========================
+   HELPERS
+========================= */
 
 function scrollBottom(el){
 
- requestAnimationFrame(()=>{
+ requestAnimationFrame(
+  ()=>{
 
    el.scrollTop =
-     el.scrollHeight;
+    el.scrollHeight;
 
- });
+  }
+ );
 
 }
 
 
-function escapeHtml(s){
+function esc(s){
 
  return String(s || "")
- .replaceAll("&","&amp;")
- .replaceAll("<","&lt;")
- .replaceAll(">","&gt;")
- .replaceAll('"',"&quot;")
- .replaceAll("'","&#039;");
+
+ .replaceAll(
+  "&",
+  "&amp;"
+ )
+
+ .replaceAll(
+  "<",
+  "&lt;"
+ )
+
+ .replaceAll(
+  ">",
+  "&gt;"
+ )
+
+ .replaceAll(
+  '"',
+  "&quot;"
+ )
+
+ .replaceAll(
+  "'",
+  "&#039;"
+ );
 
 }
 
 
-function extractOutput(data){
+function output(d){
 
- if(data.output_text){
-   return data.output_text;
+ if(d.output_text){
+  return d.output_text;
  }
 
  try{
 
-   return data.output
-   .flatMap(x=>x.content || [])
-   .filter(x=>x.type==="output_text")
-   .map(x=>x.text)
-   .join("");
+  return d.output
+
+  .flatMap(
+   x => x.content || []
+  )
+
+  .filter(
+   x =>
+   x.type ===
+   "output_text"
+  )
+
+  .map(
+   x => x.text
+  )
+
+  .join("");
 
  }catch(e){
 
-   return "";
+  return "";
 
  }
 
 }
 
 
-async function callOpenAI(prompt){
+/* =========================
+   OPENAI
+========================= */
 
- const apiKey =
-   keyEl.value.trim();
+async function ai(prompt){
 
- if(!apiKey){
-
-   throw new Error(
-     "APIキーを入力してください"
-   );
-
- }
-
- const response =
- await fetch(
-   "https://api.openai.com/v1/responses",
-   {
-
-     method:"POST",
-
-     headers:{
-
-       "Content-Type":
-         "application/json",
-
-       "Authorization":
-         "Bearer " + apiKey
-
-     },
-
-     body:JSON.stringify({
-
-       model:"gpt-5-mini",
-
-       input:prompt
-
-     })
-
-   }
- );
+ const k =
+  keyEl.value.trim();
 
 
- const data =
-   await response.json();
+ if(!k){
 
-
- if(!response.ok){
-
-   throw new Error(
-     data?.error?.message ||
-     "OpenAI API error"
-   );
-
- }
-
-
- return extractOutput(data);
-
-}
-
-
-
-function initRecognition(){
-
- const SR =
-   window.SpeechRecognition ||
-   window.webkitSpeechRecognition;
-
-
- if(!SR){
-
-   statusEl.textContent =
-     "音声認識未対応";
-
-   return null;
+  throw Error(
+   "APIキーを入力してください"
+  );
 
  }
 
 
  const r =
-   new SR();
+ await fetch(
+
+  "https://api.openai.com/v1/responses",
+
+  {
+
+   method:"POST",
+
+   headers:{
+
+    "Content-Type":
+    "application/json",
+
+    "Authorization":
+    "Bearer " + k
+
+   },
+
+   body:
+   JSON.stringify({
+
+    model:
+    "gpt-5-mini",
+
+    input:
+    prompt
+
+   })
+
+  }
+
+ );
 
 
- r.continuous = true;
-
- r.interimResults = true;
-
- r.lang = "en-US";
+ const d =
+  await r.json();
 
 
- r.onresult = e=>{
+ if(!r.ok){
 
-   let newFinal = "";
+  throw Error(
+   d?.error?.message ||
+   "OpenAI API error"
+  );
 
-   interimText = "";
+ }
+
+
+ return output(d);
+
+}
+
+
+/* =========================
+   TIMER
+========================= */
+
+function startTimer(){
+
+ if(!meetingStart){
+
+  meetingStart =
+   Date.now();
+
+ }
+
+
+ clearInterval(
+  timerInterval
+ );
+
+
+ timerInterval =
+ setInterval(
+  ()=>{
+
+   let s =
+    Math.floor(
+     (
+      Date.now() -
+      meetingStart
+     ) / 1000
+    );
+
+
+   const h =
+    String(
+     Math.floor(
+      s / 3600
+     )
+    )
+    .padStart(
+     2,
+     "0"
+    );
+
+
+   const m =
+    String(
+     Math.floor(
+      (s % 3600) / 60
+     )
+    )
+    .padStart(
+     2,
+     "0"
+    );
+
+
+   const sec =
+    String(
+     s % 60
+    )
+    .padStart(
+     2,
+     "0"
+    );
+
+
+   timerEl.textContent =
+    `⏱ ${h}:${m}:${sec}`;
+
+  },
+
+  1000
+
+ );
+
+}
+
+
+/* =========================
+   QUESTION DETECTION
+========================= */
+
+function detectQuestion(t){
+
+ const x =
+  (t || "")
+  .toLowerCase();
+
+
+ const detected =
+  /\?|\b(what|when|where|who|why|how|can you|could you|would you|do you|did you|are you|is there|have you|will you)\b/
+  .test(x);
+
+
+ if(!detected){
+  return;
+ }
+
+
+ questionAlert.style.display =
+  "flex";
+
+
+ if(
+  /japan|japanese/
+  .test(x)
+ ){
+
+  questionAlert.textContent =
+   "❓ Japan QUESTION";
+
+ }else{
+
+  questionAlert.textContent =
+   "❓ QUESTION";
+
+ }
+
+
+ clearTimeout(
+  detectQuestion.timer
+ );
+
+
+ detectQuestion.timer =
+ setTimeout(
+  ()=>{
+
+   questionAlert.style.display =
+    "none";
+
+  },
+
+  8000
+
+ );
+
+}
+
+
+/* =========================
+   SPEECH RECOGNITION
+========================= */
+
+function initRecognition(){
+
+ const SR =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
+
+
+ if(!SR){
+
+  return null;
+
+ }
+
+
+ const r =
+  new SR();
+
+
+ r.continuous =
+  true;
+
+
+ r.interimResults =
+  true;
+
+
+ r.lang =
+  "en-US";
+
+
+ r.onresult =
+  e=>{
+
+   let newFinal =
+    "";
+
+
+   interimText =
+    "";
 
 
    for(
-     let i=e.resultIndex;
-     i<e.results.length;
-     i++
+    let i=e.resultIndex;
+    i<e.results.length;
+    i++
    ){
 
-     const text =
-       e.results[i][0].transcript;
+    const text =
+     e.results[i][0]
+     .transcript;
 
 
-     if(
-       e.results[i].isFinal
-     ){
+    if(
+     e.results[i]
+     .isFinal
+    ){
 
-       newFinal +=
-         text.trim() + ". ";
+     newFinal +=
+      text.trim() +
+      ". ";
 
-     }else{
+    }else{
 
-       interimText +=
-         text;
+     interimText +=
+      text;
 
-     }
+    }
 
    }
 
 
    if(newFinal){
 
-     transcript +=
-       newFinal;
+    transcript +=
+     newFinal;
 
 
-     pendingEnglish.push(
-       newFinal.trim()
-     );
+    pendingEnglish.push(
+     newFinal.trim()
+    );
 
 
-     translatePending();
+    detectQuestion(
+     newFinal
+    );
 
 
-     scheduleAnalysis();
+    translatePending();
+
+
+    scheduleAnalysis();
 
    }
 
 
    rawEl.textContent =
-     (
-       transcript +
-       " " +
-       interimText
-     ).trim();
+    (
+     transcript +
+     " " +
+     interimText
+    )
+    .trim();
 
 
    scrollBottom(
-     rawEl
+    rawEl
    );
 
- };
+  };
 
 
- r.onerror = e=>{
-
-   if(
-     e.error === "no-speech"
-   ){
-     return;
-   }
-
-
-   statusEl.textContent =
-     "音声認識: " +
-     e.error;
-
- };
-
-
- r.onend = ()=>{
+ r.onend =
+  ()=>{
 
    if(running){
 
-     setTimeout(()=>{
+    setTimeout(
+     ()=>{
 
-       try{
+      try{
 
-         r.start();
+       r.start();
 
-       }catch(e){}
+      }catch(e){}
 
-     },250);
+     },
+
+     250
+
+    );
 
    }
 
- };
+  };
 
 
  return r;
@@ -676,49 +1094,47 @@ function initRecognition(){
 }
 
 
+/* =========================
+   TRANSLATION
+========================= */
 
 async function translatePending(){
 
- if(translating){
-   return;
- }
-
  if(
-   !pendingEnglish.length
+  translating ||
+  !pendingEnglish.length
  ){
-   return;
+  return;
  }
 
 
- translating = true;
+ translating =
+  true;
 
 
- const batch =
-   pendingEnglish.splice(0,2);
-
-
- const english =
-   batch.join(" ");
+ const en =
+  pendingEnglish
+  .splice(
+   0,
+   2
+  )
+  .join(" ");
 
 
  try{
 
-   statusEl.textContent =
-     "翻訳中…";
-
-
-   const prompt = `
+  const jp =
+   (
+    await ai(
+`
 Translate this spoken English into natural Japanese.
 
 Do not summarize.
-
 Do not explain.
-
-Translate only what was said.
 
 Keep technical terminology accurate.
 
-Context may include:
+The context may involve:
 metallography,
 cutting,
 mounting,
@@ -734,250 +1150,203 @@ Return ONLY Japanese.
 
 English:
 
-${english}
-`;
+${en}
+`
+    )
+   )
+   .trim();
 
 
-   const jp =
-     (
-       await callOpenAI(prompt)
-     ).trim();
+  translationHistory.push(
+   jp
+  );
 
 
-   if(
-     translationEl
-     .querySelector(".muted")
-   ){
-
-     translationEl.innerHTML =
-       "";
-
-   }
-
-
-   const div =
-     document.createElement(
-       "div"
-     );
-
-
-   div.className =
-     "translation-line";
-
-
-   div.textContent =
-     jp;
-
-
+  if(
    translationEl
-   .appendChild(div);
+   .querySelector(
+    ".muted"
+   )
+  ){
+
+   translationEl.innerHTML =
+    "";
+
+  }
 
 
-   scrollBottom(
-     translationEl
+  const div =
+   document.createElement(
+    "div"
    );
 
 
-   statusEl.textContent =
-     running
-     ? "音声認識中"
-     : "停止";
+  div.className =
+   "translation-line";
 
 
- }catch(err){
+  div.textContent =
+   jp;
 
-   console.error(err);
 
-   statusEl.textContent =
-     "翻訳エラー";
+  translationEl
+  .appendChild(
+   div
+  );
+
+
+  scrollBottom(
+   translationEl
+  );
+
+
+ }catch(e){
+
+  console.error(e);
 
  }finally{
 
-   translating = false;
+  translating =
+   false;
 
 
-   if(
-     pendingEnglish.length
-   ){
+  if(
+   pendingEnglish.length
+  ){
 
-     translatePending();
+   translatePending();
 
-   }
+  }
 
  }
 
 }
 
 
+/* =========================
+   ANALYSIS TIMER
+========================= */
 
 function scheduleAnalysis(){
 
  clearTimeout(
-   analysisTimer
+  analysisTimer
  );
 
 
  analysisTimer =
- setTimeout(()=>{
-
-   updateMeetingAI();
-
- },1200);
+  setTimeout(
+   updateAI,
+   1200
+  );
 
 }
 
 
+/* =========================
+   MEETING AI
+========================= */
 
-async function updateMeetingAI(){
+async function updateAI(){
 
  if(analyzing){
-   return;
+  return;
  }
 
 
  const current =
-   transcript.trim();
-
-
- if(!current){
-   return;
- }
+  transcript.trim();
 
 
  if(
-   current ===
-   lastPredictionTranscript
+  !current ||
+  current ===
+  lastPredictionTranscript
  ){
-   return;
+  return;
  }
 
 
- analyzing = true;
-
- analysisCount++;
-
-
- statusEl.textContent =
-   "AI解析中…";
+ analyzing =
+  true;
 
 
  const recent =
-   current.length > 8000
-   ? current.slice(-8000)
-   : current;
+  current.slice(
+   -8000
+  );
 
 
- const existingTopics =
-   topicHistory
-   .map(
-     (t,i)=>
-     `${i+1}. ${t.title} - ${t.description}`
-   )
-   .join("\n");
+ const existing =
+  topicHistory
+
+  .map(
+   (t,i)=>
+   `${i+1}. ${t.title} - ${t.description}`
+  )
+
+  .join("\n");
 
 
- const firstTopic =
-   topicHistory.length === 0;
+ const first =
+  !topicHistory.length;
 
 
- const prompt = `
+ const prompt =
+`
 You are a real-time meeting assistant.
 
 The user is a Japanese application engineer working with
 metallographic sample preparation and materials characterization.
 
-Analyze the English meeting transcript.
-
 Return ONLY valid JSON.
 
---------------------------------
-TASK 1
+
+TASK 1:
 MEETING OVERVIEW
---------------------------------
 
-The overview is NOT a running summary.
+The meeting overview is a presentation agenda,
+not a running summary.
 
-It should look like a short presentation agenda.
-
-For example:
-
-Product Introduction
-製品の主な特徴と変更点について説明。
-
-Testing in Japan
-日本での試験状況と評価について議論。
-
-Customer Feedback
-顧客からの要望と課題について確認。
-
-Next Actions
-今後の試験と情報共有について確認。
-
-
-IMPORTANT:
-
-${firstTopic
- ? "This is the first analysis. You MUST create the first topic."
- : "A topic already exists."}
-
+${first
+ ? "You MUST create the first meaningful topic."
+ : "Create a new topic only if the major subject clearly changes."
+}
 
 Existing topics:
 
-${existingTopics || "None"}
-
+${existing || "None"}
 
 Current topic:
 
 ${currentTopicTitle || "None"}
 
 
-Create a NEW topic only when:
-
-- the presentation section clearly changes
-- the main subject clearly changes
-- the speaker moves to a different product
-- the discussion moves to a different technical theme
-- the meeting moves to next actions or conclusions
-
-
-Do NOT create a new topic for small details.
-
-Do NOT repeat an existing topic.
-
-
---------------------------------
-TASK 2
+TASK 2:
 SPEAKING PREDICTIONS
---------------------------------
 
-Predict what the Japanese application engineer may need to say NEXT.
-
-Return up to 5 candidates.
+Predict up to 5 things the engineer may need to say NEXT.
 
 Prioritize:
 
-1 direct questions
-2 Japan / Japanese customers
-3 test results
-4 sample preparation conditions
-5 technical opinions
-6 useful voluntary comments
+1. Direct questions
+2. Japan or Japanese customers
+3. Test results
+4. Sample preparation conditions
+5. Technical opinions
+6. Useful voluntary comments
 
+English answers must be:
 
-Keep the situation description VERY short.
+- short
+- easy to pronounce
+- natural
+- immediately usable
 
-Keep the likely question short.
+Never invent facts.
 
-The English answer must be:
-short,
-easy to pronounce,
-natural,
-immediately usable.
-
-
-Do not invent facts.
-
-If information is unknown use safe answers such as:
+If information is unknown,
+use safe answers such as:
 
 I need to check the details.
 
@@ -986,12 +1355,12 @@ We have not confirmed that yet.
 I will check and share the information.
 
 
-Return exactly this JSON structure:
+Return:
 
 {
  "topic":{
    "changed":true,
-   "title":"Short English or Japanese presentation title",
+   "title":"Short title",
    "description":"Short Japanese description"
  },
  "predictions":[
@@ -1006,7 +1375,7 @@ Return exactly this JSON structure:
 }
 
 
-Meeting transcript:
+Transcript:
 
 ${recent}
 `;
@@ -1014,434 +1383,788 @@ ${recent}
 
  try{
 
-   const output =
-     await callOpenAI(
-       prompt
-     );
+  const resultText =
+   await ai(
+    prompt
+   );
 
 
-   const cleaned =
-     output
-     .replace(/^```json/i,"")
-     .replace(/^```/,"")
-     .replace(/```$/,"")
-     .trim();
+  const cleaned =
+   resultText
+
+   .replace(
+    /^```json/i,
+    ""
+   )
+
+   .replace(
+    /^```/,
+    ""
+   )
+
+   .replace(
+    /```$/,
+    ""
+   )
+
+   .trim();
 
 
-   const result =
-     JSON.parse(cleaned);
+  const result =
+   JSON.parse(
+    cleaned
+   );
 
 
-   if(
-     result.topic
-   ){
+  if(
+   result.topic
+  ){
 
-     handleTopic(
-       result.topic,
-       firstTopic
-     );
+   handleTopic(
+    result.topic,
+    first
+   );
 
-   }
-
-
-   if(
-     Array.isArray(
-       result.predictions
-     )
-   ){
-
-     renderPredictions(
-       result.predictions
-     );
-
-   }
+  }
 
 
-   lastPredictionTranscript =
-     current;
+  if(
+   Array.isArray(
+    result.predictions
+   )
+  ){
+
+   renderPredictions(
+    result.predictions
+   );
 
 
-   statusEl.textContent =
-     running
-     ? "音声認識中"
-     : "停止";
+   const best =
+    result.predictions[0];
 
 
- }catch(err){
+   nextSpeakText.textContent =
+    best?.answer_short ||
+    "—";
 
-   console.error(err);
+  }
 
-   statusEl.textContent =
-     "AI解析エラー";
+
+  lastPredictionTranscript =
+   current;
+
+
+ }catch(e){
+
+  console.error(e);
 
  }finally{
 
-   analyzing = false;
+  analyzing =
+   false;
 
 
-   if(
-     transcript.trim() !==
-     lastPredictionTranscript
-   ){
+  if(
+   transcript.trim() !==
+   lastPredictionTranscript
+  ){
 
-     scheduleAnalysis();
+   scheduleAnalysis();
 
-   }
+  }
 
  }
 
 }
 
 
+/* =========================
+   TOPIC
+========================= */
 
 function handleTopic(
- topic,
- forceFirst=false
+ t,
+ first
 ){
 
  if(
-   !topic ||
-   !topic.title
+  !t?.title
  ){
-   return;
+  return;
  }
 
 
  const title =
-   String(
-     topic.title
-   ).trim();
+  String(
+   t.title
+  )
+  .trim();
 
 
  const description =
-   String(
-     topic.description || ""
-   ).trim();
+  String(
+   t.description || ""
+  )
+  .trim();
 
 
- const sameAsCurrent =
-   currentTopicTitle &&
-   title.toLowerCase() ===
-   currentTopicTitle.toLowerCase();
+ const same =
+  currentTopicTitle &&
+  title.toLowerCase() ===
+  currentTopicTitle.toLowerCase();
 
 
  const duplicate =
-   topicHistory.some(
-     t=>
-     t.title
-     .toLowerCase() ===
-     title.toLowerCase()
-   );
-
-
- /*
- First topic is ALWAYS added.
- Later topics only when changed.
- */
-
- if(forceFirst){
-
-   topicHistory.push({
-     title,
-     description
-   });
-
-
-   currentTopicTitle =
-     title;
-
-
-   renderTopics();
-
-   return;
-
- }
+  topicHistory.some(
+   x =>
+   x.title.toLowerCase() ===
+   title.toLowerCase()
+  );
 
 
  if(
-   topic.changed &&
-   !sameAsCurrent &&
+  first ||
+  (
+   t.changed &&
+   !same &&
    !duplicate
+  )
  ){
 
+  if(!duplicate){
+
    topicHistory.push({
-     title,
-     description
+
+    title,
+    description
+
    });
 
-
-   currentTopicTitle =
-     title;
+  }
 
 
-   renderTopics();
+  currentTopicTitle =
+   title;
+
+
+  renderTopics();
 
  }
 
 }
 
 
+/* =========================
+   TOPIC DISPLAY
+========================= */
 
 function renderTopics(){
 
- if(
-   !topicHistory.length
- ){
-   return;
- }
-
-
  summaryEl.innerHTML =
-   topicHistory
-   .map(t=>`
+  topicHistory
 
-   <div class="topic">
+  .map(
+   t=>
+`
+<div class="topic">
 
-     <div class="topic-title">
-       • ${escapeHtml(t.title)}
-     </div>
+<div class="topic-title">
+• ${esc(t.title)}
+</div>
 
-     <div class="topic-description">
-       ${escapeHtml(t.description)}
-     </div>
+<div class="topic-description">
+${esc(t.description)}
+</div>
 
-   </div>
+</div>
+`
+  )
 
-   `)
-   .join("");
+  .join("");
 
-
- /*
- Always show newest overview item.
- */
 
  scrollBottom(
-   summaryEl
+  summaryEl
  );
 
 }
 
 
+/* =========================
+   PREDICTIONS
+========================= */
 
 function renderPredictions(
  items
 ){
 
- if(
-   !items ||
-   !items.length
- ){
-   return;
- }
-
-
  predictionEl.innerHTML =
-   items
-   .slice(0,5)
-   .map(
-     (p,i)=>{
+  items
 
-       const chance =
-         ["high","medium","low"]
-         .includes(p.chance)
-         ? p.chance
-         : "medium";
+  .slice(
+   0,
+   5
+  )
 
+  .map(
+   (p,i)=>{
 
-       const label =
-         chance === "high"
-         ? "高"
-         : chance === "medium"
-         ? "中"
-         : "低";
-
-
-       return `
-
-       <div class="prediction-card ${chance}">
-
-         <div class="pred-top">
-
-           <span class="number">
-             ${i+1}
-           </span>
-
-           <span class="chance">
-             可能性 ${label}
-           </span>
-
-           <span class="situation">
-             ${escapeHtml(
-               p.situation
-             )}
-           </span>
-
-         </div>
+    const chance =
+     [
+      "high",
+      "medium",
+      "low"
+     ]
+     .includes(
+      p.chance
+     )
+     ? p.chance
+     : "medium";
 
 
-         <div class="question">
-
-           <b>Q:</b>
-           ${escapeHtml(
-             p.question
-           )}
-
-         </div>
+    const label =
+     chance === "high"
+     ? "高"
+     : chance === "medium"
+     ? "中"
+     : "低";
 
 
-         <div class="answer">
+    return `
+<div class="prediction-card ${chance}">
 
-           ${escapeHtml(
-             p.answer_short
-           )}
+<div class="pred-top">
 
-         </div>
+<span class="number">
+${i+1}
+</span>
 
+<span class="chance">
+可能性 ${label}
+</span>
 
-         <div class="jp">
+<span class="situation">
+${esc(p.situation)}
+</span>
 
-           ${escapeHtml(
-             p.answer_jp
-           )}
+</div>
 
-         </div>
+<div class="question">
+<b>Q:</b>
+${esc(p.question)}
+</div>
 
-       </div>
+<div class="answer">
+${esc(p.answer_short)}
+</div>
 
-       `;
+<div class="jp">
+${esc(p.answer_jp)}
+</div>
 
-     }
-   )
-   .join("");
+</div>
+`;
+
+   }
+
+  )
+
+  .join("");
 
 
  /*
- New prediction results appear,
- then automatically show the
- newest/lower part.
+ 発言予測は最重要候補が
+ 一番上に見えるようにする
  */
 
- scrollBottom(
-   predictionEl
+ predictionEl.scrollTop =
+  0;
+
+}
+
+
+/* =========================
+   COPY NEXT ANSWER
+========================= */
+
+nextSpeak.onclick =
+ async ()=>{
+
+  const text =
+   nextSpeakText
+   .textContent;
+
+
+  if(
+   !text ||
+   text === "—"
+  ){
+   return;
+  }
+
+
+  try{
+
+   await navigator
+   .clipboard
+   .writeText(
+    text
+   );
+
+
+   const old =
+    text;
+
+
+   nextSpeakText.textContent =
+    "✓ コピーしました";
+
+
+   setTimeout(
+    ()=>{
+
+     nextSpeakText.textContent =
+      old;
+
+    },
+
+    900
+
+   );
+
+  }catch(e){}
+
+ };
+
+
+/* =========================
+   START
+========================= */
+
+startBtn.onclick =
+ ()=>{
+
+  if(
+   !keyEl.value.trim()
+  ){
+
+   alert(
+    "OpenAI APIキーを入力してください。"
+   );
+
+   return;
+
+  }
+
+
+  localStorage.setItem(
+   "meeting_ai_key",
+   keyEl.value.trim()
+  );
+
+
+  recognition =
+   recognition ||
+   initRecognition();
+
+
+  if(!recognition){
+
+   alert(
+    "このブラウザは音声認識に対応していません。"
+   );
+
+   return;
+
+  }
+
+
+  running =
+   true;
+
+
+  startBtn.disabled =
+   true;
+
+
+  stopBtn.disabled =
+   false;
+
+
+  startTimer();
+
+
+  try{
+
+   recognition.start();
+
+  }catch(e){}
+
+ };
+
+
+/* =========================
+   STOP
+========================= */
+
+stopBtn.onclick =
+ ()=>{
+
+  running =
+   false;
+
+
+  clearTimeout(
+   analysisTimer
+  );
+
+
+  startBtn.disabled =
+   false;
+
+
+  stopBtn.disabled =
+   true;
+
+
+  if(recognition){
+
+   try{
+
+    recognition.stop();
+
+   }catch(e){}
+
+  }
+
+
+  if(
+   pendingEnglish.length
+  ){
+
+   translatePending();
+
+  }
+
+
+  if(
+   transcript.trim()
+  ){
+
+   updateAI();
+
+  }
+
+ };
+
+
+/* =========================
+   DOWNLOAD TXT
+========================= */
+
+function downloadText(
+ name,
+ text
+){
+
+ const blob =
+  new Blob(
+   [
+    "\ufeff" +
+    text
+   ],
+   {
+    type:
+    "text/plain;charset=utf-8"
+   }
+  );
+
+
+ const url =
+  URL.createObjectURL(
+   blob
+  );
+
+
+ const a =
+  document.createElement(
+   "a"
+  );
+
+
+ a.href =
+  url;
+
+
+ a.download =
+  name;
+
+
+ document.body
+ .appendChild(
+  a
+ );
+
+
+ a.click();
+
+
+ a.remove();
+
+
+ setTimeout(
+  ()=>{
+
+   URL.revokeObjectURL(
+    url
+   );
+
+  },
+
+  1000
+
  );
 
 }
 
 
+/* =========================
+   FINISH + SAVE
+========================= */
 
-startBtn.onclick =
-()=>{
+finishBtn.onclick =
+ async ()=>{
 
- const apiKey =
-   keyEl.value.trim();
-
-
- if(!apiKey){
+  if(
+   !transcript.trim()
+  ){
 
    alert(
-     "OpenAI APIキーを入力してください。"
+    "保存する会議内容がありません。"
    );
 
-   keyEl.focus();
-
    return;
 
- }
+  }
 
 
- localStorage.setItem(
-   "meeting_ai_key",
-   apiKey
- );
-
-
- recognition =
-   recognition ||
-   initRecognition();
-
-
- if(!recognition){
-   return;
- }
-
-
- running = true;
-
-
- startBtn.disabled =
-   true;
-
-
- stopBtn.disabled =
+  running =
    false;
 
 
- statusEl.textContent =
-   "音声認識中";
-
-
- try{
-
-   recognition.start();
-
- }catch(e){}
-
-};
-
-
-
-stopBtn.onclick =
-()=>{
-
- running = false;
-
-
- clearTimeout(
+  clearTimeout(
    analysisTimer
- );
+  );
 
 
- startBtn.disabled =
-   false;
+  clearInterval(
+   timerInterval
+  );
 
 
- stopBtn.disabled =
-   true;
-
-
- statusEl.textContent =
-   "停止";
-
-
- if(recognition){
+  if(recognition){
 
    try{
 
-     recognition.stop();
+    recognition.stop();
 
    }catch(e){}
 
- }
+  }
 
 
- if(
-   pendingEnglish.length
- ){
-
-   translatePending();
-
- }
+  finishBtn.disabled =
+   true;
 
 
- if(
-   transcript.trim()
- ){
+  finishBtn.textContent =
+   "まとめ作成中…";
 
-   updateMeetingAI();
 
- }
+  try{
 
-};
+   const topics =
+    topicHistory
+
+    .map(
+     t =>
+     `- ${t.title}: ${t.description}`
+    )
+
+    .join("\n");
+
+
+   const finalPrompt =
+`
+Create a concise Japanese final meeting report.
+
+Do not invent facts.
+
+Use exactly these headings:
+
+【会議まとめ】
+
+【決定事項】
+
+【Action Items】
+
+【確認・未解決事項】
+
+
+For Action Items:
+
+Include owner only if actually stated.
+
+Include deadline only if actually stated.
+
+If the information is unknown,
+write 不明.
+
+If there are no relevant items,
+write 特になし.
+
+
+Known meeting topics:
+
+${topics || "なし"}
+
+
+Full transcript:
+
+${transcript}
+`;
+
+
+   const report =
+    (
+     await ai(
+      finalPrompt
+     )
+    )
+    .trim();
+
+
+   const now =
+    new Date();
+
+
+   const stamp =
+    `${now.getFullYear()}-${
+     String(
+      now.getMonth()+1
+     )
+     .padStart(
+      2,
+      "0"
+     )
+    }-${
+     String(
+      now.getDate()
+     )
+     .padStart(
+      2,
+      "0"
+     )
+    }_${
+     String(
+      now.getHours()
+     )
+     .padStart(
+      2,
+      "0"
+     )
+    }-${
+     String(
+      now.getMinutes()
+     )
+     .padStart(
+      2,
+      "0"
+     )
+    }`;
+
+
+   const text =
+`Meeting AI 会議記録
+
+日時:
+${now.toLocaleString("ja-JP")}
+
+
+==============================
+AI 会議まとめ
+==============================
+
+${report}
+
+
+==============================
+会議概要履歴
+==============================
+
+${topics || "なし"}
+
+
+==============================
+English Transcript
+==============================
+
+${transcript}
+
+
+==============================
+日本語訳
+==============================
+
+${translationHistory.join("\n") || "なし"}
+`;
+
+
+   downloadText(
+
+    `Meeting_AI_${stamp}.txt`,
+
+    text
+
+   );
+
+
+   alert(
+    "会議まとめを保存しました。"
+   );
+
+
+  }catch(e){
+
+   console.error(e);
+
+
+   alert(
+    "まとめ作成に失敗しました。\n" +
+    e.message
+   );
+
+
+  }finally{
+
+   finishBtn.disabled =
+    false;
+
+
+   finishBtn.textContent =
+    "会議終了・保存";
+
+
+   startBtn.disabled =
+    false;
+
+
+   stopBtn.disabled =
+    true;
+
+  }
+
+ };
 
 </script>
 
