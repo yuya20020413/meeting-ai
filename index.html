@@ -4,157 +4,283 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Meeting AI for iPad mini</title>
+<title>Meeting AI FREE</title>
+
 <style>
-:root{--gap:8px;--bg:#0b0f14;--panel:#141b24;--line:#293342;--text:#f3f6fa;--muted:#9eacbd;--accent:#78a9ff;--good:#68d391;--warn:#ffd166;--danger:#ff7b7b}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}
-body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-#app{height:100%;display:grid;grid-template-rows:48px 1fr;gap:var(--gap);padding:var(--gap)}
-header{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 10px}
-header strong{font-size:16px;margin-right:auto}.status{font-size:12px;color:var(--muted)}
-button,input,select{font:inherit}button{border:1px solid var(--line);background:#202a37;color:var(--text);border-radius:9px;padding:7px 10px}
-button.primary{background:#245db8;border-color:#3775d6}button.stop{background:#713333}button:disabled{opacity:.45}
-main{min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
-.panel{min-height:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
-.right{min-height:0;display:grid;grid-template-rows:3fr 7fr;gap:var(--gap)}
-.title{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);padding:8px 10px;font-size:13px;font-weight:700}
-.title span{margin-left:auto;color:var(--muted);font-weight:500;font-size:11px}
-.content{padding:10px;overflow:auto;white-space:pre-wrap;line-height:1.5;font-size:17px}
-#translation{font-size:19px}.muted{color:var(--muted)}#summary{font-size:16px}
-#prediction{font-size:15px}.badge{display:inline-block;border-radius:999px;padding:2px 8px;font-size:11px;margin-left:6px}
-.high{background:#612c34;color:#ffd7dc}.medium{background:#594a22;color:#ffe8a6}.low{background:#244735;color:#c9f7d8}
-.answer{margin-top:8px;padding:8px;border-left:3px solid var(--accent);background:#101720;border-radius:5px}
-.answer b{color:#b9d1ff}.controls{display:flex;gap:6px;align-items:center}.controls input{width:170px;background:#0f151d;color:white;border:1px solid var(--line);border-radius:8px;padding:6px}
-#raw{overflow:auto;white-space:pre-wrap}
-@media (orientation:portrait){
-  body{overflow:hidden}
-  #app{height:100%}
-  main{
-    grid-template-columns:1fr;
-    grid-template-rows:55fr 45fr;
-    overflow:hidden;
-    min-height:0
-  }
-  main>.panel{min-height:0}
-  .right{
-    min-height:0;
-    display:grid;
-    grid-template-rows:1fr 3fr;
-    gap:var(--gap)
-  }
-  .right .panel{min-height:0}
-  #summary{font-size:14px;line-height:1.35;padding:7px 9px}
-  #prediction{font-size:14px}
-  #raw{font-size:16px!important}
-  #translation{font-size:18px}
-  .title{padding:6px 9px}
+:root{
+ --gap:8px;--bg:#0b0f14;--panel:#141b24;
+ --line:#293342;--text:#f3f6fa;--muted:#9eacbd;
+ --accent:#78a9ff;
+}
+*{box-sizing:border-box}
+html,body{
+ margin:0;width:100%;height:100%;
+ background:var(--bg);color:var(--text);
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ overflow:hidden
+}
+#app{
+ height:100%;display:grid;
+ grid-template-rows:48px 1fr;
+ gap:var(--gap);padding:var(--gap)
+}
+header{
+ display:flex;align-items:center;gap:8px;
+ background:var(--panel);
+ border:1px solid var(--line);
+ border-radius:12px;padding:6px 10px
+}
+header strong{font-size:16px;margin-right:auto}
+.status{font-size:12px;color:var(--muted)}
+button{
+ font:inherit;border:1px solid var(--line);
+ background:#202a37;color:white;
+ border-radius:9px;padding:7px 12px
+}
+.primary{background:#245db8}
+.stop{background:#713333}
+button:disabled{opacity:.45}
+
+main{
+ min-height:0;display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:var(--gap)
+}
+.panel{
+ min-height:0;background:var(--panel);
+ border:1px solid var(--line);
+ border-radius:12px;overflow:hidden;
+ display:flex;flex-direction:column
+}
+.right{
+ min-height:0;display:grid;
+ grid-template-rows:3fr 7fr;
+ gap:var(--gap)
+}
+.title{
+ display:flex;align-items:center;
+ border-bottom:1px solid var(--line);
+ padding:8px 10px;
+ font-size:13px;font-weight:700
+}
+.content{
+ padding:10px;overflow:auto;
+ white-space:pre-wrap;
+ line-height:1.5;font-size:17px
+}
+.muted{color:var(--muted)}
+.answer{
+ margin-top:7px;padding:8px;
+ border-left:3px solid var(--accent);
+ background:#101720;border-radius:5px
+}
+.answer b{color:#b9d1ff}
+
+@media(orientation:portrait){
+ main{
+  grid-template-columns:1fr;
+  grid-template-rows:55fr 45fr
+ }
+ .right{grid-template-rows:1fr 3fr}
 }
 </style>
 </head>
+
 <body>
+
 <div id="app">
+
 <header>
-  <strong>🎙 Meeting AI</strong>
-  <span class="status" id="status">待機中</span>
-  <div class="controls">
-    <input id="apiKey" type="password" placeholder="OpenAI API key">
-    <button id="saveKey">保存</button>
-    <button class="primary" id="start">開始</button>
-    <button class="stop" id="stop" disabled>停止</button>
-  </div>
+<strong>🎙 Meeting AI FREE</strong>
+<span class="status" id="status">待機中</span>
+<button class="primary" id="start">開始</button>
+<button class="stop" id="stop" disabled>停止</button>
 </header>
+
 <main>
-  <section class="panel">
-    <div class="title">🎙 English <span>左上 25%</span></div>
-    <div class="content" id="raw" style="flex:1;font-size:17px;border-top:0;max-height:none;padding:10px;color:var(--text)">English transcript...</div>
-    <div class="title" style="border-top:1px solid var(--line)">🇯🇵 日本語訳 <span>左下 25%</span></div>
-    <div class="content" id="translation" style="flex:1"><span class="muted">会議を開始すると、日本語訳がここに表示されます。</span></div>
-  </section>
-  <div class="right">
-    <section class="panel">
-      <div class="title">📝 会議概要 <span>約200字・画面15%</span></div>
-      <div class="content" id="summary"><span class="muted">現在の会議内容を要約します。</span></div>
-    </section>
-    <section class="panel">
-      <div class="title">🔮 発言予測・想定質問・回答候補 <span id="chance"></span></div>
-      <div class="content" id="prediction"><span class="muted">次に発言する可能性のある状況を複数予測します。</span></div>
-    </section>
-  </div>
+
+<section class="panel">
+
+<div class="title">🎙 English</div>
+<div class="content" id="raw" style="flex:1">
+English transcript...
+</div>
+
+<div class="title">🇯🇵 日本語サポート</div>
+<div class="content" id="translation" style="flex:1">
+<span class="muted">
+無料モードです。
+英語音声をリアルタイムで文字起こしします。
+</span>
+</div>
+
+</section>
+
+<div class="right">
+
+<section class="panel">
+<div class="title">📝 会議ログ</div>
+<div class="content" id="summary">
+<span class="muted">
+直近の会話内容を表示します。
+</span>
+</div>
+</section>
+
+<section class="panel">
+<div class="title">🔮 発言支援・回答候補</div>
+
+<div class="content" id="prediction">
+
+<div class="answer">
+<b>聞き取れなかった時</b><br>
+Could you say that again, please?<br>
+<span class="muted">もう一度言っていただけますか？</span>
+</div>
+
+<div class="answer">
+<b>確認したい時</b><br>
+Let me confirm my understanding.<br>
+<span class="muted">私の理解を確認させてください。</span>
+</div>
+
+<div class="answer">
+<b>技術的な意見</b><br>
+From an application point of view, I think we should verify it with actual samples.<br>
+<span class="muted">アプリケーションの観点では、実サンプルで確認すべきだと思います。</span>
+</div>
+
+<div class="answer">
+<b>日本の状況を聞かれた時</b><br>
+I will check the details and share the latest information.<br>
+<span class="muted">詳細を確認して最新情報を共有します。</span>
+</div>
+
+<div class="answer">
+<b>分からない時</b><br>
+I'm not sure yet. Let me check and get back to you.<br>
+<span class="muted">まだ分かりません。確認して回答します。</span>
+</div>
+
+</div>
+</section>
+
+</div>
 </main>
 </div>
+
 <script>
-const $=id=>document.getElementById(id);
-const translation=$("translation"), raw=$("raw"), summary=$("summary"), prediction=$("prediction"), statusEl=$("status");
-let recognition=null, running=false, transcript="", lastAnalyzed="", timer=null, busy=false;
-$("apiKey").value=localStorage.getItem("meeting_ai_key")||"";
-$("saveKey").onclick=()=>{localStorage.setItem("meeting_ai_key",$("apiKey").value.trim()); statusEl.textContent="APIキー保存済み"};
-function esc(s){return (s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+
+const raw=document.getElementById("raw");
+const summary=document.getElementById("summary");
+const statusEl=document.getElementById("status");
+
+let recognition=null;
+let running=false;
+let transcript="";
+
 function initRecognition(){
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){statusEl.textContent="このブラウザは音声認識に未対応";return null}
- const r=new SR(); r.continuous=true;r.interimResults=true;r.lang="en-US";
+
+ const SR=
+ window.SpeechRecognition||
+ window.webkitSpeechRecognition;
+
+ if(!SR){
+  statusEl.textContent="音声認識未対応";
+  return null;
+ }
+
+ const r=new SR();
+
+ r.continuous=true;
+ r.interimResults=true;
+ r.lang="en-US";
+
  r.onresult=e=>{
-   let interim="", finals="";
-   for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)finals+=t+" ";else interim+=t}
-   if(finals) transcript+=(transcript?" ":"")+finals.trim();
-   raw.textContent=(transcript+" "+interim).trim()||"English transcript...";
+
+  let interim="";
+  let finals="";
+
+  for(let i=e.resultIndex;i<e.results.length;i++){
+
+   const t=e.results[i][0].transcript;
+
+   if(e.results[i].isFinal){
+    finals+=t+" ";
+   }else{
+    interim+=t;
+   }
+
+  }
+
+  if(finals){
+   transcript+=(transcript?" ":"")+finals.trim();
+  }
+
+  raw.textContent=
+  (transcript+" "+interim).trim();
+
+  const sentences=
+  transcript.split(/[.!?]+/)
+  .map(x=>x.trim())
+  .filter(Boolean);
+
+  summary.textContent=
+  sentences.slice(-5).join("\n");
+
  };
- r.onerror=e=>statusEl.textContent="音声認識: "+e.error;
- r.onend=()=>{if(running)try{r.start()}catch(e){}};
+
+ r.onerror=e=>{
+  statusEl.textContent="音声認識: "+e.error;
+ };
+
+ r.onend=()=>{
+  if(running){
+   try{r.start()}catch(e){}
+  }
+ };
+
  return r;
 }
-async function analyze(){
- const key=$("apiKey").value.trim(); if(!key||busy||!transcript||transcript===lastAnalyzed)return;
- busy=true; statusEl.textContent="AI解析中…";
- const recent=transcript.slice(-7000);
- const prompt=`You are a real-time meeting assistant for a Japanese application engineer.
-Analyze the English meeting transcript below.
-Return ONLY valid JSON with these keys:
-translation: natural Japanese translation of the recent discussion, concise but retaining technical meaning.
-summary: Japanese meeting summary, maximum about 200 Japanese characters, continuously representing the meeting so far.
-predictions: an array of 4 likely upcoming speaking situations, ordered from most likely to less likely. Each item must contain:
-- chance: "high", "medium", or "low"
-- situation: concise Japanese explanation of why/when the user may need to speak
-- question: likely English question addressed to the user
-- answer_short: simple, easy-to-say English answer of 1-2 sentences; never invent facts and use cautious wording when unknown
-- answer_jp: Japanese meaning of answer_short
-Try to anticipate different angles: direct question to the user, request for Japan/customer status, technical/application opinion, and a useful voluntary comment.
-Transcript:
-${recent}`;
+
+document.getElementById("start").onclick=()=>{
+
+ if(running)return;
+
+ recognition=
+ recognition||initRecognition();
+
+ if(!recognition)return;
+
+ running=true;
+
+ document.getElementById("start").disabled=true;
+ document.getElementById("stop").disabled=false;
+
+ statusEl.textContent="無料モード・音声認識中";
+
  try{
-   const res=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:"gpt-5-mini",input:prompt})});
-   if(!res.ok)throw new Error((await res.text()).slice(0,180));
-   const data=await res.json();
-   let txt=data.output_text;
-   if(!txt && data.output) txt=data.output.flatMap(o=>o.content||[]).map(c=>c.text||"").join("");
-   txt=(txt||"").replace(/^```json\s*|```$/g,"").trim();
-   const j=JSON.parse(txt);
-   translation.textContent=j.translation||"";
-   summary.textContent=j.summary||"";
-   const preds = Array.isArray(j.predictions) ? j.predictions : [];
-   const topChance = preds[0]?.chance || "low";
-   const cls=topChance==="high"?"high":topChance==="medium"?"medium":"low";
-   const label=topChance==="high"?"発言可能性 高":topChance==="medium"?"発言可能性 中":"発言可能性 低";
-   $("chance").innerHTML=`<span class="badge ${cls}">${label}</span>`;
-   prediction.innerHTML = preds.length ? preds.map((x,i)=>{
-     const c=x.chance==="high"?"high":x.chance==="medium"?"medium":"low";
-     const l=x.chance==="high"?"高":x.chance==="medium"?"中":"低";
-     return `<div style="margin-bottom:14px"><b>予測 ${i+1}</b><span class="badge ${c}">${l}</span><br>${esc(x.situation||"")}<br><br><b>想定質問：</b> ${esc(x.question||"—")}<div class="answer"><b>英語回答</b><br>${esc(x.answer_short||"—")}<br><span class="muted">${esc(x.answer_jp||"")}</span></div></div>`;
-   }).join("") : '<span class="muted">予測を作成中…</span>';
-   lastAnalyzed=transcript; statusEl.textContent="解析済み・音声認識中";
- }catch(e){statusEl.textContent="AIエラー"; prediction.textContent="AI解析エラー: "+e.message}
- finally{busy=false}
-}
-$("start").onclick=()=>{
- if(running)return; recognition=recognition||initRecognition(); if(!recognition)return;
- running=true;$("start").disabled=true;$("stop").disabled=false;statusEl.textContent="音声認識中";
- try{recognition.start()}catch(e){}
- timer=setInterval(analyze,10000);
+  recognition.start();
+ }catch(e){}
+
 };
-$("stop").onclick=()=>{
- running=false;$("start").disabled=false;$("stop").disabled=true;statusEl.textContent="停止";
- if(recognition)try{recognition.stop()}catch(e){};clearInterval(timer);analyze();
+
+document.getElementById("stop").onclick=()=>{
+
+ running=false;
+
+ document.getElementById("start").disabled=false;
+ document.getElementById("stop").disabled=true;
+
+ statusEl.textContent="停止";
+
+ if(recognition){
+  try{recognition.stop()}catch(e){}
+ }
+
 };
+
 </script>
+
 </body>
 </html>
