@@ -4,84 +4,186 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Meeting AI FREE</title>
+<title>Meeting AI</title>
 
 <style>
 :root{
- --gap:8px;--bg:#0b0f14;--panel:#141b24;
- --line:#293342;--text:#f3f6fa;--muted:#9eacbd;
- --accent:#78a9ff;
+  --gap:8px;
+  --bg:#0b0f14;
+  --panel:#141b24;
+  --line:#293342;
+  --text:#f3f6fa;
+  --muted:#9eacbd;
+  --accent:#78a9ff;
+  --green:#65d18a;
+  --red:#ff8585;
 }
 *{box-sizing:border-box}
+
 html,body{
- margin:0;width:100%;height:100%;
- background:var(--bg);color:var(--text);
- font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
- overflow:hidden
+  margin:0;
+  width:100%;
+  height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  overflow:hidden;
 }
+
 #app{
- height:100%;display:grid;
- grid-template-rows:48px 1fr;
- gap:var(--gap);padding:var(--gap)
+  height:100%;
+  display:grid;
+  grid-template-rows:52px 1fr;
+  gap:var(--gap);
+  padding:var(--gap);
 }
+
 header{
- display:flex;align-items:center;gap:8px;
- background:var(--panel);
- border:1px solid var(--line);
- border-radius:12px;padding:6px 10px
+  display:flex;
+  align-items:center;
+  gap:7px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:6px 10px;
 }
-header strong{font-size:16px;margin-right:auto}
-.status{font-size:12px;color:var(--muted)}
+
+header strong{
+  font-size:16px;
+  white-space:nowrap;
+}
+
+.status{
+  margin-left:auto;
+  font-size:12px;
+  color:var(--muted);
+  white-space:nowrap;
+}
+
+input{
+  width:150px;
+  min-width:90px;
+  border:1px solid var(--line);
+  background:#0e141c;
+  color:white;
+  border-radius:8px;
+  padding:7px 8px;
+  font-size:12px;
+}
+
 button{
- font:inherit;border:1px solid var(--line);
- background:#202a37;color:white;
- border-radius:9px;padding:7px 12px
+  border:1px solid var(--line);
+  background:#202a37;
+  color:white;
+  border-radius:9px;
+  padding:7px 11px;
+  font-size:14px;
 }
+
 .primary{background:#245db8}
 .stop{background:#713333}
 button:disabled{opacity:.45}
 
 main{
- min-height:0;display:grid;
- grid-template-columns:1fr 1fr;
- gap:var(--gap)
+  min-height:0;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:var(--gap);
 }
-.panel{
- min-height:0;background:var(--panel);
- border:1px solid var(--line);
- border-radius:12px;overflow:hidden;
- display:flex;flex-direction:column
+
+.left{
+  min-height:0;
+  display:grid;
+  grid-template-rows:1fr 1fr;
+  gap:var(--gap);
 }
+
 .right{
- min-height:0;display:grid;
- grid-template-rows:3fr 7fr;
- gap:var(--gap)
+  min-height:0;
+  display:grid;
+  grid-template-rows:3fr 7fr;
+  gap:var(--gap);
 }
+
+.panel{
+  min-height:0;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
 .title{
- display:flex;align-items:center;
- border-bottom:1px solid var(--line);
- padding:8px 10px;
- font-size:13px;font-weight:700
+  border-bottom:1px solid var(--line);
+  padding:7px 10px;
+  font-size:13px;
+  font-weight:700;
 }
+
 .content{
- padding:10px;overflow:auto;
- white-space:pre-wrap;
- line-height:1.5;font-size:17px
+  flex:1;
+  padding:10px;
+  overflow:auto;
+  white-space:pre-wrap;
+  line-height:1.45;
+  font-size:16px;
 }
-.muted{color:var(--muted)}
+
+#translation{
+  font-size:18px;
+}
+
+#summary{
+  font-size:16px;
+}
+
+.muted{
+  color:var(--muted);
+}
+
+.card{
+  padding:9px;
+  margin-bottom:8px;
+  border-left:3px solid var(--accent);
+  background:#101720;
+  border-radius:6px;
+}
+
+.card.high{border-left-color:var(--red)}
+.card.medium{border-left-color:#ffd36a}
+.card.low{border-left-color:var(--green)}
+
+.chance{
+  font-size:11px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.question{
+  margin-top:6px;
+  font-size:14px;
+}
+
 .answer{
- margin-top:7px;padding:8px;
- border-left:3px solid var(--accent);
- background:#101720;border-radius:5px
+  margin-top:5px;
+  font-size:16px;
+  font-weight:600;
+  color:#c8dbff;
 }
-.answer b{color:#b9d1ff}
+
+.jp{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:13px;
+}
 
 @media(orientation:portrait){
- main{
-  grid-template-columns:1fr;
-  grid-template-rows:55fr 45fr
- }
- .right{grid-template-rows:1fr 3fr}
+  main{
+    grid-template-columns:1fr;
+    grid-template-rows:1fr 1fr;
+  }
 }
 </style>
 </head>
@@ -91,193 +193,460 @@ main{
 <div id="app">
 
 <header>
-<strong>🎙 Meeting AI FREE</strong>
-<span class="status" id="status">待機中</span>
-<button class="primary" id="start">開始</button>
-<button class="stop" id="stop" disabled>停止</button>
+  <strong>🎙 Meeting AI</strong>
+
+  <input
+    id="apiKey"
+    type="password"
+    placeholder="OpenAI API Key"
+    autocomplete="off"
+  >
+
+  <span class="status" id="status">待機中</span>
+
+  <button class="primary" id="start">開始</button>
+  <button class="stop" id="stop" disabled>停止</button>
 </header>
 
 <main>
 
+<div class="left">
+
 <section class="panel">
-
-<div class="title">🎙 English</div>
-<div class="content" id="raw" style="flex:1">
-English transcript...
-</div>
-
-<div class="title">🇯🇵 日本語サポート</div>
-<div class="content" id="translation" style="flex:1">
-<span class="muted">
-無料モードです。
-英語音声をリアルタイムで文字起こしします。
-</span>
-</div>
-
+  <div class="title">🎙 English</div>
+  <div class="content" id="raw">
+    <span class="muted">English transcript...</span>
+  </div>
 </section>
+
+<section class="panel">
+  <div class="title">🇯🇵 リアルタイム日本語訳</div>
+  <div class="content" id="translation">
+    <span class="muted">日本語訳がここに表示されます。</span>
+  </div>
+</section>
+
+</div>
 
 <div class="right">
 
 <section class="panel">
-<div class="title">📝 会議ログ</div>
-<div class="content" id="summary">
-<span class="muted">
-直近の会話内容を表示します。
-</span>
-</div>
+  <div class="title">📝 会議要約（日本語）</div>
+  <div class="content" id="summary">
+    <span class="muted">会議内容を約200字で要約します。</span>
+  </div>
 </section>
 
 <section class="panel">
-<div class="title">🔮 発言支援・回答候補</div>
-
-<div class="content" id="prediction">
-
-<div class="answer">
-<b>聞き取れなかった時</b><br>
-Could you say that again, please?<br>
-<span class="muted">もう一度言っていただけますか？</span>
-</div>
-
-<div class="answer">
-<b>確認したい時</b><br>
-Let me confirm my understanding.<br>
-<span class="muted">私の理解を確認させてください。</span>
-</div>
-
-<div class="answer">
-<b>技術的な意見</b><br>
-From an application point of view, I think we should verify it with actual samples.<br>
-<span class="muted">アプリケーションの観点では、実サンプルで確認すべきだと思います。</span>
-</div>
-
-<div class="answer">
-<b>日本の状況を聞かれた時</b><br>
-I will check the details and share the latest information.<br>
-<span class="muted">詳細を確認して最新情報を共有します。</span>
-</div>
-
-<div class="answer">
-<b>分からない時</b><br>
-I'm not sure yet. Let me check and get back to you.<br>
-<span class="muted">まだ分かりません。確認して回答します。</span>
-</div>
-
-</div>
+  <div class="title">🔮 発言予測・回答候補</div>
+  <div class="content" id="prediction">
+    <span class="muted">
+      会話に合わせて、次に聞かれそうなことと回答例を更新します。
+    </span>
+  </div>
 </section>
 
 </div>
+
 </main>
 </div>
 
 <script>
 
-const raw=document.getElementById("raw");
-const summary=document.getElementById("summary");
-const statusEl=document.getElementById("status");
+const rawEl = document.getElementById("raw");
+const translationEl = document.getElementById("translation");
+const summaryEl = document.getElementById("summary");
+const predictionEl = document.getElementById("prediction");
+const statusEl = document.getElementById("status");
+const keyEl = document.getElementById("apiKey");
+const startBtn = document.getElementById("start");
+const stopBtn = document.getElementById("stop");
 
-let recognition=null;
-let running=false;
-let transcript="";
+let recognition = null;
+let running = false;
+
+let transcript = "";
+let interimText = "";
+
+let lastAnalyzed = "";
+let analyzing = false;
+let analysisTimer = null;
+
+keyEl.value = localStorage.getItem("meeting_ai_key") || "";
+
+keyEl.addEventListener("change",()=>{
+  localStorage.setItem("meeting_ai_key",keyEl.value.trim());
+});
 
 function initRecognition(){
 
- const SR=
- window.SpeechRecognition||
- window.webkitSpeechRecognition;
+  const SR =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
 
- if(!SR){
-  statusEl.textContent="音声認識未対応";
-  return null;
- }
-
- const r=new SR();
-
- r.continuous=true;
- r.interimResults=true;
- r.lang="en-US";
-
- r.onresult=e=>{
-
-  let interim="";
-  let finals="";
-
-  for(let i=e.resultIndex;i<e.results.length;i++){
-
-   const t=e.results[i][0].transcript;
-
-   if(e.results[i].isFinal){
-    finals+=t+" ";
-   }else{
-    interim+=t;
-   }
-
+  if(!SR){
+    statusEl.textContent = "音声認識未対応";
+    return null;
   }
 
-  if(finals){
-   transcript+=(transcript?" ":"")+finals.trim();
-  }
+  const r = new SR();
 
-  raw.textContent=
-  (transcript+" "+interim).trim();
+  r.continuous = true;
+  r.interimResults = true;
+  r.lang = "en-US";
 
-  const sentences=
-  transcript.split(/[.!?]+/)
-  .map(x=>x.trim())
-  .filter(Boolean);
+  r.onresult = e => {
 
-  summary.textContent=
-  sentences.slice(-5).join("\n");
+    let newFinal = "";
+    interimText = "";
 
- };
+    for(let i=e.resultIndex;i<e.results.length;i++){
 
- r.onerror=e=>{
-  statusEl.textContent="音声認識: "+e.error;
- };
+      const text = e.results[i][0].transcript;
 
- r.onend=()=>{
-  if(running){
-   try{r.start()}catch(e){}
-  }
- };
+      if(e.results[i].isFinal){
+        newFinal += text.trim() + ". ";
+      }else{
+        interimText += text;
+      }
+    }
 
- return r;
+    if(newFinal){
+      transcript += newFinal;
+    }
+
+    rawEl.textContent =
+      (transcript + " " + interimText).trim();
+
+    if(newFinal){
+      scheduleAnalysis();
+    }
+  };
+
+  r.onerror = e => {
+
+    if(e.error === "no-speech"){
+      return;
+    }
+
+    statusEl.textContent =
+      "音声認識: " + e.error;
+  };
+
+  r.onend = () => {
+
+    if(running){
+      setTimeout(()=>{
+        try{ r.start(); }catch(e){}
+      },300);
+    }
+  };
+
+  return r;
 }
 
-document.getElementById("start").onclick=()=>{
+function scheduleAnalysis(){
 
- if(running)return;
+  clearTimeout(analysisTimer);
 
- recognition=
- recognition||initRecognition();
+  analysisTimer = setTimeout(()=>{
+    analyzeMeeting();
+  },1200);
+}
 
- if(!recognition)return;
+function extractOutput(data){
 
- running=true;
+  if(data.output_text){
+    return data.output_text;
+  }
 
- document.getElementById("start").disabled=true;
- document.getElementById("stop").disabled=false;
+  try{
+    return data.output
+      .flatMap(x=>x.content || [])
+      .filter(x=>x.type === "output_text")
+      .map(x=>x.text)
+      .join("");
+  }catch(e){
+    return "";
+  }
+}
 
- statusEl.textContent="無料モード・音声認識中";
+async function analyzeMeeting(){
 
- try{
-  recognition.start();
- }catch(e){}
+  const apiKey = keyEl.value.trim();
 
+  if(!apiKey){
+    statusEl.textContent = "APIキーを入力";
+    return;
+  }
+
+  if(analyzing){
+    return;
+  }
+
+  const current = transcript.trim();
+
+  if(!current || current === lastAnalyzed){
+    return;
+  }
+
+  analyzing = true;
+  statusEl.textContent = "AI解析中…";
+
+  const recent =
+    current.length > 10000
+      ? current.slice(-10000)
+      : current;
+
+  const prompt = `
+You are a real-time meeting assistant for a Japanese application engineer.
+
+The user works in materials / metallographic sample preparation.
+Typical topics include:
+cutting, mounting, grinding, polishing, etching,
+microscopy, material evaluation,
+customer samples, test results,
+technical conditions and Japanese customer feedback.
+
+Analyze the English meeting transcript below.
+
+Return ONLY valid JSON.
+
+Required format:
+
+{
+  "translation":"Natural Japanese translation of the transcript. Translate the actual content accurately.",
+  "summary":"Japanese meeting summary. About 200 Japanese characters. Focus on decisions, important technical points, requests, problems and next actions.",
+  "predictions":[
+    {
+      "chance":"high",
+      "situation":"Japanese explanation of when/why the user may need to speak next",
+      "question":"Likely English question the user may be asked",
+      "answer_short":"A simple natural English answer the user can say immediately. Do not invent facts.",
+      "answer_jp":"Japanese meaning of the answer"
+    }
+  ]
+}
+
+Prediction rules:
+
+- Return 5 predictions when useful.
+- Put the most likely one first.
+- Anticipate direct questions to the user.
+- Anticipate questions about Japan or Japanese customers.
+- Anticipate technical/application opinions.
+- Anticipate requests for test results or sample preparation conditions.
+- Include useful voluntary comments the user could make.
+- English answers should be short and easy for a Japanese speaker.
+- Never invent customer names, numerical results, dates or technical facts not present in the transcript.
+- If information is unknown, give a safe answer such as:
+  "I need to check the details."
+  or
+  "We have not confirmed that yet."
+
+Meeting transcript:
+
+${recent}
+`;
+
+  try{
+
+    const response = await fetch(
+      "https://api.openai.com/v1/responses",
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization":"Bearer " + apiKey
+        },
+
+        body:JSON.stringify({
+          model:"gpt-5-mini",
+          input:prompt,
+          text:{
+            format:{
+              type:"json_object"
+            }
+          }
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if(!response.ok){
+
+      const msg =
+        data?.error?.message ||
+        "OpenAI API error";
+
+      throw new Error(msg);
+    }
+
+    const output = extractOutput(data);
+
+    if(!output){
+      throw new Error("AIの回答を取得できませんでした");
+    }
+
+    const result = JSON.parse(output);
+
+    if(result.translation){
+      translationEl.textContent =
+        result.translation;
+    }
+
+    if(result.summary){
+      summaryEl.textContent =
+        result.summary;
+    }
+
+    if(Array.isArray(result.predictions)){
+      renderPredictions(result.predictions);
+    }
+
+    lastAnalyzed = current;
+
+    statusEl.textContent = "音声認識中";
+
+  }catch(err){
+
+    console.error(err);
+
+    statusEl.textContent =
+      "AIエラー";
+
+    summaryEl.textContent =
+      "エラー: " + err.message;
+
+  }finally{
+
+    analyzing = false;
+
+    if(transcript.trim() !== lastAnalyzed){
+      scheduleAnalysis();
+    }
+  }
+}
+
+function escapeHtml(s){
+
+  return String(s || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function renderPredictions(items){
+
+  if(!items.length){
+    predictionEl.innerHTML =
+      '<span class="muted">発言候補を分析中です。</span>';
+    return;
+  }
+
+  predictionEl.innerHTML =
+    items.slice(0,5).map((p,i)=>{
+
+      const chance =
+        ["high","medium","low"].includes(p.chance)
+          ? p.chance
+          : "medium";
+
+      const label =
+        chance === "high"
+          ? "可能性：高"
+          : chance === "medium"
+          ? "可能性：中"
+          : "可能性：低";
+
+      return `
+      <div class="card ${chance}">
+
+        <div class="chance">
+          ${i+1}. ${label}
+        </div>
+
+        <div>
+          ${escapeHtml(p.situation)}
+        </div>
+
+        <div class="question">
+          <b>想定質問：</b><br>
+          ${escapeHtml(p.question)}
+        </div>
+
+        <div class="answer">
+          ${escapeHtml(p.answer_short)}
+        </div>
+
+        <div class="jp">
+          ${escapeHtml(p.answer_jp)}
+        </div>
+
+      </div>
+      `;
+    }).join("");
+}
+
+startBtn.onclick = ()=>{
+
+  const apiKey = keyEl.value.trim();
+
+  if(!apiKey){
+    alert("OpenAI APIキーを入力してください。");
+    keyEl.focus();
+    return;
+  }
+
+  localStorage.setItem(
+    "meeting_ai_key",
+    apiKey
+  );
+
+  recognition =
+    recognition || initRecognition();
+
+  if(!recognition){
+    return;
+  }
+
+  running = true;
+
+  startBtn.disabled = true;
+  stopBtn.disabled = false;
+
+  statusEl.textContent =
+    "音声認識中";
+
+  try{
+    recognition.start();
+  }catch(e){}
 };
 
-document.getElementById("stop").onclick=()=>{
+stopBtn.onclick = ()=>{
 
- running=false;
+  running = false;
 
- document.getElementById("start").disabled=false;
- document.getElementById("stop").disabled=true;
+  clearTimeout(analysisTimer);
 
- statusEl.textContent="停止";
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
 
- if(recognition){
-  try{recognition.stop()}catch(e){}
- }
+  statusEl.textContent = "停止";
 
+  if(recognition){
+    try{
+      recognition.stop();
+    }catch(e){}
+  }
+
+  if(transcript.trim()){
+    analyzeMeeting();
+  }
 };
 
 </script>
