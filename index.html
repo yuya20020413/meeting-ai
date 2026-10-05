@@ -21,9 +21,13 @@
  --green:#65d18a;
  --red:#ff8585;
  --yellow:#ffd36a;
+ --purple:#b69cff;
+ --orange:#ffad66;
 }
 
-*{box-sizing:border-box}
+*{
+ box-sizing:border-box;
+}
 
 html,body{
  margin:0;
@@ -38,23 +42,25 @@ html,body{
 #app{
  height:100%;
  display:grid;
- grid-template-rows:58px 1fr;
+ grid-template-rows:56px 1fr;
  gap:var(--gap);
  padding:var(--gap);
 }
 
 
 /* =========================
- HEADER
+   HEADER
 ========================= */
 
 header{
  display:flex;
  align-items:center;
  gap:6px;
+
  background:var(--panel);
  border:1px solid var(--line);
  border-radius:10px;
+
  padding:5px 8px;
  min-width:0;
 }
@@ -65,56 +71,64 @@ header strong{
 }
 
 input{
- width:100px;
+ width:95px;
+ min-width:65px;
+
  border:1px solid var(--line);
  background:#0e141c;
  color:white;
+
  border-radius:7px;
  padding:6px;
- font-size:11px;
+
+ font-size:10px;
 }
 
 .chip{
- height:38px;
+ height:36px;
+
  display:flex;
  align-items:center;
+
  border:1px solid var(--line);
  border-radius:8px;
+
  padding:0 7px;
+
  background:#0e141c;
- white-space:nowrap;
+
  font-size:11px;
+ white-space:nowrap;
 }
 
 #timer{
  font-variant-numeric:tabular-nums;
 }
 
-#questionAlert{
- display:none;
- color:#ffb2b2;
- border-color:#7b3434;
-}
-
-#nextSpeak{
+#currentTopicBox{
  flex:1;
- min-width:120px;
- max-width:330px;
+ min-width:150px;
+
  display:block;
- padding:4px 8px;
- cursor:pointer;
+
+ padding:3px 8px;
+ overflow:hidden;
 }
 
-#nextSpeak .small{
+.topic-label{
  font-size:9px;
  color:var(--muted);
+ line-height:1;
 }
 
-#nextSpeakText{
- margin-top:2px;
+#currentTopicText{
+ margin-top:3px;
+
  font-size:13px;
  font-weight:750;
- color:#8fbdff;
+
+ color:#d8e6ff;
+
  overflow:hidden;
  white-space:nowrap;
  text-overflow:ellipsis;
@@ -122,184 +136,132 @@ input{
 
 button{
  border:1px solid var(--line);
+
  background:#202a37;
  color:white;
+
  border-radius:8px;
+
  padding:6px 8px;
+
  font-size:11px;
+
  white-space:nowrap;
 }
-
-.primary{background:#245db8}
-.stop{background:#713333}
-.camera{background:#256b4b}
-.save{background:#594c27}
 
 button:disabled{
  opacity:.45;
 }
 
+.primary{
+ background:#245db8;
+}
+
+.stop{
+ background:#713333;
+}
+
+.camera{
+ background:#226744;
+}
+
+.save{
+ background:#655225;
+}
+
 
 /* =========================
- MAIN
+   MAIN
 ========================= */
 
 main{
  min-height:0;
+
  display:grid;
- grid-template-columns:1fr 1fr;
+
+ grid-template-columns:
+  1fr 1fr;
+
  gap:var(--gap);
 }
+
+
+/* =========================
+   LEFT
+========================= */
 
 .left{
  min-height:0;
+
  display:grid;
- grid-template-rows:1fr 1fr;
+
+ /*
+   Camera
+   English
+   Japanese
+ */
+ grid-template-rows:
+  35fr 32.5fr 32.5fr;
+
  gap:var(--gap);
 }
+
+
+/* =========================
+   RIGHT
+========================= */
 
 .right{
  min-height:0;
+
  display:grid;
- grid-template-rows:32fr 68fr;
+
+ grid-template-rows:
+  32fr 68fr;
+
  gap:var(--gap);
 }
 
+
+/* =========================
+   PANEL
+========================= */
+
 .panel{
  min-height:0;
+
  background:var(--panel);
+
  border:1px solid var(--line);
  border-radius:10px;
+
  overflow:hidden;
+
  display:flex;
  flex-direction:column;
 }
 
 .title{
  flex:none;
+
  border-bottom:1px solid var(--line);
- padding:6px 9px;
- font-size:13px;
+
+ padding:5px 8px;
+
+ font-size:12px;
  font-weight:700;
 }
 
 .content{
  flex:1;
  min-height:0;
- padding:7px 9px;
+
+ padding:6px 8px;
+
  overflow-y:auto;
  overflow-x:hidden;
+
  -webkit-overflow-scrolling:touch;
-}
-
-
-/* =========================
- TRANSCRIPT
-========================= */
-
-#raw{
- white-space:pre-wrap;
- font-size:16px;
- line-height:1.35;
-}
-
-#translation{
- font-size:18px;
- line-height:1.35;
-}
-
-.translation-line{
- margin:0 0 4px;
-}
-
-
-/* =========================
- SUMMARY
-========================= */
-
-.topic{
- padding:4px 0 5px;
- border-bottom:1px solid #27313d;
-}
-
-.topic-title{
- font-size:15px;
- font-weight:750;
- color:#d9e7ff;
-}
-
-.topic-description{
- font-size:13px;
- line-height:1.25;
- color:#e0e5ec;
-}
-
-
-/* =========================
- PREDICTION
-========================= */
-
-#prediction{
- padding:5px 7px;
-}
-
-.prediction-card{
- margin:0 0 4px;
- padding:5px 7px;
- background:#101720;
- border-left:3px solid var(--blue);
- border-radius:4px;
-}
-
-.prediction-card.high{
- border-left-color:var(--red);
-}
-
-.prediction-card.medium{
- border-left-color:var(--yellow);
-}
-
-.prediction-card.low{
- border-left-color:var(--green);
-}
-
-.pred-top{
- display:flex;
- align-items:center;
- gap:5px;
- line-height:1.1;
-}
-
-.number{
- font-size:12px;
- font-weight:800;
-}
-
-.chance{
- font-size:11px;
- font-weight:700;
- color:var(--muted);
-}
-
-.question-jp{
- font-size:13px;
- font-weight:700;
- color:white;
-}
-
-.answer{
- margin-top:2px;
- font-size:17px;
- line-height:1.16;
- font-weight:750;
- color:#c9dcff;
-}
-
-.answer-jp{
- margin-top:1px;
- font-size:12px;
- line-height:1.15;
- color:var(--muted);
 }
 
 .muted{
@@ -308,76 +270,241 @@ main{
 
 
 /* =========================
- CAMERA WINDOW
+   CAMERA
 ========================= */
 
-#cameraWindow{
- position:fixed;
- right:12px;
- top:72px;
-
- width:310px;
-
- background:#080c11;
- border:1px solid #46627f;
- border-radius:10px;
-
- z-index:100;
-
- display:none;
-
- box-shadow:0 5px 30px rgba(0,0,0,.55);
-}
-
-.camera-title{
- height:30px;
+.camera-header{
  display:flex;
  align-items:center;
  gap:6px;
-
- padding:0 8px;
-
- border-bottom:1px solid var(--line);
-
- font-size:11px;
- font-weight:700;
 }
 
 #cameraStatus{
  margin-left:auto;
+
  color:var(--green);
+
  font-size:10px;
+}
+
+#cameraArea{
+ position:relative;
+
+ flex:1;
+ min-height:0;
+
+ background:#070a0e;
+
+ overflow:hidden;
 }
 
 #cameraVideo{
  width:100%;
- display:block;
+ height:100%;
+
+ object-fit:contain;
+
  background:black;
- max-height:180px;
- object-fit:cover;
+
+ display:block;
 }
 
-#slideInfo{
- padding:6px 8px;
- font-size:11px;
- line-height:1.3;
- max-height:85px;
- overflow:auto;
+#slideOverlay{
+ position:absolute;
+
+ left:6px;
+ right:6px;
+ bottom:6px;
+
+ padding:5px 7px;
+
+ border-radius:6px;
+
+ background:rgba(5,9,14,.82);
+
+ backdrop-filter:blur(4px);
+
+ font-size:10px;
+ line-height:1.25;
 }
 
 #slideTitle{
- color:#8fbdff;
+ font-size:11px;
  font-weight:750;
+ color:#9bc3ff;
+
  margin-bottom:2px;
 }
 
+#slideDescription{
+ color:#e6ebf2;
+}
 
-/* hidden canvas */
+
+/* =========================
+   TRANSCRIPT
+========================= */
+
+#raw{
+ white-space:pre-wrap;
+
+ font-size:15px;
+ line-height:1.3;
+}
+
+#translation{
+ font-size:17px;
+ line-height:1.3;
+}
+
+.translation-line{
+ margin:0 0 3px 0;
+}
+
+
+/* =========================
+   MEETING SUMMARY
+========================= */
+
+#summary{
+ padding:5px 8px;
+}
+
+.topic{
+ padding:4px 0;
+
+ border-bottom:
+ 1px solid #27313d;
+}
+
+.topic-title{
+ font-size:14px;
+ line-height:1.2;
+
+ font-weight:750;
+
+ color:#d9e7ff;
+}
+
+.topic-description{
+ margin-top:1px;
+
+ font-size:12px;
+ line-height:1.22;
+
+ color:#e0e5ec;
+}
+
+
+/* =========================
+   PREDICTIONS
+========================= */
+
+#prediction{
+ padding:4px 6px;
+}
+
+.prediction-card{
+ margin:0 0 4px 0;
+
+ padding:5px 7px;
+
+ background:#101720;
+
+ border-radius:4px;
+}
+
+.prediction-card.incoming{
+ border-left:
+ 3px solid var(--red);
+}
+
+.prediction-card.outgoing{
+ border-left:
+ 3px solid var(--green);
+}
+
+.pred-top{
+ display:flex;
+ align-items:center;
+ gap:5px;
+
+ line-height:1.12;
+
+ margin-bottom:2px;
+}
+
+.pred-type{
+ font-size:11px;
+ font-weight:800;
+
+ white-space:nowrap;
+}
+
+.incoming .pred-type{
+ color:#ff9c9c;
+}
+
+.outgoing .pred-type{
+ color:#82dfa1;
+}
+
+.chance{
+ font-size:10px;
+ color:var(--muted);
+
+ white-space:nowrap;
+}
+
+.question-jp{
+ font-size:13px;
+ font-weight:700;
+
+ color:white;
+}
+
+.question-en{
+ margin-top:2px;
+
+ font-size:12px;
+ line-height:1.15;
+
+ color:#b9c9df;
+}
+
+.answer-en{
+ margin-top:3px;
+
+ font-size:16px;
+ line-height:1.16;
+
+ font-weight:750;
+
+ color:#c9dcff;
+}
+
+.answer-jp{
+ margin-top:1px;
+
+ font-size:12px;
+ line-height:1.15;
+
+ color:var(--muted);
+}
+
+
+/* =========================
+   HIDDEN CANVAS
+========================= */
 
 #captureCanvas{
  display:none;
 }
 
+
+/* =========================
+   SMALL IPAD
+========================= */
 
 @media(max-width:1000px){
 
@@ -386,23 +513,32 @@ main{
  }
 
  input{
-  width:75px;
+  width:72px;
+ }
+
+ button{
+  padding:6px;
+  font-size:10px;
  }
 
  .chip{
   padding:0 5px;
  }
 
- #nextSpeak{
-  max-width:250px;
+ #currentTopicText{
+  font-size:12px;
  }
 
- button{
-  padding:6px;
- }
+}
 
- #cameraWindow{
-  width:270px;
+
+/* portrait */
+
+@media(orientation:portrait){
+
+ main{
+  grid-template-columns:1fr;
+  grid-template-rows:1fr 1fr;
  }
 
 }
@@ -415,48 +551,19 @@ main{
 
 <div id="app">
 
+
+<!-- =========================
+     HEADER
+========================= -->
+
 <header>
 
 <strong>
 🎙 Meeting AI
 </strong>
 
-<input
- id="apiKey"
- type="password"
- placeholder="API Key"
- autocomplete="off"
->
 
-<div
- class="chip"
- id="timer"
->
-⏱ 00:00:00
-</div>
-
-<div
- class="chip"
- id="questionAlert"
->
-❓ QUESTION
-</div>
-
-<div
- class="chip"
- id="nextSpeak"
- title="タップでコピー"
->
-
-<div class="small">
-⭐ 次の発言
-</div>
-
-<div id="nextSpeakText">
-—
-</div>
-
-</div>
+<!-- Camera button LEFT -->
 
 <button
  class="camera"
@@ -465,12 +572,48 @@ main{
 📷 資料読取
 </button>
 
+
+<input
+ id="apiKey"
+ type="password"
+ placeholder="API Key"
+ autocomplete="off"
+>
+
+
+<div
+ class="chip"
+ id="timer"
+>
+⏱ 00:00:00
+</div>
+
+
+<!-- Current topic -->
+
+<div
+ class="chip"
+ id="currentTopicBox"
+>
+
+<div class="topic-label">
+💬 現在の話題
+</div>
+
+<div id="currentTopicText">
+会議開始を待っています
+</div>
+
+</div>
+
+
 <button
  class="primary"
  id="start"
 >
 開始
 </button>
+
 
 <button
  class="stop"
@@ -479,6 +622,7 @@ main{
 >
 停止
 </button>
+
 
 <button
  class="save"
@@ -490,9 +634,67 @@ main{
 </header>
 
 
+
+<!-- =========================
+     MAIN
+========================= -->
+
 <main>
 
+
+<!-- =========================
+     LEFT
+========================= -->
+
 <div class="left">
+
+
+<!-- CAMERA -->
+
+<section class="panel">
+
+<div class="title camera-header">
+
+<span>
+📷 資料読取
+</span>
+
+<span id="cameraStatus">
+OFF
+</span>
+
+</div>
+
+
+<div id="cameraArea">
+
+<video
+ id="cameraVideo"
+ autoplay
+ muted
+ playsinline
+></video>
+
+
+<div id="slideOverlay">
+
+<div id="slideTitle">
+資料読取 OFF
+</div>
+
+<div id="slideDescription">
+「📷 資料読取」を押すとカメラを開始します。
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- ENGLISH -->
 
 <section class="panel">
 
@@ -504,13 +706,18 @@ main{
  class="content"
  id="raw"
 >
+
 <span class="muted">
 English transcript...
 </span>
+
 </div>
 
 </section>
 
+
+
+<!-- JAPANESE -->
 
 <section class="panel">
 
@@ -522,17 +729,28 @@ English transcript...
  class="content"
  id="translation"
 >
+
 <span class="muted">
 日本語訳を順番に追加します。
 </span>
+
 </div>
 
 </section>
 
+
 </div>
 
 
+
+<!-- =========================
+     RIGHT
+========================= -->
+
 <div class="right">
+
+
+<!-- SUMMARY -->
 
 <section class="panel">
 
@@ -544,70 +762,42 @@ English transcript...
  class="content"
  id="summary"
 >
+
 <span class="muted">
 大きな話題ごとに概要を残します。
 </span>
+
 </div>
 
 </section>
 
 
+
+<!-- PREDICTION -->
+
 <section class="panel">
 
 <div class="title">
-🔮 発言予測・回答候補
+🔮 質問予測・こちらから質問
 </div>
 
 <div
  class="content"
  id="prediction"
 >
+
 <span class="muted">
-会話に合わせて更新します。
+会話と資料から候補を作ります。
 </span>
+
 </div>
 
 </section>
 
+
 </div>
 
 </main>
-
-</div>
-
-
-<!-- CAMERA -->
-
-<div id="cameraWindow">
-
-<div class="camera-title">
-
-📷 資料カメラ
-
-<span id="cameraStatus">
-待機
-</span>
-
-</div>
-
-<video
- id="cameraVideo"
- autoplay
- muted
- playsinline
-></video>
-
-<div id="slideInfo">
-
-<div id="slideTitle">
-資料を待っています
-</div>
-
-<div id="slideDescription">
-PowerPointなどの資料をカメラに映してください。
-</div>
-
-</div>
 
 </div>
 
@@ -617,9 +807,9 @@ PowerPointなどの資料をカメラに映してください。
 
 <script>
 
-/* =========================
- ELEMENTS
-========================= */
+/* =====================================================
+   ELEMENTS
+===================================================== */
 
 const $ =
  id =>
@@ -653,14 +843,8 @@ const finishBtn =
 const timerEl =
  $("timer");
 
-const questionAlert =
- $("questionAlert");
-
-const nextSpeak =
- $("nextSpeak");
-
-const nextSpeakText =
- $("nextSpeakText");
+const currentTopicText =
+ $("currentTopicText");
 
 
 /* camera */
@@ -668,14 +852,11 @@ const nextSpeakText =
 const cameraBtn =
  $("cameraBtn");
 
-const cameraWindow =
- $("cameraWindow");
+const cameraStatus =
+ $("cameraStatus");
 
 const cameraVideo =
  $("cameraVideo");
-
-const cameraStatus =
- $("cameraStatus");
 
 const slideTitleEl =
  $("slideTitle");
@@ -687,9 +868,9 @@ const captureCanvas =
  $("captureCanvas");
 
 
-/* =========================
- VARIABLES
-========================= */
+/* =====================================================
+   STATE
+===================================================== */
 
 let recognition =
  null;
@@ -721,8 +902,17 @@ let topicHistory =
 let currentTopicTitle =
  "";
 
-let lastPredictionTranscript =
+let currentLiveTopic =
  "";
+
+let lastAnalysisSignature =
+ "";
+
+let translationHistory =
+ [];
+
+
+/* timer */
 
 let meetingStart =
  null;
@@ -730,17 +920,14 @@ let meetingStart =
 let timerInterval =
  null;
 
-let translationHistory =
- [];
-
 
 /* camera */
 
-let cameraStream =
- null;
-
 let cameraRunning =
  false;
+
+let cameraStream =
+ null;
 
 let cameraTimer =
  null;
@@ -751,19 +938,41 @@ let previousFingerprint =
 let slideAnalyzing =
  false;
 
-let currentSlide =
+
+/*
+ current slide
+*/
+
+let currentSlide = {
+
+ title:"",
+ description:"",
+ keywords:[]
+
+};
+
+
+/*
+ Saved slides.
+
+ Each object:
+
  {
+   time,
+   title,
+   description,
+   keywords,
+   image
+ }
+*/
 
-  title:"",
-  description:"",
-  keywords:[]
-
- };
+let savedSlides =
+ [];
 
 
-/* =========================
- API KEY
-========================= */
+/* =====================================================
+   API KEY
+===================================================== */
 
 keyEl.value =
  localStorage.getItem(
@@ -771,7 +980,8 @@ keyEl.value =
  ) || "";
 
 
-keyEl.onchange =
+keyEl.addEventListener(
+ "change",
  ()=>{
 
   localStorage.setItem(
@@ -779,12 +989,13 @@ keyEl.onchange =
    keyEl.value.trim()
   );
 
- };
+ }
+);
 
 
-/* =========================
- HELPERS
-========================= */
+/* =====================================================
+   HELPERS
+===================================================== */
 
 function scrollBottom(el){
 
@@ -815,10 +1026,10 @@ function esc(s){
 
 function extractOutput(data){
 
- if(
-  data.output_text
- ){
+ if(data.output_text){
+
   return data.output_text;
+
  }
 
 
@@ -853,11 +1064,26 @@ function extractOutput(data){
 }
 
 
-/* =========================
- OPENAI TEXT
-========================= */
+function cleanJSON(text){
 
-async function callOpenAI(prompt){
+ return text
+
+ .replace(/^```json/i,"")
+ .replace(/^```/,"")
+ .replace(/```$/,"")
+
+ .trim();
+
+}
+
+
+/* =====================================================
+   OPENAI TEXT
+===================================================== */
+
+async function callOpenAI(
+ prompt
+){
 
  const key =
   keyEl.value.trim();
@@ -866,7 +1092,7 @@ async function callOpenAI(prompt){
  if(!key){
 
   throw new Error(
-   "APIキーを入力してください"
+   "OpenAI APIキーを入力してください"
   );
 
  }
@@ -884,10 +1110,10 @@ async function callOpenAI(prompt){
    headers:{
 
     "Content-Type":
-    "application/json",
+     "application/json",
 
     "Authorization":
-    "Bearer " + key
+     "Bearer " + key
 
    },
 
@@ -895,10 +1121,10 @@ async function callOpenAI(prompt){
    JSON.stringify({
 
     model:
-    "gpt-5-mini",
+     "gpt-5-mini",
 
     input:
-    prompt
+     prompt
 
    })
 
@@ -928,9 +1154,9 @@ async function callOpenAI(prompt){
 }
 
 
-/* =========================
- OPENAI IMAGE
-========================= */
+/* =====================================================
+   OPENAI IMAGE
+===================================================== */
 
 async function analyzeSlideImage(
  dataUrl
@@ -943,7 +1169,7 @@ async function analyzeSlideImage(
  if(!key){
 
   throw new Error(
-   "APIキーを入力してください"
+   "OpenAI APIキーを入力してください"
   );
 
  }
@@ -961,10 +1187,10 @@ async function analyzeSlideImage(
    headers:{
 
     "Content-Type":
-    "application/json",
+     "application/json",
 
     "Authorization":
-    "Bearer " + key
+     "Bearer " + key
 
    },
 
@@ -972,7 +1198,7 @@ async function analyzeSlideImage(
    JSON.stringify({
 
     model:
-    "gpt-5-mini",
+     "gpt-5-mini",
 
     input:[
      {
@@ -982,14 +1208,18 @@ async function analyzeSlideImage(
       content:[
        {
 
-        type:"input_text",
+        type:
+         "input_text",
 
         text:
 `
-You are looking at a presentation slide
-during a technical meeting.
+This is a presentation slide
+shown during a technical meeting.
 
 Read the slide carefully.
+
+Extract only information
+that is actually visible.
 
 The meeting may involve:
 
@@ -1001,8 +1231,8 @@ polishing
 etching
 microscopy
 materials characterization
-customer samples
 test results
+customer samples
 Japan
 Japanese customers
 
@@ -1010,23 +1240,24 @@ Return ONLY valid JSON.
 
 {
  "title":"Short slide title",
- "description":"日本語で1～2文の簡潔な内容",
+ "description":"日本語で簡潔に内容を1～2文",
  "keywords":[
-  "important keyword"
+   "keyword"
  ]
 }
 
 Do not invent information.
 
-If text is difficult to read,
-only report what can be understood.
+If something cannot be read,
+do not guess.
 `
 
        },
 
        {
 
-        type:"input_image",
+        type:
+         "input_image",
 
         image_url:
          dataUrl
@@ -1060,41 +1291,20 @@ only report what can be understood.
  }
 
 
- const text =
-  extractOutput(
-   data
-  );
-
-
  return JSON.parse(
 
-  text
-
-  .replace(
-   /^```json/i,
-   ""
+  cleanJSON(
+   extractOutput(data)
   )
-
-  .replace(
-   /^```/,
-   ""
-  )
-
-  .replace(
-   /```$/,
-   ""
-  )
-
-  .trim()
 
  );
 
 }
 
 
-/* =========================
- TIMER
-========================= */
+/* =====================================================
+   TIMER
+===================================================== */
 
 function startTimer(){
 
@@ -1130,10 +1340,7 @@ function startTimer(){
       seconds / 3600
      )
     )
-    .padStart(
-     2,
-     "0"
-    );
+    .padStart(2,"0");
 
 
    const m =
@@ -1142,20 +1349,14 @@ function startTimer(){
       (seconds % 3600) / 60
      )
     )
-    .padStart(
-     2,
-     "0"
-    );
+    .padStart(2,"0");
 
 
    const s =
     String(
      seconds % 60
     )
-    .padStart(
-     2,
-     "0"
-    );
+    .padStart(2,"0");
 
 
    timerEl.textContent =
@@ -1170,15 +1371,36 @@ function startTimer(){
 }
 
 
-/* =========================
- CAMERA START / STOP
-========================= */
+/* =====================================================
+   CAMERA
+===================================================== */
+
+cameraBtn.onclick =
+ async ()=>{
+
+  if(cameraRunning){
+
+   stopCamera();
+
+  }else{
+
+   await startCamera();
+
+  }
+
+ };
+
 
 async function startCamera(){
 
- if(cameraRunning){
+ if(
+  !navigator.mediaDevices ||
+  !navigator.mediaDevices.getUserMedia
+ ){
 
-  stopCamera();
+  alert(
+   "このブラウザではカメラを使用できません。"
+  );
 
   return;
 
@@ -1224,10 +1446,6 @@ async function startCamera(){
    true;
 
 
-  cameraWindow.style.display =
-   "block";
-
-
   cameraBtn.textContent =
    "📷 資料読取 ON";
 
@@ -1236,19 +1454,31 @@ async function startCamera(){
    "監視中";
 
 
-  /*
-   最初は必ず解析
-  */
+  slideTitleEl.textContent =
+   "資料を監視しています";
+
+
+  slideDescriptionEl.textContent =
+   "スライドが変わると自動で読み取ります。";
+
 
   previousFingerprint =
    null;
 
+
+  /*
+   first read
+  */
 
   setTimeout(
    checkSlide,
    1200
   );
 
+
+  /*
+   check every 3 sec
+  */
 
   cameraTimer =
    setInterval(
@@ -1257,9 +1487,9 @@ async function startCamera(){
    );
 
 
- }catch(e){
+ }catch(error){
 
-  console.error(e);
+  console.error(error);
 
 
   alert(
@@ -1306,21 +1536,23 @@ function stopCamera(){
   null;
 
 
- cameraWindow.style.display =
-  "none";
-
-
  cameraBtn.textContent =
   "📷 資料読取";
+
+
+ cameraStatus.textContent =
+  "OFF";
 
 }
 
 
-/* =========================
- CAPTURE
-========================= */
+/* =====================================================
+   CAPTURE FRAME
+===================================================== */
 
-function captureFrame(){
+function captureFrame(
+ quality = 0.78
+){
 
  if(
   !cameraVideo.videoWidth ||
@@ -1331,12 +1563,12 @@ function captureFrame(){
 
 
  /*
-  AIへ巨大画像を送らないよう
-  最大幅960px程度へ縮小
+  Keep enough resolution
+  for PowerPoint text.
  */
 
  const maxWidth =
-  960;
+  1280;
 
 
  const scale =
@@ -1362,32 +1594,37 @@ function captureFrame(){
 
 
  const ctx =
-  captureCanvas.getContext(
+  captureCanvas
+  .getContext(
    "2d"
   );
 
 
  ctx.drawImage(
+
   cameraVideo,
+
   0,
   0,
+
   captureCanvas.width,
   captureCanvas.height
+
  );
 
 
  return captureCanvas
  .toDataURL(
   "image/jpeg",
-  0.72
+  quality
  );
 
 }
 
 
-/* =========================
- LOCAL SLIDE CHANGE CHECK
-========================= */
+/* =====================================================
+   FINGERPRINT
+===================================================== */
 
 function createFingerprint(){
 
@@ -1399,27 +1636,27 @@ function createFingerprint(){
 
 
  const w =
-  32;
+  40;
 
  const h =
-  18;
+  22;
 
 
- const temp =
+ const canvas =
   document.createElement(
    "canvas"
   );
 
 
- temp.width =
+ canvas.width =
   w;
 
- temp.height =
+ canvas.height =
   h;
 
 
  const ctx =
-  temp.getContext(
+  canvas.getContext(
    "2d",
    {
     willReadFrequently:true
@@ -1445,7 +1682,7 @@ function createFingerprint(){
   ).data;
 
 
- const result =
+ const values =
   [];
 
 
@@ -1455,22 +1692,24 @@ function createFingerprint(){
   i+=4
  ){
 
-  const gray =
+  /*
+   grayscale
+  */
+
+  values.push(
+
    (
     data[i] +
     data[i+1] +
     data[i+2]
-   ) / 3;
+   ) / 3
 
-
-  result.push(
-   gray
   );
 
  }
 
 
- return result;
+ return values;
 
 }
 
@@ -1485,7 +1724,9 @@ function fingerprintDifference(
   !b ||
   a.length !== b.length
  ){
+
   return 999;
+
  }
 
 
@@ -1514,9 +1755,9 @@ function fingerprintDifference(
 }
 
 
-/* =========================
- CHECK SLIDE
-========================= */
+/* =====================================================
+   SLIDE CHECK
+===================================================== */
 
 async function checkSlide(){
 
@@ -1545,15 +1786,17 @@ async function checkSlide(){
 
 
  /*
-  初回 または
-  映像の変化が一定以上の時だけ解析
+  Small camera movement should not
+  trigger an API request.
  */
 
  if(
   previousFingerprint &&
-  difference < 12
+  difference < 13
  ){
+
   return;
+
  }
 
 
@@ -1586,23 +1829,60 @@ async function checkSlide(){
    );
 
 
+  const newSlide = {
+
+   title:
+    String(
+     result.title || ""
+    )
+    .trim(),
+
+   description:
+    String(
+     result.description || ""
+    )
+    .trim(),
+
+   keywords:
+    Array.isArray(
+     result.keywords
+    )
+    ? result.keywords
+    : []
+
+  };
+
+
+  /*
+   Compare with previous AI result.
+  */
+
+  const normalizedNew =
+   (
+    newSlide.title +
+    "|" +
+    newSlide.description
+   )
+   .toLowerCase();
+
+
+  const normalizedOld =
+   (
+    currentSlide.title +
+    "|" +
+    currentSlide.description
+   )
+   .toLowerCase();
+
+
+  const meaningfulChange =
+   !normalizedOld ||
+   normalizedNew !==
+   normalizedOld;
+
+
   currentSlide =
-   {
-
-    title:
-     result.title || "",
-
-    description:
-     result.description || "",
-
-    keywords:
-     Array.isArray(
-      result.keywords
-     )
-     ? result.keywords
-     : []
-
-   };
+   newSlide;
 
 
   slideTitleEl.textContent =
@@ -1612,7 +1892,7 @@ async function checkSlide(){
 
   slideDescriptionEl.textContent =
    currentSlide.description ||
-   "内容を読み取りました。";
+   "資料を読み取りました。";
 
 
   cameraStatus.textContent =
@@ -1620,20 +1900,68 @@ async function checkSlide(){
 
 
   /*
-   スライドが変わったら
-   会議AIも再解析
+   SAVE IMAGE ONLY WHEN
+   A MEANINGFULLY NEW SLIDE
+   WAS RECOGNIZED.
   */
 
-  lastPredictionTranscript =
-   "";
+  if(meaningfulChange){
+
+   const now =
+    new Date();
 
 
-  scheduleAnalysis();
+   savedSlides.push({
+
+    time:
+     now.toISOString(),
+
+    displayTime:
+     now.toLocaleTimeString(
+      "ja-JP",
+      {
+       hour:"2-digit",
+       minute:"2-digit",
+       second:"2-digit"
+      }
+     ),
+
+    title:
+     currentSlide.title,
+
+    description:
+     currentSlide.description,
+
+    keywords:
+     currentSlide.keywords,
+
+    /*
+     embedded image
+    */
+
+    image:
+     image
+
+   });
 
 
- }catch(e){
+   /*
+    Force meeting AI refresh
+    even if transcript did not change.
+   */
 
-  console.error(e);
+   lastAnalysisSignature =
+    "";
+
+
+   scheduleAnalysis();
+
+  }
+
+
+ }catch(error){
+
+  console.error(error);
 
 
   cameraStatus.textContent =
@@ -1649,60 +1977,9 @@ async function checkSlide(){
 }
 
 
-/* =========================
- QUESTION DETECTION
-========================= */
-
-function detectQuestion(text){
-
- const t =
-  text.toLowerCase();
-
-
- const detected =
-  /\?|\b(what|when|where|who|why|how|can you|could you|would you|do you|did you|are you|have you|will you)\b/
-  .test(t);
-
-
- if(!detected){
-  return;
- }
-
-
- questionAlert.style.display =
-  "flex";
-
-
- questionAlert.textContent =
-  /japan|japanese/.test(t)
-  ? "❓ Japan QUESTION"
-  : "❓ QUESTION";
-
-
- clearTimeout(
-  detectQuestion.timer
- );
-
-
- detectQuestion.timer =
-  setTimeout(
-   ()=>{
-
-    questionAlert.style.display =
-     "none";
-
-   },
-
-   8000
-
-  );
-
-}
-
-
-/* =========================
- SPEECH RECOGNITION
-========================= */
+/* =====================================================
+   SPEECH RECOGNITION
+===================================================== */
 
 function initRecognition(){
 
@@ -1735,7 +2012,7 @@ function initRecognition(){
 
 
  r.onresult =
-  e=>{
+  event=>{
 
    let newFinal =
     "";
@@ -1746,18 +2023,19 @@ function initRecognition(){
 
 
    for(
-    let i=e.resultIndex;
-    i<e.results.length;
+    let i=event.resultIndex;
+    i<event.results.length;
     i++
    ){
 
     const text =
-     e.results[i][0]
+     event.results[i][0]
      .transcript;
 
 
     if(
-     e.results[i].isFinal
+     event.results[i]
+     .isFinal
     ){
 
      newFinal +=
@@ -1785,11 +2063,6 @@ function initRecognition(){
     );
 
 
-    detectQuestion(
-     newFinal
-    );
-
-
     translatePending();
 
 
@@ -1809,6 +2082,24 @@ function initRecognition(){
 
    scrollBottom(
     rawEl
+   );
+
+  };
+
+
+ r.onerror =
+  event=>{
+
+   if(
+    event.error ===
+    "no-speech"
+   ){
+    return;
+   }
+
+
+   console.log(
+    event.error
    );
 
   };
@@ -1844,9 +2135,9 @@ function initRecognition(){
 }
 
 
-/* =========================
- TRANSLATION
-========================= */
+/* =====================================================
+   TRANSLATION
+===================================================== */
 
 async function translatePending(){
 
@@ -1877,14 +2168,18 @@ async function translatePending(){
    (
     await callOpenAI(
 `
-Translate the following spoken English
-directly into natural Japanese.
+Translate the spoken English directly
+into natural Japanese.
 
-Do not summarize.
-Do not explain.
-Do not add information.
+Do NOT summarize.
+Do NOT explain.
+Do NOT add information.
+
+Keep technical terms accurate.
 
 Return ONLY Japanese.
+
+English:
 
 ${english}
 `
@@ -1893,9 +2188,15 @@ ${english}
    .trim();
 
 
-  translationHistory.push(
-   japanese
-  );
+  translationHistory.push({
+
+   english:
+    english,
+
+   japanese:
+    japanese
+
+  });
 
 
   if(
@@ -1936,9 +2237,9 @@ ${english}
   );
 
 
- }catch(e){
+ }catch(error){
 
-  console.error(e);
+  console.error(error);
 
  }finally{
 
@@ -1959,9 +2260,9 @@ ${english}
 }
 
 
-/* =========================
- ANALYSIS
-========================= */
+/* =====================================================
+   SCHEDULE ANALYSIS
+===================================================== */
 
 function scheduleAnalysis(){
 
@@ -1971,13 +2272,17 @@ function scheduleAnalysis(){
 
 
  analysisTimer =
-  setTimeout(
-   updateMeetingAI,
-   1200
-  );
+ setTimeout(
+  updateMeetingAI,
+  1200
+ );
 
 }
 
+
+/* =====================================================
+   MEETING AI
+===================================================== */
 
 async function updateMeetingAI(){
 
@@ -1995,9 +2300,21 @@ async function updateMeetingAI(){
  }
 
 
+ /*
+  Transcript + slide signature
+ */
+
+ const signature =
+  current +
+  "|" +
+  currentSlide.title +
+  "|" +
+  currentSlide.description;
+
+
  if(
-  current ===
-  lastPredictionTranscript
+  signature ===
+  lastAnalysisSignature
  ){
   return;
  }
@@ -2007,9 +2324,20 @@ async function updateMeetingAI(){
   true;
 
 
+ /*
+  Latest transcript gets
+  more importance.
+ */
+
  const recent =
   current.slice(
    -8000
+  );
+
+
+ const veryRecent =
+  current.slice(
+   -2500
   );
 
 
@@ -2024,139 +2352,242 @@ async function updateMeetingAI(){
   .join("\n");
 
 
- const first =
+ const firstTopic =
   topicHistory.length === 0;
-
-
- /*
-  ★ カメラで読んだ資料情報
- */
-
- const slideContext =
-`
-CURRENT PRESENTATION SLIDE
-
-Title:
-${currentSlide.title || "Unknown"}
-
-Description:
-${currentSlide.description || "Unknown"}
-
-Keywords:
-${currentSlide.keywords.join(", ") || "Unknown"}
-`;
 
 
  const prompt =
 `
-You are a real-time meeting assistant.
+You are a real-time meeting assistant
+for a Japanese application engineer.
 
-The user is a Japanese application engineer.
+The engineer works with:
+
+metallographic sample preparation,
+cutting,
+mounting,
+grinding,
+polishing,
+etching,
+microscopy,
+materials characterization,
+customer samples,
+technical testing.
 
 Use BOTH:
 
-1. the spoken meeting transcript
+1. the spoken meeting conversation
 2. the currently visible presentation slide
 
-to understand the meeting context.
+
+================================
+CURRENT PRESENTATION
+================================
+
+Title:
+
+${currentSlide.title || "Unknown"}
+
+Description:
+
+${currentSlide.description || "Unknown"}
+
+Keywords:
+
+${currentSlide.keywords.join(", ") || "Unknown"}
 
 
-${slideContext}
+================================
+TASK 1
+CURRENT TOPIC
+================================
+
+Create ONE short Japanese sentence
+explaining what the meeting is talking
+about RIGHT NOW.
+
+This is shown in the top bar.
+
+Example:
+
+新製造拠点でのSiC-Foilの性能安定性について説明中
+
+Keep it short.
 
 
-------------------------------
+================================
+TASK 2
 MEETING OVERVIEW
-------------------------------
+================================
 
-The overview should look like
-a short presentation agenda.
+The meeting overview is NOT
+a running transcript summary.
 
-${first
+It is a history of the major
+presentation/discussion topics.
+
+${firstTopic
  ? "You MUST create the first meaningful topic."
- : "Create a new topic only when the major subject clearly changes."
+ : "Create a NEW overview topic only when the major subject clearly changes."
 }
 
 Existing topics:
 
 ${existingTopics || "None"}
 
-Current topic:
+Current overview topic:
 
 ${currentTopicTitle || "None"}
 
+Do NOT create new topics
+for small details.
 
-------------------------------
-SPEAKING PREDICTIONS
-------------------------------
 
-Predict up to 5 things
-the engineer may need to say NEXT.
+================================
+TASK 3
+QUESTION PREDICTIONS
+================================
 
-Use the slide information
-to improve the prediction.
+Predict questions that OTHER meeting
+participants are likely to ask
+THE JAPANESE APPLICATION ENGINEER.
 
-Prioritize:
+These are questions directed TO THE USER.
 
-1 direct questions
-2 Japan / Japanese customers
-3 slide results
-4 test results
-5 sample preparation conditions
-6 technical opinions
+Use the current conversation and slide.
 
+Prioritize questions about:
+
+Japan
+Japanese customers
+customer feedback
+technical opinion
+test results
+applications in Japan
+sample preparation
+customer samples
+what the user thinks
+what the user can confirm
+
+For every predicted incoming question:
+
+question_jp =
+direct Japanese translation
+of the predicted question.
+
+question_en =
+the likely English question.
+
+answer_en =
+a short simple English answer
+the user could say.
+
+answer_jp =
+direct Japanese translation
+of answer_en.
+
+Do NOT invent facts.
+
+If facts are unknown use safe answers:
+
+I need to check that.
+I have not confirmed that yet.
+I will check and get back to you.
+
+
+================================
+TASK 4
+QUESTIONS THE USER CAN ASK
+================================
+
+Also suggest useful questions
+that THE USER could ask
+the other meeting participants.
+
+These should be relevant
+to the CURRENT conversation or slide.
+
+For outgoing questions:
+
+question_jp =
+natural Japanese meaning
+of the question.
+
+question_en =
+simple English sentence
+the user can actually say.
 
 IMPORTANT:
 
-question_jp must be the DIRECT Japanese translation
-of the likely question.
+Do NOT create answer fields
+for outgoing questions.
 
-Do NOT describe the situation.
-
-Example:
-
-Correct:
-この結果についてどう思いますか？
-
-Wrong:
-結果に対する意見を求められる
+The Japanese meaning must NOT
+be repeated on another line.
 
 
-answer_short must be:
+================================
+SELECTION
+================================
 
-short
-easy English
-natural
-immediately usable
+Return a MAXIMUM of 5 items total.
+
+Mix incoming and outgoing questions
+based on what is most useful RIGHT NOW.
+
+Usually prefer around:
+
+3 incoming question predictions
+2 outgoing questions
+
+but change the ratio when appropriate.
+
+Put the most useful item first.
 
 
-answer_jp must be a DIRECT Japanese translation
-of answer_short.
+================================
+JSON
+================================
 
-Do not add explanations.
-
-Do not invent facts.
-
-
-Return ONLY valid JSON:
+Return ONLY valid JSON.
 
 {
+ "current_topic":"現在話している内容を短い日本語で",
  "topic":{
-  "changed":true,
-  "title":"Short title",
-  "description":"Short Japanese description"
+   "changed":true,
+   "title":"Short topic title",
+   "description":"短い日本語説明"
  },
- "predictions":[
-  {
-   "chance":"high",
-   "question_jp":"この結果についてどう思いますか？",
-   "answer_short":"The result looks good.",
-   "answer_jp":"結果は良さそうです。"
-  }
+ "items":[
+   {
+     "type":"incoming",
+     "chance":"high",
+     "question_jp":"この結果についてどう思いますか？",
+     "question_en":"What do you think about this result?",
+     "answer_en":"The result looks good, but I need to check the details.",
+     "answer_jp":"結果は良さそうですが、詳細を確認する必要があります。"
+   },
+   {
+     "type":"outgoing",
+     "chance":"medium",
+     "question_jp":"このデータはどのくらいの期間で取得したものですか？",
+     "question_en":"How long was this data collected for?"
+   }
  ]
 }
 
 
-MEETING TRANSCRIPT:
+================================
+RECENT CONVERSATION
+MOST IMPORTANT
+================================
+
+${veryRecent}
+
+
+================================
+LONGER CONTEXT
+================================
 
 ${recent}
 `;
@@ -2170,32 +2601,38 @@ ${recent}
    );
 
 
-  const cleaned =
-   output
-
-   .replace(
-    /^```json/i,
-    ""
-   )
-
-   .replace(
-    /^```/,
-    ""
-   )
-
-   .replace(
-    /```$/,
-    ""
-   )
-
-   .trim();
-
-
   const result =
    JSON.parse(
-    cleaned
+    cleanJSON(
+     output
+    )
    );
 
+
+  /*
+   CURRENT TOPIC
+  */
+
+  if(
+   result.current_topic
+  ){
+
+   currentLiveTopic =
+    String(
+     result.current_topic
+    )
+    .trim();
+
+
+   currentTopicText.textContent =
+    currentLiveTopic;
+
+  }
+
+
+  /*
+   OVERVIEW
+  */
 
   if(
    result.topic
@@ -2203,38 +2640,38 @@ ${recent}
 
    handleTopic(
     result.topic,
-    first
+    firstTopic
    );
 
   }
 
 
+  /*
+   QUESTIONS
+  */
+
   if(
    Array.isArray(
-    result.predictions
+    result.items
    )
   ){
 
    renderPredictions(
-    result.predictions
+    result.items
    );
-
-
-   nextSpeakText.textContent =
-    result.predictions[0]
-    ?.answer_short ||
-    "—";
 
   }
 
 
-  lastPredictionTranscript =
-   current;
+  lastAnalysisSignature =
+   signature;
 
 
- }catch(e){
+ }catch(error){
 
-  console.error(e);
+  console.error(
+   error
+  );
 
  }finally{
 
@@ -2242,9 +2679,17 @@ ${recent}
    false;
 
 
+  const newestSignature =
+   transcript.trim() +
+   "|" +
+   currentSlide.title +
+   "|" +
+   currentSlide.description;
+
+
   if(
-   transcript.trim() !==
-   lastPredictionTranscript
+   newestSignature !==
+   lastAnalysisSignature
   ){
 
    scheduleAnalysis();
@@ -2256,13 +2701,13 @@ ${recent}
 }
 
 
-/* =========================
- TOPICS
-========================= */
+/* =====================================================
+   TOPIC HISTORY
+===================================================== */
 
 function handleTopic(
  topic,
- first
+ forceFirst = false
 ){
 
  if(
@@ -2287,40 +2732,65 @@ function handleTopic(
   .trim();
 
 
+ const sameAsCurrent =
+  currentTopicTitle &&
+  title.toLowerCase() ===
+  currentTopicTitle.toLowerCase();
+
+
  const duplicate =
   topicHistory.some(
-   t =>
-   t.title.toLowerCase() ===
+   item =>
+   item.title
+   .toLowerCase() ===
    title.toLowerCase()
   );
 
 
- const same =
-  currentTopicTitle &&
-  currentTopicTitle
-  .toLowerCase() ===
-  title.toLowerCase();
-
-
- if(
-  first ||
-  (
-   topic.changed &&
-   !duplicate &&
-   !same
-  )
- ){
+ if(forceFirst){
 
   if(!duplicate){
 
    topicHistory.push({
 
-    title,
-    description
+    title:
+     title,
+
+    description:
+     description
 
    });
 
   }
+
+
+  currentTopicTitle =
+   title;
+
+
+  renderTopics();
+
+
+  return;
+
+ }
+
+
+ if(
+  topic.changed &&
+  !sameAsCurrent &&
+  !duplicate
+ ){
+
+  topicHistory.push({
+
+   title:
+    title,
+
+   description:
+    description
+
+  });
 
 
   currentTopicTitle =
@@ -2334,23 +2804,34 @@ function handleTopic(
 }
 
 
+/* =====================================================
+   RENDER TOPICS
+===================================================== */
+
 function renderTopics(){
+
+ if(
+  !topicHistory.length
+ ){
+  return;
+ }
+
 
  summaryEl.innerHTML =
   topicHistory
 
   .map(
-   t=>
+   topic =>
 `
 <div class="topic">
 
-<div class="topic-title">
-• ${esc(t.title)}
-</div>
+ <div class="topic-title">
+  • ${esc(topic.title)}
+ </div>
 
-<div class="topic-description">
-${esc(t.description)}
-</div>
+ <div class="topic-description">
+  ${esc(topic.description)}
+ </div>
 
 </div>
 `
@@ -2366,13 +2847,21 @@ ${esc(t.description)}
 }
 
 
-/* =========================
- 3-LINE PREDICTION
-========================= */
+/* =====================================================
+   RENDER QUESTIONS
+===================================================== */
 
 function renderPredictions(
  items
 ){
+
+ if(
+  !items ||
+  !items.length
+ ){
+  return;
+ }
+
 
  predictionEl.innerHTML =
   items
@@ -2383,22 +2872,25 @@ function renderPredictions(
   )
 
   .map(
-   (p,i)=>{
+   (item,index)=>{
+
+    const type =
+     item.type ===
+     "outgoing"
+     ? "outgoing"
+     : "incoming";
+
 
     const chance =
-     [
-      "high",
-      "medium",
-      "low"
-     ]
+     ["high","medium","low"]
      .includes(
-      p.chance
+      item.chance
      )
-     ? p.chance
+     ? item.chance
      : "medium";
 
 
-    const label =
+    const chanceJP =
      chance === "high"
      ? "高"
      : chance === "medium"
@@ -2406,32 +2898,86 @@ function renderPredictions(
      : "低";
 
 
+    /*
+     INCOMING:
+     4 lines of useful information
+
+     Japanese question
+     English question
+     English answer
+     Japanese answer
+    */
+
+    if(
+     type ===
+     "incoming"
+    ){
+
+     return `
+<div class="prediction-card incoming">
+
+ <div class="pred-top">
+
+  <span class="pred-type">
+   🔴 質問予測
+  </span>
+
+  <span class="chance">
+   可能性 ${chanceJP}
+  </span>
+
+  <span class="question-jp">
+   ${esc(item.question_jp)}
+  </span>
+
+ </div>
+
+ <div class="question-en">
+  Q: ${esc(item.question_en)}
+ </div>
+
+ <div class="answer-en">
+  ${esc(item.answer_en)}
+ </div>
+
+ <div class="answer-jp">
+  ${esc(item.answer_jp)}
+ </div>
+
+</div>
+`;
+
+    }
+
+
+    /*
+     OUTGOING:
+     ONLY 2 useful lines.
+
+     Japanese question
+     English question
+
+     No duplicated Japanese.
+    */
+
     return `
-<div class="prediction-card ${chance}">
+<div class="prediction-card outgoing">
 
-<div class="pred-top">
+ <div class="pred-top">
 
-<span class="number">
-${i+1}
-</span>
+  <span class="pred-type">
+   🟢 こちらから質問
+  </span>
 
-<span class="chance">
-可能性 ${label}
-</span>
+  <span class="question-jp">
+   ${esc(item.question_jp)}
+  </span>
 
-<span class="question-jp">
-${esc(p.question_jp)}
-</span>
+ </div>
 
-</div>
-
-<div class="answer">
-${esc(p.answer_short)}
-</div>
-
-<div class="answer-jp">
-${esc(p.answer_jp)}
-</div>
+ <div class="answer-en">
+  ${esc(item.question_en)}
+ </div>
 
 </div>
 `;
@@ -2443,83 +2989,37 @@ ${esc(p.answer_jp)}
   .join("");
 
 
+ /*
+  Most important item
+  remains visible at top.
+ */
+
  predictionEl.scrollTop =
   0;
 
 }
 
 
-/* =========================
- COPY NEXT ANSWER
-========================= */
-
-nextSpeak.onclick =
- async ()=>{
-
-  const text =
-   nextSpeakText.textContent;
-
-
-  if(
-   !text ||
-   text === "—"
-  ){
-   return;
-  }
-
-
-  try{
-
-   await navigator
-   .clipboard
-   .writeText(
-    text
-   );
-
-
-   const old =
-    text;
-
-
-   nextSpeakText.textContent =
-    "✓ コピーしました";
-
-
-   setTimeout(
-    ()=>{
-
-     nextSpeakText.textContent =
-      old;
-
-    },
-
-    900
-
-   );
-
-  }catch(e){}
-
- };
-
-
-/* =========================
- BUTTONS
-========================= */
-
-cameraBtn.onclick =
- startCamera;
-
+/* =====================================================
+   START MEETING
+===================================================== */
 
 startBtn.onclick =
  ()=>{
 
-  if(
-   !keyEl.value.trim()
-  ){
+  const key =
+   keyEl.value.trim();
+
+
+  if(!key){
 
    alert(
     "OpenAI APIキーを入力してください。"
    );
+
+
+   keyEl.focus();
+
 
    return;
 
@@ -2528,7 +3028,7 @@ startBtn.onclick =
 
   localStorage.setItem(
    "meeting_ai_key",
-   keyEl.value.trim()
+   key
   );
 
 
@@ -2569,8 +3069,12 @@ startBtn.onclick =
 
   }catch(e){}
 
- };
+};
 
+
+/* =====================================================
+   STOP
+===================================================== */
 
 stopBtn.onclick =
  ()=>{
@@ -2620,27 +3124,449 @@ stopBtn.onclick =
 
   }
 
- };
+};
 
 
-/* =========================
- DOWNLOAD
-========================= */
+/* =====================================================
+   FINAL REPORT
+===================================================== */
 
-function downloadText(
- name,
- text
+async function createFinalReport(){
+
+ const topics =
+  topicHistory
+
+  .map(
+   (topic,index)=>
+   `${index+1}. ${topic.title}: ${topic.description}`
+  )
+
+  .join("\n");
+
+
+ const slides =
+  savedSlides
+
+  .map(
+   (slide,index)=>
+`
+資料${index+1}
+時刻: ${slide.displayTime}
+タイトル: ${slide.title}
+内容: ${slide.description}
+`
+  )
+
+  .join("\n");
+
+
+ const prompt =
+`
+Create a concise Japanese meeting report.
+
+Do NOT invent facts.
+
+Use the following sections:
+
+【会議まとめ】
+
+【決定事項】
+
+【Action Items】
+
+【確認・未解決事項】
+
+For Action Items:
+
+Only include owner or deadline
+if it was actually stated.
+
+If unknown, say 不明.
+
+Use the transcript,
+topic history,
+and presentation slide information.
+
+
+TOPIC HISTORY:
+
+${topics || "なし"}
+
+
+PRESENTATION SLIDES:
+
+${slides || "なし"}
+
+
+ENGLISH TRANSCRIPT:
+
+${transcript}
+`;
+
+
+ return (
+  await callOpenAI(
+   prompt
+  )
+ )
+ .trim();
+
+}
+
+
+/* =====================================================
+   CREATE HTML REPORT
+===================================================== */
+
+function buildHTMLReport(
+ finalReport
+){
+
+ const now =
+  new Date();
+
+
+ /*
+  SLIDE HTML
+ */
+
+ const slideHTML =
+  savedSlides.length
+
+  ? savedSlides
+
+    .map(
+     (slide,index)=>
+`
+<section class="slide">
+
+<h3>
+資料 ${index+1}
+・${esc(slide.title || "資料")}
+</h3>
+
+<div class="time">
+撮影時刻：
+${esc(slide.displayTime)}
+</div>
+
+<img
+ src="${slide.image}"
+ alt="Meeting slide ${index+1}"
+>
+
+<p>
+${esc(slide.description)}
+</p>
+
+${
+ slide.keywords.length
+ ? `
+<div class="keywords">
+キーワード：
+${esc(slide.keywords.join(", "))}
+</div>
+`
+ : ""
+}
+
+</section>
+`
+    )
+
+    .join("")
+
+  : "<p>保存された資料画像はありません。</p>";
+
+
+ /*
+  TOPICS
+ */
+
+ const topicHTML =
+  topicHistory.length
+
+  ? topicHistory
+
+    .map(
+     topic =>
+`
+<div class="topic">
+
+<strong>
+${esc(topic.title)}
+</strong>
+
+<div>
+${esc(topic.description)}
+</div>
+
+</div>
+`
+    )
+
+    .join("")
+
+  : "<p>なし</p>";
+
+
+ /*
+  TRANSLATION
+ */
+
+ const translationHTML =
+  translationHistory.length
+
+  ? translationHistory
+
+    .map(
+     item =>
+`
+<div class="translation">
+
+<div class="en">
+${esc(item.english)}
+</div>
+
+<div class="jp">
+${esc(item.japanese)}
+</div>
+
+</div>
+`
+    )
+
+    .join("")
+
+  : "<p>なし</p>";
+
+
+ return `
+<!doctype html>
+
+<html lang="ja">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport"
+ content="width=device-width,initial-scale=1">
+
+<title>
+Meeting AI Report
+</title>
+
+<style>
+
+body{
+ margin:0;
+ padding:28px;
+
+ font-family:
+ -apple-system,
+ BlinkMacSystemFont,
+ "Segoe UI",
+ sans-serif;
+
+ background:#f5f6f8;
+ color:#18202a;
+
+ line-height:1.6;
+}
+
+main{
+ max-width:1000px;
+ margin:auto;
+
+ background:white;
+
+ padding:30px;
+
+ border-radius:14px;
+}
+
+h1{
+ margin-top:0;
+}
+
+h2{
+ margin-top:38px;
+
+ padding-bottom:6px;
+
+ border-bottom:
+ 2px solid #dfe4ea;
+}
+
+h3{
+ margin-bottom:5px;
+}
+
+.meta{
+ color:#66717f;
+}
+
+.report{
+ white-space:pre-wrap;
+
+ background:#f7f9fb;
+
+ padding:18px;
+
+ border-radius:10px;
+}
+
+.topic{
+ padding:8px 0;
+
+ border-bottom:
+ 1px solid #e2e6eb;
+}
+
+.slide{
+ margin:20px 0 32px;
+}
+
+.slide img{
+ display:block;
+
+ max-width:100%;
+ height:auto;
+
+ margin-top:10px;
+
+ border-radius:8px;
+
+ border:
+ 1px solid #cfd5dc;
+}
+
+.time{
+ color:#697481;
+
+ font-size:13px;
+}
+
+.keywords{
+ color:#697481;
+
+ font-size:13px;
+}
+
+.transcript{
+ white-space:pre-wrap;
+
+ background:#f7f9fb;
+
+ padding:15px;
+
+ border-radius:8px;
+}
+
+.translation{
+ padding:9px 0;
+
+ border-bottom:
+ 1px solid #e3e7eb;
+}
+
+.translation .en{
+ color:#536170;
+
+ font-size:14px;
+}
+
+.translation .jp{
+ margin-top:3px;
+
+ font-size:16px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<main>
+
+<h1>
+Meeting AI 会議記録
+</h1>
+
+<div class="meta">
+
+保存日時：
+${esc(now.toLocaleString("ja-JP"))}
+
+</div>
+
+
+<h2>
+AI 会議まとめ
+</h2>
+
+<div class="report">
+${esc(finalReport)}
+</div>
+
+
+<h2>
+会議概要
+</h2>
+
+${topicHTML}
+
+
+<h2>
+会議資料
+</h2>
+
+${slideHTML}
+
+
+<h2>
+English Transcript
+</h2>
+
+<div class="transcript">
+${esc(transcript)}
+</div>
+
+
+<h2>
+日本語訳
+</h2>
+
+${translationHTML}
+
+
+</main>
+
+</body>
+
+</html>
+`;
+
+}
+
+
+/* =====================================================
+   DOWNLOAD HTML
+===================================================== */
+
+function downloadHTML(
+ html
 ){
 
  const blob =
   new Blob(
-   [
-    "\ufeff" +
-    text
-   ],
+   [html],
    {
     type:
-    "text/plain;charset=utf-8"
+     "text/html;charset=utf-8"
    }
   );
 
@@ -2657,18 +3583,30 @@ function downloadText(
   );
 
 
+ const now =
+  new Date();
+
+
+ const filename =
+  "Meeting_AI_" +
+  now
+  .toISOString()
+  .slice(0,16)
+  .replace("T","_")
+  .replace(":","-") +
+  ".html";
+
+
  a.href =
   url;
 
 
  a.download =
-  name;
+  filename;
 
 
  document.body
- .appendChild(
-  a
- );
+ .appendChild(a);
 
 
  a.click();
@@ -2686,22 +3624,23 @@ function downloadText(
 
   },
 
-  1000
+  1500
 
  );
 
 }
 
 
-/* =========================
- FINISH
-========================= */
+/* =====================================================
+   FINISH + SAVE
+===================================================== */
 
 finishBtn.onclick =
  async ()=>{
 
   if(
-   !transcript.trim()
+   !transcript.trim() &&
+   !savedSlides.length
   ){
 
    alert(
@@ -2712,6 +3651,10 @@ finishBtn.onclick =
 
   }
 
+
+  /*
+   stop meeting
+  */
 
   running =
    false;
@@ -2727,9 +3670,6 @@ finishBtn.onclick =
   );
 
 
-  stopCamera();
-
-
   if(recognition){
 
    try{
@@ -2739,6 +3679,15 @@ finishBtn.onclick =
    }catch(e){}
 
   }
+
+
+  /*
+   Stop camera AFTER
+   saved slide images are already
+   stored as data URLs.
+  */
+
+  stopCamera();
 
 
   finishBtn.disabled =
@@ -2751,151 +3700,48 @@ finishBtn.onclick =
 
   try{
 
-   const topics =
-    topicHistory
+   /*
+    Wait briefly for translation
+    already being processed.
+   */
 
-    .map(
-     t =>
-     `- ${t.title}: ${t.description}`
-    )
+   if(
+    pendingEnglish.length
+   ){
 
-    .join("\n");
+    await translatePending();
 
-
-   const report =
-    (
-     await callOpenAI(
-`
-Create a concise Japanese final meeting report.
-
-Do not invent facts.
-
-Use these headings:
-
-【会議まとめ】
-
-【決定事項】
-
-【Action Items】
-
-【確認・未解決事項】
-
-Use the transcript and presentation context.
-
-Presentation:
-
-${currentSlide.title}
-
-${currentSlide.description}
+   }
 
 
-Meeting topics:
-
-${topics || "なし"}
-
-
-Transcript:
-
-${transcript}
-`
-     )
-    )
-    .trim();
+   const finalReport =
+    await createFinalReport();
 
 
-   const now =
-    new Date();
-
-
-   const stamp =
-    now
-    .toISOString()
-    .slice(
-     0,
-     16
-    )
-    .replace(
-     "T",
-     "_"
-    )
-    .replace(
-     ":",
-     "-"
+   const html =
+    buildHTMLReport(
+     finalReport
     );
 
 
-   const text =
-`Meeting AI 会議記録
-
-日時:
-${now.toLocaleString("ja-JP")}
-
-
-==============================
-AI 会議まとめ
-==============================
-
-${report}
-
-
-==============================
-会議概要
-==============================
-
-${topics || "なし"}
-
-
-==============================
-最後に認識した資料
-==============================
-
-タイトル:
-${currentSlide.title || "なし"}
-
-内容:
-${currentSlide.description || "なし"}
-
-キーワード:
-${currentSlide.keywords.join(", ") || "なし"}
-
-
-==============================
-English Transcript
-==============================
-
-${transcript}
-
-
-==============================
-日本語訳
-==============================
-
-${translationHistory.join("\n") || "なし"}
-`;
-
-
-   downloadText(
-
-    `Meeting_AI_${stamp}.txt`,
-
-    text
-
+   downloadHTML(
+    html
    );
 
 
    alert(
-    "会議まとめを保存しました。"
+    "画像付き会議レポートを保存しました。"
    );
 
 
-  }catch(e){
+  }catch(error){
 
-   console.error(e);
+   console.error(error);
 
 
    alert(
-    "まとめ作成に失敗しました。\n" +
-    e.message
+    "会議レポートの作成に失敗しました。\n" +
+    error.message
    );
 
 
@@ -2918,7 +3764,7 @@ ${translationHistory.join("\n") || "なし"}
 
   }
 
- };
+};
 
 </script>
 
