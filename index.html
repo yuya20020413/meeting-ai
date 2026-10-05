@@ -2,424 +2,175 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Meeting AI - Video Practice</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Meeting AI</title>
 
 <style>
 :root{
- --bg:#090d12;
- --panel:#121923;
- --panel2:#0e151e;
- --line:#293544;
- --text:#f3f6fa;
- --muted:#9eabb9;
- --blue:#70a7ff;
- --green:#68d78e;
- --red:#ff8080;
- --orange:#ffad66;
- --purple:#b79cff;
+ --gap:6px;--bg:#090d12;--panel:#121923;--panel2:#0d141c;
+ --line:#293544;--text:#f3f6fa;--muted:#9eabb9;
+ --blue:#78a9ff;--green:#68d78e;--red:#ff8585;
+ --orange:#ffad66;--purple:#b79cff;
 }
-
 *{box-sizing:border-box}
-
 html,body{
- margin:0;
- width:100%;
- height:100%;
- overflow:hidden;
- background:var(--bg);
- color:var(--text);
+ margin:0;width:100%;height:100%;overflow:hidden;
+ background:var(--bg);color:var(--text);
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
-
 #app{
- height:100%;
- display:grid;
- grid-template-rows:58px 1fr;
- gap:6px;
- padding:6px;
+ height:100%;display:grid;grid-template-rows:58px 1fr;
+ gap:var(--gap);padding:var(--gap);
 }
-
-/* HEADER */
-
 header{
- display:flex;
- align-items:center;
- gap:6px;
- background:var(--panel);
- border:1px solid var(--line);
- border-radius:10px;
- padding:5px 8px;
+ display:flex;align-items:center;gap:5px;min-width:0;
+ background:var(--panel);border:1px solid var(--line);
+ border-radius:10px;padding:5px 7px;
 }
-
-.logo{
- font-weight:800;
- white-space:nowrap;
+.logo{font-size:13px;font-weight:800;white-space:nowrap}
+button,input,select,.fileBtn{
+ border:1px solid var(--line);background:#1c2733;color:white;
+ border-radius:7px;padding:6px 8px;font-size:10px;white-space:nowrap;
 }
-
-.mode{
- background:#285c9e;
-}
-
-button,.fileButton,select,input{
- border:1px solid var(--line);
- border-radius:7px;
- background:#1d2835;
- color:white;
- padding:7px 9px;
- font-size:11px;
-}
-
-button{
- cursor:pointer;
-}
-
-button:disabled{
- opacity:.45;
-}
-
-.fileButton{
- display:inline-block;
- cursor:pointer;
- white-space:nowrap;
-}
-
-#videoFile{
- display:none;
-}
-
-#apiKey{
- width:100px;
-}
-
-#status{
+button{cursor:pointer}
+button:disabled{opacity:.45}
+.modeActive{background:#245db8;border-color:#4b83d5}
+#liveMode.modeActive{background:#8a3535}
+#videoFile{display:none}
+.fileBtn{cursor:pointer;background:#384557}
+#apiKey{width:72px}
+#timer{font-variant-numeric:tabular-nums}
+.chip{
+ height:36px;display:flex;align-items:center;padding:0 6px;
+ border:1px solid var(--line);border-radius:7px;background:#0d141c;
  font-size:10px;
- color:var(--green);
- white-space:nowrap;
 }
-
+#currentTopicBox{
+ flex:1;min-width:120px;height:38px;padding:3px 8px;
+ border:1px solid var(--line);border-radius:7px;background:#0d141c;
+ overflow:hidden;
+}
+.smallLabel{font-size:8px;color:var(--muted)}
 #currentTopic{
- flex:1;
- min-width:100px;
- height:38px;
- padding:3px 8px;
- border:1px solid var(--line);
- border-radius:7px;
- background:#0c1219;
- overflow:hidden;
+ margin-top:2px;font-size:12px;font-weight:750;color:#d7e5ff;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-
-.smallLabel{
- font-size:9px;
- color:var(--muted);
-}
-
-#currentTopicText{
- font-size:12px;
- font-weight:700;
- margin-top:2px;
- white-space:nowrap;
- overflow:hidden;
- text-overflow:ellipsis;
-}
-
-/* MAIN */
-
 main{
- min-height:0;
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:6px;
+ min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);
 }
-
 .left{
- min-height:0;
- display:grid;
- grid-template-rows:47% 26.5% 26.5%;
- gap:6px;
+ min-height:0;display:grid;grid-template-rows:39% 30.5% 30.5%;
+ gap:var(--gap);
 }
-
 .right{
- min-height:0;
- display:grid;
- grid-template-rows:31% 69%;
- gap:6px;
+ min-height:0;display:grid;grid-template-rows:32% 68%;gap:var(--gap);
 }
-
 .panel{
- min-height:0;
- display:flex;
- flex-direction:column;
- overflow:hidden;
- background:var(--panel);
- border:1px solid var(--line);
- border-radius:9px;
+ min-height:0;display:flex;flex-direction:column;overflow:hidden;
+ background:var(--panel);border:1px solid var(--line);border-radius:9px;
 }
-
 .title{
- flex:none;
- padding:5px 8px;
- border-bottom:1px solid var(--line);
- font-size:12px;
- font-weight:750;
+ flex:none;padding:5px 8px;border-bottom:1px solid var(--line);
+ font-size:11px;font-weight:750;
 }
-
 .content{
- flex:1;
- min-height:0;
- overflow:auto;
- padding:6px 8px;
+ flex:1;min-height:0;overflow:auto;padding:6px 8px;
+ -webkit-overflow-scrolling:touch;
 }
 
-/* VIDEO */
-
-#videoPanel{
- display:grid;
- grid-template-columns:64% 36%;
- flex:1;
- min-height:0;
+/* TOP MEDIA */
+#mediaWorkspace{
+ flex:1;min-height:0;display:grid;grid-template-columns:58% 42%;
+ background:#05080c;
 }
-
-#videoSide{
- min-width:0;
- min-height:0;
- display:flex;
- flex-direction:column;
- background:black;
+#mediaLeft{
+ min-width:0;min-height:0;background:#000;
  border-right:1px solid var(--line);
+ display:flex;flex-direction:column;
 }
-
-#meetingVideo{
- width:100%;
- flex:1;
- min-height:0;
- object-fit:contain;
- background:black;
+#cameraVideo,#practiceVideo{
+ width:100%;flex:1;min-height:0;object-fit:contain;
+ object-position:left center;background:black;
 }
-
-.controls{
- flex:none;
- display:flex;
- align-items:center;
- gap:5px;
- padding:4px;
- background:#0b1118;
+#practiceVideo{display:none}
+#videoControls{
+ display:none;flex:none;gap:4px;align-items:center;
+ padding:3px;background:#0b1118;
 }
-
-.controls button{
- padding:5px 7px;
+#videoControls button,#videoControls select{padding:4px 6px}
+#videoTime{margin-left:auto;font-size:9px;color:#aeb9c5}
+#mediaInfo{
+ min-width:0;min-height:0;padding:7px 9px;overflow:auto;background:#0e151e;
 }
-
-#videoTime{
- margin-left:auto;
- font-size:10px;
- color:#b9c4d0;
+.aiLabel{font-size:9px;font-weight:800;color:var(--green);margin-bottom:4px}
+#mediaTitle{font-size:14px;font-weight:800;color:#a7caff;margin-bottom:5px}
+#mediaDescription{font-size:11px;line-height:1.3;color:#e1e7ed}
+.subLabel{margin-top:7px;margin-bottom:3px;font-size:9px;color:#8997a6}
+#keywords{display:flex;gap:3px;flex-wrap:wrap}
+.keyword{
+ padding:2px 5px;border-radius:4px;background:#192636;
+ border:1px solid #34485e;font-size:9px;color:#d6e4f4;
 }
-
-/* VIDEO AI SIDE */
-
-#videoInfo{
- padding:8px;
- overflow:auto;
- background:#0e151e;
-}
-
-.infoTitle{
- font-size:10px;
- color:var(--green);
- font-weight:800;
- margin-bottom:5px;
-}
-
-#activeSpeaker{
- font-size:11px;
- color:#9db8dc;
- margin-bottom:5px;
-}
-
-#videoTopic{
- font-size:14px;
- font-weight:800;
- color:#a8caff;
- margin-bottom:7px;
-}
-
-#videoInfoText{
- font-size:11px;
- line-height:1.3;
- color:#dce3eb;
+#mediaStatus{
+ margin-top:7px;padding-top:5px;border-top:1px solid #293544;
+ color:#77d998;font-size:9px;
 }
 
 /* TRANSCRIPT */
-
-#english,
-#japanese{
- font-size:15px;
- line-height:1.3;
+#lineEN,#lineJP{font-size:15px;line-height:1.28}
+#lineJP{font-size:16px}
+.speechLine{
+ margin:0 0 3px;padding-left:5px;border-left:3px solid transparent;
 }
-
-#japanese{
- font-size:16px;
-}
-
-.line{
- margin-bottom:3px;
- padding-left:5px;
- border-left:3px solid transparent;
-}
-
-.speaker-A{
- color:#82b1ff;
- border-color:#82b1ff;
-}
-
-.speaker-B{
- color:#7dde9b;
- border-color:#7dde9b;
-}
-
-.speaker-C{
- color:#ffb36b;
- border-color:#ffb36b;
-}
-
-.speaker-D{
- color:#c09cff;
- border-color:#c09cff;
-}
-
-.jpLine{
- color:white;
-}
-
-.jpLine.speaker-A{border-color:#82b1ff}
-.jpLine.speaker-B{border-color:#7dde9b}
-.jpLine.speaker-C{border-color:#ffb36b}
-.jpLine.speaker-D{border-color:#c09cff}
+.spA{border-color:#82b1ff}
+.spB{border-color:#70d995}
+.spC{border-color:#ffad66}
+.spD{border-color:#b79cff}
+.enA{color:#82b1ff}.enB{color:#70d995}
+.enC{color:#ffad66}.enD{color:#b79cff}
 
 /* OVERVIEW */
-
-.topicItem{
- padding:5px 0;
- border-bottom:1px solid #26313e;
+.topic{
+ padding:4px 0;border-bottom:1px solid #26313e;
 }
-
-.topicItem strong{
- color:#cfe0ff;
- font-size:13px;
-}
-
-.topicItem div{
- color:#d3d9e0;
- font-size:11px;
- margin-top:2px;
-}
+.topic strong{font-size:13px;color:#d3e2ff}
+.topic div{margin-top:2px;font-size:11px;color:#d4dae1}
 
 /* PREDICTIONS */
-
 .card{
- margin-bottom:5px;
- padding:6px 8px;
- background:#0d151e;
- border-radius:5px;
+ margin-bottom:4px;padding:5px 7px;background:#0d151e;border-radius:4px;
 }
+.incoming{border-left:3px solid var(--red)}
+.outgoing{border-left:3px solid var(--green)}
+.cardHead{font-size:10px;font-weight:800;margin-bottom:2px}
+.incoming .cardHead{color:#ff9999}
+.outgoing .cardHead{color:#7ee09e}
+.qjp{font-size:13px;font-weight:700}
+.qen{font-size:11px;color:#b9c9df;margin-top:2px}
+.answer{font-size:15px;font-weight:750;color:#d0e0ff;margin-top:3px}
+.answerJP{font-size:11px;color:#aeb8c6}
 
-.incoming{
- border-left:3px solid var(--red);
-}
-
-.outgoing{
- border-left:3px solid var(--green);
-}
-
-.cardHead{
- font-size:11px;
- font-weight:800;
- margin-bottom:2px;
-}
-
-.incoming .cardHead{
- color:#ff9999;
-}
-
-.outgoing .cardHead{
- color:#7ee09e;
-}
-
-.qjp{
- font-size:13px;
- font-weight:700;
-}
-
-.qen{
- margin-top:2px;
- color:#b8c9df;
- font-size:12px;
-}
-
-.answer{
- margin-top:4px;
- color:#d3e3ff;
- font-size:16px;
- font-weight:750;
-}
-
-.answerjp{
- color:#aeb8c6;
- font-size:11px;
-}
-
-/* PROCESSING */
-
+/* PROCESS */
 #processing{
- position:fixed;
- inset:0;
- display:none;
- align-items:center;
- justify-content:center;
- background:rgba(0,0,0,.82);
- z-index:999;
+ display:none;position:fixed;inset:0;z-index:100;
+ align-items:center;justify-content:center;background:rgba(0,0,0,.82);
 }
-
-.processingBox{
- width:min(520px,80vw);
- background:#121923;
- border:1px solid #344354;
- border-radius:12px;
- padding:22px;
- text-align:center;
+.processBox{
+ width:min(500px,80vw);padding:20px;text-align:center;
+ background:#121923;border:1px solid #344354;border-radius:12px;
 }
-
-#processTitle{
- font-size:18px;
- font-weight:800;
-}
-
-#processText{
- margin-top:8px;
- color:#b7c1cc;
- font-size:13px;
-}
-
-.progress{
- height:8px;
- background:#28323e;
- border-radius:5px;
- margin-top:16px;
- overflow:hidden;
-}
-
-#progressBar{
- width:10%;
- height:100%;
- background:#4d8ee8;
- transition:width .3s;
-}
+#processTitle{font-size:17px;font-weight:800}
+#processText{margin-top:7px;color:#aeb9c5;font-size:12px}
+.progress{height:7px;margin-top:14px;background:#27313d;border-radius:5px;overflow:hidden}
+#progressBar{height:100%;width:10%;background:#4d8ee8;transition:.3s}
+#captureCanvas{display:none}
 
 @media(max-width:1000px){
- .logo{font-size:12px}
- button,.fileButton,select,input{font-size:10px;padding:6px}
- #apiKey{width:75px}
+ .logo{font-size:11px}
+ button,input,select,.fileBtn{padding:5px;font-size:9px}
+ #apiKey{width:62px}
+ #currentTopic{font-size:11px}
 }
 </style>
 </head>
@@ -429,1525 +180,1306 @@ main{
 <div id="app">
 
 <header>
+ <div class="logo">🎙 Meeting AI</div>
 
-<div class="logo">
-🎬 Meeting AI
-</div>
+ <button id="liveMode" class="modeActive">🔴 LIVE</button>
+ <button id="practiceMode">🎬 動画練習</button>
 
-<button class="mode">
-動画練習
-</button>
+ <label id="videoPicker" class="fileBtn" style="display:none">
+  📁 動画
+  <input id="videoFile" type="file" accept="video/*,audio/*">
+ </label>
 
-<label class="fileButton">
-📁 動画選択
-<input id="videoFile" type="file" accept="video/*,audio/*">
-</label>
+ <button id="cameraBtn">📷 資料読取</button>
 
-<input
- id="apiKey"
- type="password"
- placeholder="API Key"
- autocomplete="off"
->
+ <input id="apiKey" type="password" placeholder="API Key">
 
-<div id="status">
-動画未選択
-</div>
+ <div class="chip" id="timer">⏱ 00:00:00</div>
 
-<div id="currentTopic">
- <div class="smallLabel">💬 現在の話題</div>
- <div id="currentTopicText">動画を選択してください</div>
-</div>
+ <div id="currentTopicBox">
+  <div class="smallLabel">💬 現在の話題</div>
+  <div id="currentTopic">会議開始を待っています</div>
+ </div>
 
-<button id="analyzeBtn" disabled>
-🤖 初回解析
-</button>
-
+ <button id="analyzeVideo" style="display:none" disabled>🤖 初回解析</button>
+ <button id="startBtn">開始</button>
+ <button id="stopBtn" disabled>停止</button>
+ <button id="finishBtn">終了・保存</button>
 </header>
 
 <main>
 
 <div class="left">
 
-<!-- VIDEO -->
-
 <section class="panel">
+ <div class="title" id="mediaHeader">📷 資料読取</div>
 
-<div class="title">
-🎬 ミーティング動画
-</div>
+ <div id="mediaWorkspace">
 
-<div id="videoPanel">
+  <div id="mediaLeft">
 
-<div id="videoSide">
+   <video id="cameraVideo" autoplay muted playsinline></video>
 
-<video
- id="meetingVideo"
- controls
- playsinline
-></video>
+   <video id="practiceVideo" controls playsinline></video>
 
-<div class="controls">
+   <div id="videoControls">
+    <button id="back10">↶10秒</button>
+    <button id="playPause">▶</button>
 
-<button id="back10">
-↶10秒
-</button>
+    <select id="speed">
+     <option value=".75">0.75×</option>
+     <option value="1" selected>1.0×</option>
+     <option value="1.25">1.25×</option>
+     <option value="1.5">1.5×</option>
+    </select>
 
-<button id="playPause">
-▶
-</button>
+    <span id="videoTime">00:00 / 00:00</span>
+   </div>
 
-<select id="speed">
-<option value=".75">0.75×</option>
-<option value="1" selected>1.0×</option>
-<option value="1.25">1.25×</option>
-<option value="1.5">1.5×</option>
-</select>
+  </div>
 
-<div id="videoTime">
-00:00 / 00:00
-</div>
+  <div id="mediaInfo">
+   <div class="aiLabel" id="aiMediaLabel">🤖 AI資料読取</div>
 
-</div>
+   <div id="mediaTitle">資料読取 OFF</div>
 
-</div>
+   <div id="mediaDescription">
+    カメラをONにすると資料を読み取ります。
+   </div>
 
-<div id="videoInfo">
+   <div class="subLabel">重要ポイント</div>
+   <div id="keywords">－</div>
 
-<div class="infoTitle">
-🤖 現在のミーティング状況
-</div>
+   <div id="mediaStatus">📷 保存画像 0枚</div>
+  </div>
 
-<div id="activeSpeaker">
-－
-</div>
-
-<div id="videoTopic">
-解析するとここに表示されます
-</div>
-
-<div id="videoInfoText">
-動画の再生位置に合わせて、
-その時点までの会話だけを使って
-Meeting AIが状況を判断します。
-</div>
-
-</div>
-
-</div>
-
+ </div>
 </section>
 
-
 <section class="panel">
-
-<div class="title">
-🎙 English
-</div>
-
-<div class="content" id="english">
-動画を解析すると英文が表示されます。
-</div>
-
+ <div class="title">🎙 English</div>
+ <div class="content" id="lineEN">English transcript...</div>
 </section>
 
-
 <section class="panel">
-
-<div class="title">
-🇯🇵 日本語
-</div>
-
-<div class="content" id="japanese">
-再生位置に合わせて日本語訳を表示します。
-</div>
-
+ <div class="title">🇯🇵 リアルタイム日本語訳</div>
+ <div class="content" id="lineJP">日本語訳を表示します。</div>
 </section>
 
 </div>
-
 
 <div class="right">
 
 <section class="panel">
-
-<div class="title">
-📝 会議概要
-</div>
-
-<div class="content" id="overview">
-動画を進めると会議概要が更新されます。
-</div>
-
+ <div class="title">📝 会議概要</div>
+ <div class="content" id="overview">会議概要を表示します。</div>
 </section>
 
-
 <section class="panel">
-
-<div class="title">
-🔮 質問予測・こちらから質問
-</div>
-
-<div class="content" id="predictions">
-現在地点までの会話から予測します。
-</div>
-
+ <div class="title">🔮 質問予測・こちらから質問</div>
+ <div class="content" id="predictions">会話から質問を予測します。</div>
 </section>
 
 </div>
 
 </main>
-
 </div>
 
+<canvas id="captureCanvas"></canvas>
 
 <div id="processing">
-
-<div class="processingBox">
-
-<div id="processTitle">
-解析中
+ <div class="processBox">
+  <div id="processTitle">解析中</div>
+  <div id="processText">準備しています…</div>
+  <div class="progress"><div id="progressBar"></div></div>
+ </div>
 </div>
-
-<div id="processText">
-準備しています…
-</div>
-
-<div class="progress">
-<div id="progressBar"></div>
-</div>
-
-</div>
-
-</div>
-
 
 <script>
+const $=id=>document.getElementById(id);
 
-/* =====================================================
-   ELEMENTS
-===================================================== */
+const apiKey=$("apiKey");
+const liveMode=$("liveMode");
+const practiceMode=$("practiceMode");
+const videoPicker=$("videoPicker");
+const videoFile=$("videoFile");
+const analyzeVideo=$("analyzeVideo");
+const startBtn=$("startBtn");
+const stopBtn=$("stopBtn");
+const finishBtn=$("finishBtn");
+const cameraBtn=$("cameraBtn");
 
-const $ = id =>
- document.getElementById(id);
+const cameraVideo=$("cameraVideo");
+const practiceVideo=$("practiceVideo");
+const videoControls=$("videoControls");
+const mediaHeader=$("mediaHeader");
+const aiMediaLabel=$("aiMediaLabel");
+const mediaTitle=$("mediaTitle");
+const mediaDescription=$("mediaDescription");
+const keywordsEl=$("keywords");
+const mediaStatus=$("mediaStatus");
 
-const video =
- $("meetingVideo");
+const lineEN=$("lineEN");
+const lineJP=$("lineJP");
+const overviewEl=$("overview");
+const predictionsEl=$("predictions");
+const currentTopicEl=$("currentTopic");
+const timerEl=$("timer");
+const captureCanvas=$("captureCanvas");
 
-const fileInput =
- $("videoFile");
+let mode="live";
 
-const apiKey =
- $("apiKey");
+/* LIVE */
+let recognition=null;
+let liveRunning=false;
+let transcript="";
+let interim="";
+let pendingEnglish=[];
+let translating=false;
 
-const analyzeBtn =
- $("analyzeBtn");
+/* COMMON */
+let topicHistory=[];
+let lastAISignature="";
+let aiRunning=false;
+let aiTimer=null;
+let translationHistory=[];
 
-const statusEl =
- $("status");
+/* TIMER */
+let meetingStart=null;
+let timerInterval=null;
 
-const englishEl =
- $("english");
+/* CAMERA */
+let cameraStream=null;
+let cameraRunning=false;
+let cameraTimer=null;
+let previousFingerprint=null;
+let slideAnalyzing=false;
+let currentSlide={title:"",description:"",keywords:[]};
+let savedSlides=[];
 
-const japaneseEl =
- $("japanese");
+/* VIDEO */
+let selectedVideoFile=null;
+let videoURL=null;
+let videoSegments=[];
+let videoTranslations=[];
+let currentVideoSegment=-1;
+let lastVideoAI=-999;
 
-const overviewEl =
- $("overview");
+/* ==============================
+ API KEY
+============================== */
 
-const predictionsEl =
- $("predictions");
+apiKey.value=localStorage.getItem("meeting_ai_key")||"";
 
-const currentTopicEl =
- $("currentTopicText");
-
-const videoTopic =
- $("videoTopic");
-
-const videoInfoText =
- $("videoInfoText");
-
-const activeSpeaker =
- $("activeSpeaker");
-
-const videoTime =
- $("videoTime");
-
-const speed =
- $("speed");
-
-const processing =
- $("processing");
-
-const processTitle =
- $("processTitle");
-
-const processText =
- $("processText");
-
-const progressBar =
- $("progressBar");
-
-
-/* =====================================================
-   STATE
-===================================================== */
-
-let selectedFile = null;
-
-let videoURL = null;
-
-let segments = [];
-
-let translatedSegments = [];
-
-let currentSegmentIndex = -1;
-
-let lastAISecond = -999;
-
-let aiRunning = false;
-
-let overviewHistory = [];
-
-let analysisId = "";
-
-let cacheKey = "";
-
-
-/* =====================================================
-   API KEY
-===================================================== */
-
-apiKey.value =
- localStorage.getItem(
-  "meeting_ai_key"
- ) || "";
-
-apiKey.onchange = ()=>{
-
- localStorage.setItem(
-  "meeting_ai_key",
-  apiKey.value.trim()
- );
-
+apiKey.onchange=()=>{
+ localStorage.setItem("meeting_ai_key",apiKey.value.trim());
 };
 
-
-/* =====================================================
-   HELPERS
-===================================================== */
+/* ==============================
+ HELPERS
+============================== */
 
 function esc(s){
-
- return String(s || "")
+ return String(s||"")
  .replaceAll("&","&amp;")
  .replaceAll("<","&lt;")
  .replaceAll(">","&gt;")
  .replaceAll('"',"&quot;")
  .replaceAll("'","&#039;");
-
 }
 
-
-function cleanJSON(text){
-
- return String(text || "")
+function cleanJSON(s){
+ return String(s||"")
  .replace(/^```json/i,"")
  .replace(/^```/,"")
  .replace(/```$/,"")
  .trim();
-
 }
 
-
 function outputText(data){
+ if(data.output_text)return data.output_text;
+ try{
+  return data.output.flatMap(x=>x.content||[])
+  .filter(x=>x.type==="output_text")
+  .map(x=>x.text).join("");
+ }catch{return""}
+}
 
- if(data.output_text)
-  return data.output_text;
+function formatTime(sec){
+ if(!Number.isFinite(sec))return"00:00";
+ const m=Math.floor(sec/60);
+ const s=Math.floor(sec%60);
+ return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+}
+
+function speakerLetter(s){
+ const x=String(s||"A").replace("speaker_","").toUpperCase();
+ return ["A","B","C","D"].includes(x)?x:"A";
+}
+
+function showProcess(title,text,pct){
+ $("processing").style.display="flex";
+ $("processTitle").textContent=title;
+ $("processText").textContent=text;
+ $("progressBar").style.width=pct+"%";
+}
+function hideProcess(){
+ $("processing").style.display="none";
+}
+
+/* ==============================
+ OPENAI TEXT
+============================== */
+
+async function callAI(prompt){
+
+ const key=apiKey.value.trim();
+ if(!key)throw new Error("APIキーを入力してください。");
+
+ const r=await fetch("https://api.openai.com/v1/responses",{
+  method:"POST",
+  headers:{
+   "Content-Type":"application/json",
+   "Authorization":"Bearer "+key
+  },
+  body:JSON.stringify({
+   model:"gpt-5-mini",
+   input:prompt
+  })
+ });
+
+ const data=await r.json();
+
+ if(!r.ok)throw new Error(data?.error?.message||"APIエラー");
+
+ return outputText(data);
+}
+
+/* =====================================================
+ MODE SWITCH
+===================================================== */
+
+liveMode.onclick=()=>setMode("live");
+practiceMode.onclick=()=>setMode("video");
+
+function setMode(newMode){
+
+ if(mode===newMode)return;
+
+ stopLive();
+ stopCamera();
+ practiceVideo.pause();
+
+ mode=newMode;
+
+ topicHistory=[];
+ lastAISignature="";
+ currentVideoSegment=-1;
+ lastVideoAI=-999;
+
+ overviewEl.textContent="会議概要を表示します。";
+ predictionsEl.textContent="会話から質問を予測します。";
+
+ if(mode==="live"){
+
+  liveMode.classList.add("modeActive");
+  practiceMode.classList.remove("modeActive");
+
+  videoPicker.style.display="none";
+  analyzeVideo.style.display="none";
+
+  cameraBtn.style.display="";
+  startBtn.style.display="";
+  stopBtn.style.display="";
+
+  cameraVideo.style.display="";
+  practiceVideo.style.display="none";
+  videoControls.style.display="none";
+
+  mediaHeader.textContent="📷 資料読取";
+  aiMediaLabel.textContent="🤖 AI資料読取";
+
+  mediaTitle.textContent="資料読取 OFF";
+  mediaDescription.textContent="カメラをONにすると資料を読み取ります。";
+
+  currentTopicEl.textContent="会議開始を待っています";
+
+  renderLiveTranscript();
+
+ }else{
+
+  liveMode.classList.remove("modeActive");
+  practiceMode.classList.add("modeActive");
+
+  videoPicker.style.display="";
+  analyzeVideo.style.display="";
+
+  cameraBtn.style.display="none";
+  startBtn.style.display="none";
+  stopBtn.style.display="none";
+
+  cameraVideo.style.display="none";
+  practiceVideo.style.display="";
+  videoControls.style.display="flex";
+
+  mediaHeader.textContent="🎬 ミーティング動画";
+  aiMediaLabel.textContent="🤖 動画練習";
+
+  mediaTitle.textContent="動画を選択してください";
+  mediaDescription.textContent="解析後、再生位置に合わせてリアルタイム風に翻訳します。";
+
+  currentTopicEl.textContent="動画を選択してください";
+
+  renderVideoAt(0);
+ }
+}
+
+/* =====================================================
+ TIMER
+===================================================== */
+
+function startTimer(){
+ if(!meetingStart)meetingStart=Date.now();
+
+ clearInterval(timerInterval);
+
+ timerInterval=setInterval(()=>{
+  const sec=Math.floor((Date.now()-meetingStart)/1000);
+  const h=String(Math.floor(sec/3600)).padStart(2,"0");
+  const m=String(Math.floor((sec%3600)/60)).padStart(2,"0");
+  const s=String(sec%60).padStart(2,"0");
+  timerEl.textContent=`⏱ ${h}:${m}:${s}`;
+ },1000);
+}
+
+/* =====================================================
+ LIVE SPEECH
+===================================================== */
+
+function initRecognition(){
+
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR)return null;
+
+ const r=new SR();
+
+ r.continuous=true;
+ r.interimResults=true;
+ r.lang="en-US";
+
+ r.onresult=e=>{
+
+  let newFinal="";
+  interim="";
+
+  for(let i=e.resultIndex;i<e.results.length;i++){
+   const t=e.results[i][0].transcript;
+
+   if(e.results[i].isFinal)
+    newFinal+=t.trim()+". ";
+   else
+    interim+=t;
+  }
+
+  if(newFinal){
+   transcript+=newFinal;
+   pendingEnglish.push(newFinal.trim());
+   translateLive();
+   scheduleLiveAI();
+  }
+
+  renderLiveTranscript();
+ };
+
+ r.onend=()=>{
+  if(liveRunning){
+   setTimeout(()=>{
+    try{r.start()}catch{}
+   },250);
+  }
+ };
+
+ return r;
+}
+
+function renderLiveTranscript(){
+ if(mode!=="live")return;
+
+ lineEN.textContent=(transcript+" "+interim).trim()||"English transcript...";
+ lineEN.scrollTop=lineEN.scrollHeight;
+}
+
+startBtn.onclick=()=>{
+
+ if(!apiKey.value.trim()){
+  alert("APIキーを入力してください。");
+  return;
+ }
+
+ recognition=recognition||initRecognition();
+
+ if(!recognition){
+  alert("このブラウザでは音声認識を利用できません。");
+  return;
+ }
+
+ liveRunning=true;
+ startBtn.disabled=true;
+ stopBtn.disabled=false;
+
+ startTimer();
+
+ try{recognition.start()}catch{}
+};
+
+stopBtn.onclick=stopLive;
+
+function stopLive(){
+
+ liveRunning=false;
+
+ if(recognition){
+  try{recognition.stop()}catch{}
+ }
+
+ startBtn.disabled=false;
+ stopBtn.disabled=true;
+}
+
+async function translateLive(){
+
+ if(translating||!pendingEnglish.length)return;
+
+ translating=true;
+
+ const english=pendingEnglish.splice(0,2).join(" ");
 
  try{
 
-  return data.output
-  .flatMap(x=>x.content || [])
-  .filter(x=>x.type==="output_text")
-  .map(x=>x.text)
-  .join("");
-
- }catch{
-
-  return "";
-
- }
-
-}
-
-
-function formatTime(sec){
-
- if(!Number.isFinite(sec))
-  return "00:00";
-
- const m =
-  Math.floor(sec / 60);
-
- const s =
-  Math.floor(sec % 60);
-
- return (
-  String(m).padStart(2,"0") +
-  ":" +
-  String(s).padStart(2,"0")
- );
-
-}
-
-
-function speakerClass(speaker){
-
- const list =
-  ["A","B","C","D"];
-
- const s =
-  String(speaker || "A")
-  .replace("speaker_","")
-  .toUpperCase();
-
- return list.includes(s)
-  ? s
-  : "A";
-
-}
-
-
-function showProcess(
- title,
- text,
- percent
-){
-
- processing.style.display =
-  "flex";
-
- processTitle.textContent =
-  title;
-
- processText.textContent =
-  text;
-
- progressBar.style.width =
-  percent + "%";
-
-}
-
-
-function hideProcess(){
-
- processing.style.display =
-  "none";
-
-}
-
-
-/* =====================================================
-   OPENAI TEXT
-===================================================== */
-
-async function callOpenAI(prompt){
-
- const key =
-  apiKey.value.trim();
-
- if(!key)
-  throw new Error(
-   "OpenAI APIキーを入力してください。"
-  );
-
- const r =
-  await fetch(
-   "https://api.openai.com/v1/responses",
-   {
-    method:"POST",
-
-    headers:{
-     "Content-Type":"application/json",
-     "Authorization":"Bearer " + key
-    },
-
-    body:JSON.stringify({
-     model:"gpt-5-mini",
-     input:prompt
-    })
-   }
-  );
-
- const data =
-  await r.json();
-
- if(!r.ok){
-
-  throw new Error(
-   data?.error?.message ||
-   "OpenAI API error"
-  );
-
- }
-
- return outputText(data);
-
-}
-
-
-/* =====================================================
-   FILE
-===================================================== */
-
-fileInput.onchange =
- async event=>{
-
-  const file =
-   event.target.files?.[0];
-
-  if(!file)
-   return;
-
-  selectedFile =
-   file;
-
-  if(videoURL)
-   URL.revokeObjectURL(videoURL);
-
-  videoURL =
-   URL.createObjectURL(file);
-
-  video.src =
-   videoURL;
-
-  analyzeBtn.disabled =
-   false;
-
-  statusEl.textContent =
-   file.name;
-
-  currentTopicEl.textContent =
-   "解析待ち";
-
-  /*
-    cache identity
-  */
-
-  analysisId =
-   [
-    file.name,
-    file.size,
-    file.lastModified
-   ].join("_");
-
-  cacheKey =
-   "meeting_practice_" +
-   analysisId;
-
-  /*
-    Try local cached analysis.
-  */
-
-  const cached =
-   localStorage.getItem(
-    cacheKey
-   );
-
-  if(cached){
-
-   try{
-
-    const data =
-     JSON.parse(cached);
-
-    segments =
-     data.segments || [];
-
-    translatedSegments =
-     data.translations || [];
-
-    statusEl.textContent =
-     "解析済み ✓";
-
-    currentTopicEl.textContent =
-     "解析済み動画";
-
-    analyzeBtn.textContent =
-     "♻️ 再解析";
-
-    renderAtTime(0);
-
-   }catch{}
-
-  }
-
- };
-
-
-/* =====================================================
-   TRANSCRIPTION
-===================================================== */
-
-async function transcribeFile(file){
-
- const key =
-  apiKey.value.trim();
-
- if(!key)
-  throw new Error(
-   "APIキーを入力してください。"
-  );
-
- const form =
-  new FormData();
-
- form.append(
-  "file",
-  file,
-  file.name
- );
-
- /*
-  Speaker diarization.
- */
-
- form.append(
-  "model",
-  "gpt-4o-transcribe-diarize"
- );
-
- form.append(
-  "response_format",
-  "diarized_json"
- );
-
- /*
-  Required for longer recordings.
- */
-
- form.append(
-  "chunking_strategy",
-  "auto"
- );
-
-
- const r =
-  await fetch(
-   "https://api.openai.com/v1/audio/transcriptions",
-   {
-    method:"POST",
-
-    headers:{
-     "Authorization":
-      "Bearer " + key
-    },
-
-    body:form
-   }
-  );
-
-
- const data =
-  await r.json();
-
-
- if(!r.ok){
-
-  throw new Error(
-   data?.error?.message ||
-   "文字起こしに失敗しました。"
-  );
-
- }
-
-
- if(!Array.isArray(data.segments)){
-
-  throw new Error(
-   "話者付きセグメントを取得できませんでした。"
-  );
-
- }
-
-
- return data.segments.map(
-  seg=>({
-
-   start:
-    Number(seg.start || 0),
-
-   end:
-    Number(seg.end || 0),
-
-   speaker:
-    String(seg.speaker || "A"),
-
-   text:
-    String(seg.text || "").trim()
-
-  })
- );
-
-}
-
-
-/* =====================================================
-   TRANSLATE SEGMENTS
-===================================================== */
-
-async function translateAll(){
-
- /*
-   Translation in groups so the
-   timestamps remain unchanged.
- */
-
- const results = [];
-
- const batchSize = 25;
-
-
- for(
-  let i=0;
-  i<segments.length;
-  i+=batchSize
- ){
-
-  const batch =
-   segments.slice(
-    i,
-    i + batchSize
-   );
-
-
-  showProcess(
-   "日本語訳を作成中",
-   `${Math.min(i+batchSize,segments.length)} / ${segments.length}`,
-   45 +
-   Math.round(
-    45 *
-    i /
-    Math.max(
-     segments.length,
-     1
-    )
-   )
-  );
-
-
-  const input =
-   batch.map(
-    (s,index)=>({
-     id:i + index,
-     text:s.text
-    })
-   );
-
-
-  const output =
-   await callOpenAI(
-`
-Translate each English meeting utterance
-into natural Japanese.
-
+  const jp=(await callAI(`
+Translate this spoken English directly into natural Japanese.
 Do not summarize.
-Do not add information.
+Do not explain.
+Return only Japanese.
 
-Technical terms should remain accurate.
+${english}
+`)).trim();
 
-Return ONLY valid JSON:
+  translationHistory.push({english,japanese:jp});
+
+  if(lineJP.textContent==="日本語訳を表示します.")
+   lineJP.innerHTML="";
+
+  const div=document.createElement("div");
+  div.className="speechLine";
+  div.textContent=jp;
+  lineJP.appendChild(div);
+  lineJP.scrollTop=lineJP.scrollHeight;
+
+ }catch(e){
+  console.error(e);
+ }finally{
+  translating=false;
+  if(pendingEnglish.length)translateLive();
+ }
+}
+
+/* =====================================================
+ CAMERA
+===================================================== */
+
+cameraBtn.onclick=async()=>{
+
+ if(cameraRunning){
+  stopCamera();
+  return;
+ }
+
+ try{
+
+  cameraStream=await navigator.mediaDevices.getUserMedia({
+   video:{
+    facingMode:{ideal:"environment"},
+    width:{ideal:1280},
+    height:{ideal:720}
+   },
+   audio:false
+  });
+
+  cameraVideo.srcObject=cameraStream;
+  await cameraVideo.play();
+
+  cameraRunning=true;
+  cameraBtn.textContent="📷 資料読取 ON";
+
+  mediaTitle.textContent="資料を監視しています";
+  mediaDescription.textContent="スライドが変わると自動で読み取ります。";
+
+  previousFingerprint=null;
+
+  setTimeout(checkSlide,1000);
+  cameraTimer=setInterval(checkSlide,3000);
+
+ }catch(e){
+  alert("カメラを開始できませんでした。");
+ }
+};
+
+function stopCamera(){
+
+ cameraRunning=false;
+
+ clearInterval(cameraTimer);
+
+ if(cameraStream)
+  cameraStream.getTracks().forEach(t=>t.stop());
+
+ cameraStream=null;
+ cameraVideo.srcObject=null;
+
+ cameraBtn.textContent="📷 資料読取";
+}
+
+function captureFrame(){
+
+ if(!cameraVideo.videoWidth)return null;
+
+ const max=1280;
+ const scale=Math.min(1,max/cameraVideo.videoWidth);
+
+ captureCanvas.width=Math.round(cameraVideo.videoWidth*scale);
+ captureCanvas.height=Math.round(cameraVideo.videoHeight*scale);
+
+ const ctx=captureCanvas.getContext("2d");
+ ctx.drawImage(cameraVideo,0,0,captureCanvas.width,captureCanvas.height);
+
+ return captureCanvas.toDataURL("image/jpeg",.76);
+}
+
+function fingerprint(){
+
+ if(!cameraVideo.videoWidth)return null;
+
+ const c=document.createElement("canvas");
+ c.width=40;c.height=22;
+
+ const ctx=c.getContext("2d",{willReadFrequently:true});
+ ctx.drawImage(cameraVideo,0,0,40,22);
+
+ const d=ctx.getImageData(0,0,40,22).data;
+ const a=[];
+
+ for(let i=0;i<d.length;i+=4)
+  a.push((d[i]+d[i+1]+d[i+2])/3);
+
+ return a;
+}
+
+function fingerprintDiff(a,b){
+ if(!a||!b)return 999;
+
+ let t=0;
+ for(let i=0;i<a.length;i++)
+  t+=Math.abs(a[i]-b[i]);
+
+ return t/a.length;
+}
+
+async function analyzeSlideImage(image){
+
+ const key=apiKey.value.trim();
+
+ const r=await fetch("https://api.openai.com/v1/responses",{
+  method:"POST",
+  headers:{
+   "Content-Type":"application/json",
+   "Authorization":"Bearer "+key
+  },
+  body:JSON.stringify({
+   model:"gpt-5-mini",
+   input:[{
+    role:"user",
+    content:[
+     {
+      type:"input_text",
+      text:`Read this technical presentation slide.
+
+Return only valid JSON:
 
 {
- "items":[
-   {
-    "id":0,
-    "jp":"日本語"
-   }
- ]
+"title":"short title",
+"description":"日本語で内容を1～3文",
+"keywords":["重要点1","重要点2","重要点3"]
 }
 
-INPUT:
+Do not invent unreadable information.`
+     },
+     {type:"input_image",image_url:image}
+    ]
+   }]
+  })
+ });
 
-${JSON.stringify(input)}
-`
-   );
+ const data=await r.json();
 
+ if(!r.ok)throw new Error(data?.error?.message||"画像解析エラー");
 
-  const parsed =
-   JSON.parse(
-    cleanJSON(output)
-   );
+ return JSON.parse(cleanJSON(outputText(data)));
+}
 
+async function checkSlide(){
 
-  for(
-   const item of
-   parsed.items || []
-  ){
+ if(!cameraRunning||slideAnalyzing)return;
 
-   results[
-    Number(item.id)
-   ] =
-    String(item.jp || "");
+ const fp=fingerprint();
+ if(!fp)return;
 
+ const diff=fingerprintDiff(previousFingerprint,fp);
+
+ if(previousFingerprint&&diff<13)return;
+
+ previousFingerprint=fp;
+
+ const image=captureFrame();
+ if(!image)return;
+
+ slideAnalyzing=true;
+
+ try{
+
+  const result=await analyzeSlideImage(image);
+
+  const next={
+   title:String(result.title||"").trim(),
+   description:String(result.description||"").trim(),
+   keywords:Array.isArray(result.keywords)?result.keywords:[]
+  };
+
+  const changed=
+   !currentSlide.title||
+   (next.title+"|"+next.description)!==
+   (currentSlide.title+"|"+currentSlide.description);
+
+  currentSlide=next;
+
+  mediaTitle.textContent=next.title||"資料";
+  mediaDescription.textContent=next.description||"";
+
+  keywordsEl.innerHTML=next.keywords.length
+   ?next.keywords.slice(0,6).map(x=>`<span class="keyword">${esc(x)}</span>`).join("")
+   :"－";
+
+  if(changed){
+
+   savedSlides.push({
+    time:new Date().toLocaleTimeString("ja-JP"),
+    title:next.title,
+    description:next.description,
+    keywords:next.keywords,
+    image
+   });
+
+   mediaStatus.textContent=`📷 自動保存 ${savedSlides.length}枚`;
+
+   scheduleLiveAI();
   }
 
+ }catch(e){
+  console.error(e);
+ }finally{
+  slideAnalyzing=false;
  }
-
-
- return results;
-
 }
 
-
 /* =====================================================
-   ANALYZE BUTTON
+ LIVE AI
 ===================================================== */
 
-analyzeBtn.onclick =
- async ()=>{
+function scheduleLiveAI(){
+ clearTimeout(aiTimer);
+ aiTimer=setTimeout(updateLiveAI,1200);
+}
 
-  if(!selectedFile)
-   return;
+async function updateLiveAI(){
 
+ if(mode!=="live"||aiRunning||!transcript.trim())return;
 
-  try{
+ aiRunning=true;
 
-   localStorage.setItem(
-    "meeting_ai_key",
-    apiKey.value.trim()
-   );
+ try{
 
+  const context=transcript.slice(-7000);
 
-   showProcess(
-    "① 音声を解析中",
-    "英語と話者を認識しています…",
-    15
-   );
+  const result=JSON.parse(cleanJSON(await callAI(`
+You are a real-time meeting assistant for a Japanese application engineer.
 
+Current slide:
+${currentSlide.title}
+${currentSlide.description}
 
-   segments =
-    await transcribeFile(
-     selectedFile
-    );
+Recent conversation:
+${context}
 
+Return ONLY JSON:
 
-   showProcess(
-    "② 日本語訳を準備",
-    `${segments.length}個の発話を取得しました`,
-    45
-   );
+{
+"current_topic":"現在話している内容を短い日本語で",
+"topic":{
+ "changed":true,
+ "title":"topic",
+ "description":"日本語概要"
+},
+"items":[
+ {
+  "type":"incoming",
+  "chance":"high",
+  "question_jp":"日本語の質問",
+  "question_en":"English question",
+  "answer_en":"short easy English answer",
+  "answer_jp":"回答の日本語"
+ },
+ {
+  "type":"outgoing",
+  "chance":"medium",
+  "question_jp":"日本語の質問",
+  "question_en":"English question"
+ }
+]
+}
 
+Incoming means a question another participant may ask THE USER.
+Never invent facts about the user.
+Outgoing means a useful question THE USER can ask.
+Maximum 5 items.
+`)));
 
-   translatedSegments =
-    await translateAll();
+  applyMeetingAI(result);
 
-
-   showProcess(
-    "③ 保存中",
-    "次回からこの解析を再利用できます",
-    95
-   );
-
-
-   /*
-     Cache analysis locally.
-   */
-
-   try{
-
-    localStorage.setItem(
-     cacheKey,
-     JSON.stringify({
-      segments:segments,
-      translations:
-       translatedSegments
-     })
-    );
-
-   }catch(e){
-
-    /*
-      Long transcripts can exceed
-      localStorage limits.
-
-      App still works in memory.
-    */
-
-    console.warn(
-     "Cache save failed",
-     e
-    );
-
-   }
-
-
-   statusEl.textContent =
-    "解析完了 ✓";
-
-
-   currentTopicEl.textContent =
-    "再生を開始してください";
-
-
-   analyzeBtn.textContent =
-    "♻️ 再解析";
-
-
-   renderAtTime(0);
-
-
-   hideProcess();
-
-
-  }catch(error){
-
-   hideProcess();
-
-   console.error(error);
-
-   alert(
-    "解析に失敗しました。\n\n" +
-    error.message
-   );
-
-  }
-
- };
-
+ }catch(e){
+  console.error(e);
+ }finally{
+  aiRunning=false;
+ }
+}
 
 /* =====================================================
-   PLAYBACK
+ VIDEO FILE
 ===================================================== */
 
-$("playPause").onclick =
- ()=>{
+videoFile.onchange=e=>{
 
-  if(video.paused){
+ const file=e.target.files?.[0];
+ if(!file)return;
 
-   video.play();
+ selectedVideoFile=file;
 
-  }else{
+ if(videoURL)URL.revokeObjectURL(videoURL);
 
-   video.pause();
+ videoURL=URL.createObjectURL(file);
+ practiceVideo.src=videoURL;
 
-  }
+ analyzeVideo.disabled=false;
 
- };
-
-
-$("back10").onclick =
- ()=>{
-
-  video.currentTime =
-   Math.max(
-    0,
-    video.currentTime - 10
-   );
-
- };
-
-
-speed.onchange =
- ()=>{
-
-  video.playbackRate =
-   Number(speed.value);
-
- };
-
-
-video.onplay =
- ()=>{
-
- $("playPause").textContent =
-  "⏸";
-
+ mediaTitle.textContent=file.name;
+ mediaDescription.textContent="「初回解析」を押してください。";
+ currentTopicEl.textContent="解析待ち";
 };
 
+analyzeVideo.onclick=async()=>{
 
-video.onpause =
- ()=>{
+ if(!selectedVideoFile)return;
 
- $("playPause").textContent =
-  "▶";
+ try{
 
+  showProcess("① 英語を解析中","話者とタイムスタンプを取得しています…",15);
+
+  videoSegments=await transcribeVideo(selectedVideoFile);
+
+  showProcess("② 日本語訳を作成中",`${videoSegments.length}発話を翻訳します`,45);
+
+  videoTranslations=await translateVideoSegments();
+
+  showProcess("③ 完了","再生を開始できます",100);
+
+  setTimeout(hideProcess,500);
+
+  mediaTitle.textContent="解析完了";
+  mediaDescription.textContent="▶ 再生するとリアルタイム風に英文・日本語が表示されます。";
+
+  currentTopicEl.textContent="再生を開始してください";
+
+  renderVideoAt(0);
+
+ }catch(e){
+  hideProcess();
+  alert("動画解析に失敗しました。\n"+e.message);
+ }
 };
 
+async function transcribeVideo(file){
 
-/* =====================================================
-   VIDEO TIME UPDATE
-===================================================== */
+ const form=new FormData();
 
-video.ontimeupdate =
- ()=>{
+ form.append("file",file,file.name);
+ form.append("model","gpt-4o-transcribe-diarize");
+ form.append("response_format","diarized_json");
+ form.append("chunking_strategy","auto");
 
-  videoTime.textContent =
-   formatTime(
-    video.currentTime
-   ) +
-   " / " +
-   formatTime(
-    video.duration
-   );
+ const r=await fetch("https://api.openai.com/v1/audio/transcriptions",{
+  method:"POST",
+  headers:{
+   "Authorization":"Bearer "+apiKey.value.trim()
+  },
+  body:form
+ });
 
+ const data=await r.json();
 
-  renderAtTime(
-   video.currentTime
+ if(!r.ok)throw new Error(data?.error?.message||"文字起こしエラー");
+
+ if(!Array.isArray(data.segments))
+  throw new Error("話者付き文字起こしを取得できませんでした。");
+
+ return data.segments.map(x=>({
+  start:Number(x.start||0),
+  end:Number(x.end||0),
+  speaker:String(x.speaker||"A"),
+  text:String(x.text||"").trim()
+ }));
+}
+
+async function translateVideoSegments(){
+
+ const results=[];
+ const batchSize=25;
+
+ for(let i=0;i<videoSegments.length;i+=batchSize){
+
+  const batch=videoSegments.slice(i,i+batchSize);
+
+  showProcess(
+   "② 日本語訳を作成中",
+   `${Math.min(i+batchSize,videoSegments.length)} / ${videoSegments.length}`,
+   45+Math.round(45*i/Math.max(videoSegments.length,1))
   );
 
+  const input=batch.map((s,j)=>({id:i+j,text:s.text}));
 
-  /*
-    AI analysis every ~20 sec.
-    It ONLY receives transcript
-    from the past.
-  */
+  const parsed=JSON.parse(cleanJSON(await callAI(`
+Translate each English meeting utterance directly into natural Japanese.
+Do not summarize.
+Return ONLY JSON:
 
-  if(
-   segments.length &&
-   video.currentTime -
-   lastAISecond >= 20
-  ){
+{"items":[{"id":0,"jp":"日本語"}]}
 
-   lastAISecond =
-    video.currentTime;
+INPUT:
+${JSON.stringify(input)}
+`)));
 
-   updatePracticeAI(
-    video.currentTime
-   );
+  for(const x of parsed.items||[])
+   results[Number(x.id)]=String(x.jp||"");
+ }
 
-  }
-
- };
-
-
-video.onseeked =
- ()=>{
-
- renderAtTime(
-  video.currentTime
- );
-
- /*
-   Recalculate immediately
-   after manual seeking.
- */
-
- lastAISecond =
-  video.currentTime - 20;
-
-};
-
+ return results;
+}
 
 /* =====================================================
-   FIND CURRENT SEGMENT
+ VIDEO CONTROLS
 ===================================================== */
 
-function getCurrentIndex(time){
+$("playPause").onclick=()=>{
+ practiceVideo.paused?practiceVideo.play():practiceVideo.pause();
+};
 
- let found = -1;
+$("back10").onclick=()=>{
+ practiceVideo.currentTime=Math.max(0,practiceVideo.currentTime-10);
+};
 
- for(
-  let i=0;
-  i<segments.length;
-  i++
+$("speed").onchange=()=>{
+ practiceVideo.playbackRate=Number($("speed").value);
+};
+
+practiceVideo.onplay=()=>{
+ $("playPause").textContent="⏸";
+};
+
+practiceVideo.onpause=()=>{
+ $("playPause").textContent="▶";
+};
+
+practiceVideo.ontimeupdate=()=>{
+
+ $("videoTime").textContent=
+  `${formatTime(practiceVideo.currentTime)} / ${formatTime(practiceVideo.duration)}`;
+
+ renderVideoAt(practiceVideo.currentTime);
+
+ if(
+  videoSegments.length &&
+  practiceVideo.currentTime-lastVideoAI>=20
  ){
+  lastVideoAI=practiceVideo.currentTime;
+  updateVideoAI(practiceVideo.currentTime);
+ }
+};
 
-  if(
-   segments[i].start <= time
-  ){
+practiceVideo.onseeked=()=>{
+ currentVideoSegment=-1;
+ renderVideoAt(practiceVideo.currentTime);
+ lastVideoAI=practiceVideo.currentTime-20;
+};
 
-   found = i;
+/* =====================================================
+ VIDEO RENDER
+===================================================== */
 
-  }else{
+function videoIndexAt(time){
 
-   break;
+ let found=-1;
 
-  }
-
+ for(let i=0;i<videoSegments.length;i++){
+  if(videoSegments[i].start<=time)found=i;
+  else break;
  }
 
  return found;
-
 }
 
+function renderVideoAt(time){
 
-/* =====================================================
-   RENDER TRANSCRIPT
-===================================================== */
+ if(mode!=="video"||!videoSegments.length)return;
 
-function renderAtTime(time){
+ const index=videoIndexAt(time);
 
- if(!segments.length)
-  return;
-
-
- const index =
-  getCurrentIndex(time);
-
-
- if(index < 0){
-
-  englishEl.innerHTML =
-   "再生待ち";
-
-  japaneseEl.innerHTML =
-   "再生待ち";
-
-  return;
-
- }
-
-
- if(
-  index ===
-  currentSegmentIndex
- ){
+ if(index<0){
+  lineEN.textContent="再生待ち";
+  lineJP.textContent="再生待ち";
   return;
  }
 
+ if(index===currentVideoSegment)return;
 
- currentSegmentIndex =
-  index;
+ currentVideoSegment=index;
 
+ const from=Math.max(0,index-8);
 
- /*
-  Only show recent lines.
-  This feels like live transcription.
- */
+ const visible=videoSegments.slice(from,index+1);
 
- const start =
-  Math.max(
-   0,
-   index - 8
-  );
+ lineEN.innerHTML=visible.map((s,j)=>{
+  const sp=speakerLetter(s.speaker);
+  return `<div class="speechLine sp${sp} en${sp}">${esc(s.text)}</div>`;
+ }).join("");
 
+ lineJP.innerHTML=visible.map((s,j)=>{
+  const n=from+j;
+  const sp=speakerLetter(s.speaker);
+  return `<div class="speechLine sp${sp}">${esc(videoTranslations[n]||"…")}</div>`;
+ }).join("");
 
- const visible =
-  segments.slice(
-   start,
-   index + 1
-  );
+ lineEN.scrollTop=lineEN.scrollHeight;
+ lineJP.scrollTop=lineJP.scrollHeight;
 
+ const current=videoSegments[index];
 
- englishEl.innerHTML =
-  visible.map(
-   (s,j)=>{
-
-    const actual =
-     start + j;
-
-    const sp =
-     speakerClass(
-      s.speaker
-     );
-
-    return `
-<div class="line speaker-${sp}">
-${esc(s.text)}
-</div>
-`;
-
-   }
-  ).join("");
-
-
- japaneseEl.innerHTML =
-  visible.map(
-   (s,j)=>{
-
-    const actual =
-     start + j;
-
-    const sp =
-     speakerClass(
-      s.speaker
-     );
-
-    return `
-<div class="line jpLine speaker-${sp}">
-${esc(
- translatedSegments[actual] ||
- "…"
-)}
-</div>
-`;
-
-   }
-  ).join("");
-
-
- englishEl.scrollTop =
-  englishEl.scrollHeight;
-
-
- japaneseEl.scrollTop =
-  japaneseEl.scrollHeight;
-
-
- const current =
-  segments[index];
-
-
- const sp =
-  speakerClass(
-   current.speaker
-  );
-
-
- activeSpeaker.textContent =
-  "現在の話者：" +
-  sp;
-
+ mediaStatus.textContent=
+  `🎙 話者 ${speakerLetter(current.speaker)}　${formatTime(current.start)}`;
 }
 
-
 /* =====================================================
-   AI CONTEXT
+ VIDEO AI
 ===================================================== */
 
-function transcriptUntil(time){
+function videoContextUntil(time){
 
- return segments
-
- .filter(
-  s =>
-  s.start <= time
- )
-
+ return videoSegments
+ .filter(x=>x.start<=time)
  .slice(-35)
-
- .map(
-  s =>
-  `[Speaker ${speakerClass(s.speaker)}] ${s.text}`
- )
-
+ .map(x=>`[Speaker ${speakerLetter(x.speaker)}] ${x.text}`)
  .join("\n");
-
 }
 
+async function updateVideoAI(time){
 
-/* =====================================================
-   PRACTICE AI
-===================================================== */
+ if(mode!=="video"||aiRunning)return;
 
-async function updatePracticeAI(time){
-
- if(aiRunning)
-  return;
-
-
- aiRunning = true;
-
+ aiRunning=true;
 
  try{
 
-  const context =
-   transcriptUntil(time);
+  const context=videoContextUntil(time);
 
-
-  const previous =
-   overviewHistory
-
-   .map(
-    (x,i)=>
-    `${i+1}. ${x.title}: ${x.description}`
-   )
-
-   .join("\n");
-
-
-  const result =
-   JSON.parse(
-    cleanJSON(
-     await callOpenAI(
-`
-You are assisting a Japanese application
-engineer practicing an English meeting.
+  const result=JSON.parse(cleanJSON(await callAI(`
+You are assisting a Japanese application engineer practicing an English meeting.
 
 IMPORTANT:
+You only know the conversation up to ${formatTime(time)}.
+You must NOT assume anything that happens later.
 
-You are at video time:
-${formatTime(time)}
+Conversation:
+${context}
 
-You are ONLY allowed to use the
-conversation shown below.
-
-You do NOT know what happens later
-in the video.
-
-The engineer works with:
-
-metallography
-cutting
-mounting
-grinding
-polishing
-etching
-microscopy
-materials characterization
-customer samples
-technical testing.
-
-TASK 1
-
-Create a short Japanese sentence
-describing what is being discussed NOW.
-
-TASK 2
-
-Update the high-level meeting overview.
-
-Only create a new topic if the major
-subject has clearly changed.
-
-TASK 3
-
-Predict questions that OTHER participants
-may ask THE USER next.
-
-For each incoming question give:
-
-Japanese question
-English question
-short safe English answer
-Japanese translation of answer
-
-Never invent the user's experience,
-customer feedback or test results.
-
-TASK 4
-
-Suggest useful questions THE USER
-could ask the other participants.
-
-Give:
-Japanese
-English
-
-Return maximum 5 items total.
-
-Return ONLY valid JSON:
+Return ONLY JSON:
 
 {
- "current_topic":"現在の話題",
- "topic":{
-  "changed":true,
-  "title":"Topic",
-  "description":"日本語説明"
+"current_topic":"現在の話題を短い日本語で",
+"topic":{
+ "changed":true,
+ "title":"topic",
+ "description":"日本語概要"
+},
+"items":[
+ {
+  "type":"incoming",
+  "chance":"high",
+  "question_jp":"日本語",
+  "question_en":"English",
+  "answer_en":"short easy English answer",
+  "answer_jp":"日本語回答"
  },
- "items":[
-  {
-   "type":"incoming",
-   "chance":"high",
-   "question_jp":"日本語",
-   "question_en":"English",
-   "answer_en":"English answer",
-   "answer_jp":"日本語回答"
-  },
-  {
-   "type":"outgoing",
-   "chance":"medium",
-   "question_jp":"日本語",
-   "question_en":"English"
-  }
- ]
-}
-
-PREVIOUS OVERVIEW:
-
-${previous || "None"}
-
-CONVERSATION AVAILABLE AT THIS POINT:
-
-${context}
-`
-     )
-    )
-   );
-
-
-  if(result.current_topic){
-
-   currentTopicEl.textContent =
-    result.current_topic;
-
-   videoTopic.textContent =
-    result.current_topic;
-
-   videoInfoText.textContent =
-    `動画 ${formatTime(time)} 時点までの会話から判断`;
-
-  }
-
-
-  if(
-   result.topic &&
-   result.topic.title
-  ){
-
-   const duplicate =
-    overviewHistory.some(
-     x =>
-     x.title.toLowerCase() ===
-     String(
-      result.topic.title
-     ).toLowerCase()
-    );
-
-
-   if(
-    (
-     result.topic.changed ||
-     overviewHistory.length === 0
-    ) &&
-    !duplicate
-   ){
-
-    overviewHistory.push({
-     title:
-      result.topic.title,
-     description:
-      result.topic.description || ""
-    });
-
-   }
-
-  }
-
-
-  renderOverview();
-
-
-  renderPredictions(
-   result.items || []
-  );
-
-
- }catch(error){
-
-  console.error(error);
-
- }finally{
-
-  aiRunning = false;
-
+ {
+  "type":"outgoing",
+  "chance":"medium",
+  "question_jp":"日本語",
+  "question_en":"English"
  }
-
+]
 }
 
+Incoming = a likely question another participant may ask THE USER.
+Do not invent the user's experience or results.
+Outgoing = a useful question THE USER can ask.
+Maximum 5 items.
+`)));
+
+  applyMeetingAI(result);
+
+  mediaTitle.textContent=result.current_topic||"動画練習";
+  mediaDescription.textContent=
+   `${formatTime(time)} 時点までの会話だけを使ってAIが判断しています。`;
+
+ }catch(e){
+  console.error(e);
+ }finally{
+  aiRunning=false;
+ }
+}
 
 /* =====================================================
-   OVERVIEW
+ COMMON AI DISPLAY
 ===================================================== */
+
+function applyMeetingAI(result){
+
+ if(result.current_topic)
+  currentTopicEl.textContent=result.current_topic;
+
+ if(result.topic?.title){
+
+  const title=String(result.topic.title);
+
+  const exists=topicHistory.some(
+   x=>x.title.toLowerCase()===title.toLowerCase()
+  );
+
+  if((result.topic.changed||!topicHistory.length)&&!exists){
+
+   topicHistory.push({
+    title,
+    description:String(result.topic.description||"")
+   });
+
+   renderOverview();
+  }
+ }
+
+ renderPredictions(result.items||[]);
+}
 
 function renderOverview(){
 
- if(!overviewHistory.length)
-  return;
-
-
- overviewEl.innerHTML =
-  overviewHistory.map(
-   item=>
-`
-<div class="topicItem">
-
-<strong>
-${esc(item.title)}
-</strong>
-
-<div>
-${esc(item.description)}
-</div>
-
-</div>
-`
-  ).join("");
-
+ overviewEl.innerHTML=topicHistory.length
+ ?topicHistory.map(x=>`
+<div class="topic">
+ <strong>• ${esc(x.title)}</strong>
+ <div>${esc(x.description)}</div>
+</div>`).join("")
+ :"会議概要を表示します。";
 }
-
-
-/* =====================================================
-   PREDICTIONS
-===================================================== */
 
 function renderPredictions(items){
 
- if(!items.length)
-  return;
+ if(!items.length)return;
 
+ predictionsEl.innerHTML=items.slice(0,5).map(x=>{
 
- predictionsEl.innerHTML =
-  items.slice(0,5)
-
-  .map(item=>{
-
-   if(
-    item.type === "outgoing"
-   ){
-
-    return `
-<div class="card outgoing">
-
-<div class="cardHead">
-🟢 こちらから質問
-</div>
-
-<div class="qjp">
-${esc(item.question_jp)}
-</div>
-
-<div class="answer">
-${esc(item.question_en)}
-</div>
-
-</div>
-`;
-
-   }
-
-
-   const chance =
-    item.chance === "high"
-    ? "高"
-    : item.chance === "low"
-    ? "低"
-    : "中";
-
+  if(x.type==="outgoing"){
 
    return `
+<div class="card outgoing">
+ <div class="cardHead">🟢 こちらから質問</div>
+ <div class="qjp">${esc(x.question_jp)}</div>
+ <div class="answer">${esc(x.question_en)}</div>
+</div>`;
+  }
+
+  const chance=
+   x.chance==="high"?"高":
+   x.chance==="low"?"低":"中";
+
+  return `
 <div class="card incoming">
+ <div class="cardHead">🔴 質問予測　可能性 ${chance}</div>
+ <div class="qjp">${esc(x.question_jp)}</div>
+ <div class="qen">${esc(x.question_en)}</div>
+ <div class="answer">${esc(x.answer_en)}</div>
+ <div class="answerJP">${esc(x.answer_jp)}</div>
+</div>`;
 
-<div class="cardHead">
-🔴 質問予測　可能性 ${chance}
-</div>
-
-<div class="qjp">
-${esc(item.question_jp)}
-</div>
-
-<div class="qen">
-${esc(item.question_en)}
-</div>
-
-<div class="answer">
-${esc(item.answer_en)}
-</div>
-
-<div class="answerjp">
-${esc(item.answer_jp)}
-</div>
-
-</div>
-`;
-
-  }).join("");
-
+ }).join("");
 }
 
-</script>
+/* =====================================================
+ SAVE REPORT
+===================================================== */
 
+finishBtn.onclick=async()=>{
+
+ if(mode==="live"){
+
+  stopLive();
+  stopCamera();
+
+  const report=buildLiveReport();
+
+  downloadHTML(
+   report,
+   "Meeting_AI_LIVE"
+  );
+
+ }else{
+
+  practiceVideo.pause();
+
+  const report=buildVideoReport();
+
+  downloadHTML(
+   report,
+   "Meeting_AI_Practice"
+  );
+ }
+};
+
+function reportStyle(){
+
+ return `
+body{
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ max-width:1000px;margin:30px auto;padding:20px;line-height:1.6;
+}
+h2{border-bottom:2px solid #ddd;padding-bottom:5px;margin-top:35px}
+img{max-width:100%;border:1px solid #ccc;border-radius:8px}
+.item{padding:7px 0;border-bottom:1px solid #ddd}
+.en{color:#56616e}
+`;
+}
+
+function buildLiveReport(){
+
+ const slides=savedSlides.map((x,i)=>`
+<h3>資料 ${i+1}：${esc(x.title)}</h3>
+<div>${esc(x.time)}</div>
+<img src="${x.image}">
+<p>${esc(x.description)}</p>
+`).join("");
+
+ return `
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Meeting AI</title>
+<style>${reportStyle()}</style>
+</head>
+<body>
+<h1>Meeting AI LIVE 会議記録</h1>
+
+<h2>会議概要</h2>
+${topicHistory.map(x=>`
+<div class="item">
+<strong>${esc(x.title)}</strong><br>
+${esc(x.description)}
+</div>`).join("")}
+
+<h2>資料</h2>
+${slides||"なし"}
+
+<h2>English Transcript</h2>
+<p>${esc(transcript)}</p>
+
+<h2>日本語訳</h2>
+${translationHistory.map(x=>`
+<div class="item">
+<div class="en">${esc(x.english)}</div>
+<div>${esc(x.japanese)}</div>
+</div>`).join("")}
+
+</body>
+</html>`;
+}
+
+function buildVideoReport(){
+
+ return `
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Meeting AI Practice</title>
+<style>${reportStyle()}</style>
+</head>
+<body>
+
+<h1>Meeting AI 動画練習記録</h1>
+
+<h2>会議概要</h2>
+${topicHistory.map(x=>`
+<div class="item">
+<strong>${esc(x.title)}</strong><br>
+${esc(x.description)}
+</div>`).join("")}
+
+<h2>Transcript</h2>
+
+${videoSegments.map((x,i)=>`
+<div class="item">
+<strong>
+${formatTime(x.start)} / Speaker ${speakerLetter(x.speaker)}
+</strong>
+<div class="en">${esc(x.text)}</div>
+<div>${esc(videoTranslations[i]||"")}</div>
+</div>`).join("")}
+
+</body>
+</html>`;
+}
+
+function downloadHTML(html,name){
+
+ const blob=new Blob([html],{type:"text/html;charset=utf-8"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+
+ a.href=url;
+
+ a.download=
+  `${name}_${new Date().toISOString().slice(0,16).replaceAll(":","-")}.html`;
+
+ document.body.appendChild(a);
+ a.click();
+ a.remove();
+
+ setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+</script>
 </body>
 </html>
