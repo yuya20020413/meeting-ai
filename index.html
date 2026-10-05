@@ -2,11 +2,14 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="viewport"
+ content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+
 <title>Meeting AI</title>
 
 <style>
+
 :root{
  --gap:6px;
  --bg:#0b0f14;
@@ -14,15 +17,13 @@
  --line:#293342;
  --text:#f3f6fa;
  --muted:#aeb8c6;
- --accent:#78a9ff;
+ --blue:#78a9ff;
  --green:#65d18a;
  --red:#ff8585;
  --yellow:#ffd36a;
 }
 
-*{
- box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 html,body{
  margin:0;
@@ -42,8 +43,9 @@ html,body{
  padding:var(--gap);
 }
 
+
 /* =========================
-   TOP BAR
+ HEADER
 ========================= */
 
 header{
@@ -58,13 +60,12 @@ header{
 }
 
 header strong{
- font-size:15px;
+ font-size:14px;
  white-space:nowrap;
 }
 
 input{
- width:110px;
- min-width:70px;
+ width:100px;
  border:1px solid var(--line);
  background:#0e141c;
  color:white;
@@ -79,10 +80,10 @@ input{
  align-items:center;
  border:1px solid var(--line);
  border-radius:8px;
- padding:0 8px;
+ padding:0 7px;
  background:#0e141c;
  white-space:nowrap;
- font-size:12px;
+ font-size:11px;
 }
 
 #timer{
@@ -97,27 +98,26 @@ input{
 
 #nextSpeak{
  flex:1;
- min-width:150px;
- max-width:430px;
+ min-width:120px;
+ max-width:330px;
  display:block;
- padding:4px 9px;
+ padding:4px 8px;
  cursor:pointer;
 }
 
-.small{
+#nextSpeak .small{
  font-size:9px;
  color:var(--muted);
- line-height:1;
 }
 
 #nextSpeakText{
- font-size:14px;
- color:#8fbdff;
+ margin-top:2px;
+ font-size:13px;
  font-weight:750;
+ color:#8fbdff;
  overflow:hidden;
- text-overflow:ellipsis;
  white-space:nowrap;
- margin-top:3px;
+ text-overflow:ellipsis;
 }
 
 button{
@@ -125,22 +125,15 @@ button{
  background:#202a37;
  color:white;
  border-radius:8px;
- padding:6px 9px;
- font-size:12px;
+ padding:6px 8px;
+ font-size:11px;
  white-space:nowrap;
 }
 
-.primary{
- background:#245db8;
-}
-
-.stop{
- background:#713333;
-}
-
-.save{
- background:#255c46;
-}
+.primary{background:#245db8}
+.stop{background:#713333}
+.camera{background:#256b4b}
+.save{background:#594c27}
 
 button:disabled{
  opacity:.45;
@@ -148,7 +141,7 @@ button:disabled{
 
 
 /* =========================
-   MAIN LAYOUT
+ MAIN
 ========================= */
 
 main{
@@ -201,7 +194,7 @@ main{
 
 
 /* =========================
-   ENGLISH
+ TRANSCRIPT
 ========================= */
 
 #raw{
@@ -209,11 +202,6 @@ main{
  font-size:16px;
  line-height:1.35;
 }
-
-
-/* =========================
-   JAPANESE
-========================= */
 
 #translation{
  font-size:18px;
@@ -226,12 +214,8 @@ main{
 
 
 /* =========================
-   SUMMARY
+ SUMMARY
 ========================= */
-
-#summary{
- padding:6px 9px;
-}
 
 .topic{
  padding:4px 0 5px;
@@ -252,7 +236,7 @@ main{
 
 
 /* =========================
-   PREDICTION
+ PREDICTION
 ========================= */
 
 #prediction{
@@ -260,10 +244,10 @@ main{
 }
 
 .prediction-card{
- margin:0 0 3px;
- padding:4px 7px;
- border-left:3px solid var(--accent);
+ margin:0 0 4px;
+ padding:5px 7px;
  background:#101720;
+ border-left:3px solid var(--blue);
  border-radius:4px;
 }
 
@@ -281,9 +265,9 @@ main{
 
 .pred-top{
  display:flex;
- gap:5px;
  align-items:center;
- line-height:1.08;
+ gap:5px;
+ line-height:1.1;
 }
 
 .number{
@@ -293,32 +277,28 @@ main{
 
 .chance{
  font-size:11px;
- color:var(--muted);
  font-weight:700;
+ color:var(--muted);
 }
 
-.situation{
+.question-jp{
  font-size:13px;
- font-weight:650;
-}
-
-.question{
- margin:1px 0;
- font-size:14px;
- line-height:1.15;
+ font-weight:700;
+ color:white;
 }
 
 .answer{
- margin:1px 0;
+ margin-top:2px;
  font-size:17px;
- line-height:1.15;
+ line-height:1.16;
  font-weight:750;
  color:#c9dcff;
 }
 
-.jp{
+.answer-jp{
+ margin-top:1px;
  font-size:12px;
- line-height:1.12;
+ line-height:1.15;
  color:var(--muted);
 }
 
@@ -328,17 +308,85 @@ main{
 
 
 /* =========================
-   SMALL SCREEN
+ CAMERA WINDOW
 ========================= */
+
+#cameraWindow{
+ position:fixed;
+ right:12px;
+ top:72px;
+
+ width:310px;
+
+ background:#080c11;
+ border:1px solid #46627f;
+ border-radius:10px;
+
+ z-index:100;
+
+ display:none;
+
+ box-shadow:0 5px 30px rgba(0,0,0,.55);
+}
+
+.camera-title{
+ height:30px;
+ display:flex;
+ align-items:center;
+ gap:6px;
+
+ padding:0 8px;
+
+ border-bottom:1px solid var(--line);
+
+ font-size:11px;
+ font-weight:700;
+}
+
+#cameraStatus{
+ margin-left:auto;
+ color:var(--green);
+ font-size:10px;
+}
+
+#cameraVideo{
+ width:100%;
+ display:block;
+ background:black;
+ max-height:180px;
+ object-fit:cover;
+}
+
+#slideInfo{
+ padding:6px 8px;
+ font-size:11px;
+ line-height:1.3;
+ max-height:85px;
+ overflow:auto;
+}
+
+#slideTitle{
+ color:#8fbdff;
+ font-weight:750;
+ margin-bottom:2px;
+}
+
+
+/* hidden canvas */
+
+#captureCanvas{
+ display:none;
+}
+
 
 @media(max-width:1000px){
 
  header strong{
-  font-size:13px;
+  font-size:12px;
  }
 
  input{
-  width:90px;
+  width:75px;
  }
 
  .chip{
@@ -346,20 +394,15 @@ main{
  }
 
  #nextSpeak{
-  max-width:330px;
+  max-width:250px;
  }
 
  button{
-  padding:6px 7px;
+  padding:6px;
  }
 
-}
-
-@media(orientation:portrait){
-
- main{
-  grid-template-columns:1fr;
-  grid-template-rows:1fr 1fr;
+ #cameraWindow{
+  width:270px;
  }
 
 }
@@ -371,11 +414,6 @@ main{
 <body>
 
 <div id="app">
-
-
-<!-- =========================
-     TOP BAR
-========================= -->
 
 <header>
 
@@ -411,7 +449,7 @@ main{
 >
 
 <div class="small">
-⭐ 次の発言（タップでコピー）
+⭐ 次の発言
 </div>
 
 <div id="nextSpeakText">
@@ -419,6 +457,13 @@ main{
 </div>
 
 </div>
+
+<button
+ class="camera"
+ id="cameraBtn"
+>
+📷 資料読取
+</button>
 
 <button
  class="primary"
@@ -439,21 +484,15 @@ main{
  class="save"
  id="finish"
 >
-会議終了・保存
+終了・保存
 </button>
 
 </header>
 
 
-<!-- =========================
-     MAIN
-========================= -->
-
 <main>
 
-
 <div class="left">
-
 
 <section class="panel">
 
@@ -465,11 +504,9 @@ main{
  class="content"
  id="raw"
 >
-
 <span class="muted">
 English transcript...
 </span>
-
 </div>
 
 </section>
@@ -485,21 +522,17 @@ English transcript...
  class="content"
  id="translation"
 >
-
 <span class="muted">
 日本語訳を順番に追加します。
 </span>
-
 </div>
 
 </section>
-
 
 </div>
 
 
 <div class="right">
-
 
 <section class="panel">
 
@@ -511,11 +544,9 @@ English transcript...
  class="content"
  id="summary"
 >
-
 <span class="muted">
 大きな話題ごとに概要を残します。
 </span>
-
 </div>
 
 </section>
@@ -531,28 +562,63 @@ English transcript...
  class="content"
  id="prediction"
 >
-
 <span class="muted">
 会話に合わせて更新します。
 </span>
-
 </div>
 
 </section>
 
-
 </div>
-
 
 </main>
 
 </div>
 
 
+<!-- CAMERA -->
+
+<div id="cameraWindow">
+
+<div class="camera-title">
+
+📷 資料カメラ
+
+<span id="cameraStatus">
+待機
+</span>
+
+</div>
+
+<video
+ id="cameraVideo"
+ autoplay
+ muted
+ playsinline
+></video>
+
+<div id="slideInfo">
+
+<div id="slideTitle">
+資料を待っています
+</div>
+
+<div id="slideDescription">
+PowerPointなどの資料をカメラに映してください。
+</div>
+
+</div>
+
+</div>
+
+
+<canvas id="captureCanvas"></canvas>
+
+
 <script>
 
 /* =========================
-   ELEMENTS
+ ELEMENTS
 ========================= */
 
 const $ =
@@ -597,41 +663,106 @@ const nextSpeakText =
  $("nextSpeakText");
 
 
+/* camera */
+
+const cameraBtn =
+ $("cameraBtn");
+
+const cameraWindow =
+ $("cameraWindow");
+
+const cameraVideo =
+ $("cameraVideo");
+
+const cameraStatus =
+ $("cameraStatus");
+
+const slideTitleEl =
+ $("slideTitle");
+
+const slideDescriptionEl =
+ $("slideDescription");
+
+const captureCanvas =
+ $("captureCanvas");
+
+
 /* =========================
-   VARIABLES
+ VARIABLES
 ========================= */
 
-let recognition = null;
+let recognition =
+ null;
 
-let running = false;
+let running =
+ false;
 
-let transcript = "";
+let transcript =
+ "";
 
-let interimText = "";
+let interimText =
+ "";
 
-let pendingEnglish = [];
+let pendingEnglish =
+ [];
 
-let translating = false;
+let translating =
+ false;
 
-let analyzing = false;
+let analyzing =
+ false;
 
-let analysisTimer = null;
+let analysisTimer =
+ null;
 
-let topicHistory = [];
+let topicHistory =
+ [];
 
-let currentTopicTitle = "";
+let currentTopicTitle =
+ "";
 
-let lastPredictionTranscript = "";
+let lastPredictionTranscript =
+ "";
 
-let meetingStart = null;
+let meetingStart =
+ null;
 
-let timerInterval = null;
+let timerInterval =
+ null;
 
-let translationHistory = [];
+let translationHistory =
+ [];
+
+
+/* camera */
+
+let cameraStream =
+ null;
+
+let cameraRunning =
+ false;
+
+let cameraTimer =
+ null;
+
+let previousFingerprint =
+ null;
+
+let slideAnalyzing =
+ false;
+
+let currentSlide =
+ {
+
+  title:"",
+  description:"",
+  keywords:[]
+
+ };
 
 
 /* =========================
-   API KEY
+ API KEY
 ========================= */
 
 keyEl.value =
@@ -652,7 +783,7 @@ keyEl.onchange =
 
 
 /* =========================
-   HELPERS
+ HELPERS
 ========================= */
 
 function scrollBottom(el){
@@ -673,46 +804,31 @@ function esc(s){
 
  return String(s || "")
 
- .replaceAll(
-  "&",
-  "&amp;"
- )
-
- .replaceAll(
-  "<",
-  "&lt;"
- )
-
- .replaceAll(
-  ">",
-  "&gt;"
- )
-
- .replaceAll(
-  '"',
-  "&quot;"
- )
-
- .replaceAll(
-  "'",
-  "&#039;"
- );
+ .replaceAll("&","&amp;")
+ .replaceAll("<","&lt;")
+ .replaceAll(">","&gt;")
+ .replaceAll('"',"&quot;")
+ .replaceAll("'","&#039;");
 
 }
 
 
-function output(d){
+function extractOutput(data){
 
- if(d.output_text){
-  return d.output_text;
+ if(
+  data.output_text
+ ){
+  return data.output_text;
  }
+
 
  try{
 
-  return d.output
+  return data.output
 
   .flatMap(
-   x => x.content || []
+   x =>
+   x.content || []
   )
 
   .filter(
@@ -722,7 +838,8 @@ function output(d){
   )
 
   .map(
-   x => x.text
+   x =>
+   x.text
   )
 
   .join("");
@@ -737,25 +854,25 @@ function output(d){
 
 
 /* =========================
-   OPENAI
+ OPENAI TEXT
 ========================= */
 
-async function ai(prompt){
+async function callOpenAI(prompt){
 
- const k =
+ const key =
   keyEl.value.trim();
 
 
- if(!k){
+ if(!key){
 
-  throw Error(
+  throw new Error(
    "APIキーを入力してください"
   );
 
  }
 
 
- const r =
+ const response =
  await fetch(
 
   "https://api.openai.com/v1/responses",
@@ -770,7 +887,7 @@ async function ai(prompt){
     "application/json",
 
     "Authorization":
-    "Bearer " + k
+    "Bearer " + key
 
    },
 
@@ -790,27 +907,193 @@ async function ai(prompt){
  );
 
 
- const d =
-  await r.json();
+ const data =
+  await response.json();
 
 
- if(!r.ok){
+ if(!response.ok){
 
-  throw Error(
-   d?.error?.message ||
+  throw new Error(
+   data?.error?.message ||
    "OpenAI API error"
   );
 
  }
 
 
- return output(d);
+ return extractOutput(
+  data
+ );
 
 }
 
 
 /* =========================
-   TIMER
+ OPENAI IMAGE
+========================= */
+
+async function analyzeSlideImage(
+ dataUrl
+){
+
+ const key =
+  keyEl.value.trim();
+
+
+ if(!key){
+
+  throw new Error(
+   "APIキーを入力してください"
+  );
+
+ }
+
+
+ const response =
+ await fetch(
+
+  "https://api.openai.com/v1/responses",
+
+  {
+
+   method:"POST",
+
+   headers:{
+
+    "Content-Type":
+    "application/json",
+
+    "Authorization":
+    "Bearer " + key
+
+   },
+
+   body:
+   JSON.stringify({
+
+    model:
+    "gpt-5-mini",
+
+    input:[
+     {
+
+      role:"user",
+
+      content:[
+       {
+
+        type:"input_text",
+
+        text:
+`
+You are looking at a presentation slide
+during a technical meeting.
+
+Read the slide carefully.
+
+The meeting may involve:
+
+metallography
+cutting
+mounting
+grinding
+polishing
+etching
+microscopy
+materials characterization
+customer samples
+test results
+Japan
+Japanese customers
+
+Return ONLY valid JSON.
+
+{
+ "title":"Short slide title",
+ "description":"日本語で1～2文の簡潔な内容",
+ "keywords":[
+  "important keyword"
+ ]
+}
+
+Do not invent information.
+
+If text is difficult to read,
+only report what can be understood.
+`
+
+       },
+
+       {
+
+        type:"input_image",
+
+        image_url:
+         dataUrl
+
+       }
+
+      ]
+
+     }
+
+    ]
+
+   })
+
+  }
+
+ );
+
+
+ const data =
+  await response.json();
+
+
+ if(!response.ok){
+
+  throw new Error(
+   data?.error?.message ||
+   "画像解析エラー"
+  );
+
+ }
+
+
+ const text =
+  extractOutput(
+   data
+  );
+
+
+ return JSON.parse(
+
+  text
+
+  .replace(
+   /^```json/i,
+   ""
+  )
+
+  .replace(
+   /^```/,
+   ""
+  )
+
+  .replace(
+   /```$/,
+   ""
+  )
+
+  .trim()
+
+ );
+
+}
+
+
+/* =========================
+ TIMER
 ========================= */
 
 function startTimer(){
@@ -832,7 +1115,7 @@ function startTimer(){
  setInterval(
   ()=>{
 
-   let s =
+   const seconds =
     Math.floor(
      (
       Date.now() -
@@ -844,7 +1127,7 @@ function startTimer(){
    const h =
     String(
      Math.floor(
-      s / 3600
+      seconds / 3600
      )
     )
     .padStart(
@@ -856,7 +1139,7 @@ function startTimer(){
    const m =
     String(
      Math.floor(
-      (s % 3600) / 60
+      (seconds % 3600) / 60
      )
     )
     .padStart(
@@ -865,9 +1148,9 @@ function startTimer(){
     );
 
 
-   const sec =
+   const s =
     String(
-     s % 60
+     seconds % 60
     )
     .padStart(
      2,
@@ -876,7 +1159,7 @@ function startTimer(){
 
 
    timerEl.textContent =
-    `⏱ ${h}:${m}:${sec}`;
+    `⏱ ${h}:${m}:${s}`;
 
   },
 
@@ -888,19 +1171,497 @@ function startTimer(){
 
 
 /* =========================
-   QUESTION DETECTION
+ CAMERA START / STOP
 ========================= */
 
-function detectQuestion(t){
+async function startCamera(){
 
- const x =
-  (t || "")
-  .toLowerCase();
+ if(cameraRunning){
+
+  stopCamera();
+
+  return;
+
+ }
+
+
+ try{
+
+  cameraStream =
+   await navigator
+   .mediaDevices
+   .getUserMedia({
+
+    video:{
+
+     facingMode:{
+      ideal:"environment"
+     },
+
+     width:{
+      ideal:1280
+     },
+
+     height:{
+      ideal:720
+     }
+
+    },
+
+    audio:false
+
+   });
+
+
+  cameraVideo.srcObject =
+   cameraStream;
+
+
+  await cameraVideo.play();
+
+
+  cameraRunning =
+   true;
+
+
+  cameraWindow.style.display =
+   "block";
+
+
+  cameraBtn.textContent =
+   "📷 資料読取 ON";
+
+
+  cameraStatus.textContent =
+   "監視中";
+
+
+  /*
+   最初は必ず解析
+  */
+
+  previousFingerprint =
+   null;
+
+
+  setTimeout(
+   checkSlide,
+   1200
+  );
+
+
+  cameraTimer =
+   setInterval(
+    checkSlide,
+    3000
+   );
+
+
+ }catch(e){
+
+  console.error(e);
+
+
+  alert(
+   "カメラを開始できませんでした。\nSafariのカメラ許可を確認してください。"
+  );
+
+ }
+
+}
+
+
+function stopCamera(){
+
+ cameraRunning =
+  false;
+
+
+ clearInterval(
+  cameraTimer
+ );
+
+
+ cameraTimer =
+  null;
+
+
+ if(cameraStream){
+
+  cameraStream
+  .getTracks()
+  .forEach(
+   track =>
+   track.stop()
+  );
+
+ }
+
+
+ cameraStream =
+  null;
+
+
+ cameraVideo.srcObject =
+  null;
+
+
+ cameraWindow.style.display =
+  "none";
+
+
+ cameraBtn.textContent =
+  "📷 資料読取";
+
+}
+
+
+/* =========================
+ CAPTURE
+========================= */
+
+function captureFrame(){
+
+ if(
+  !cameraVideo.videoWidth ||
+  !cameraVideo.videoHeight
+ ){
+  return null;
+ }
+
+
+ /*
+  AIへ巨大画像を送らないよう
+  最大幅960px程度へ縮小
+ */
+
+ const maxWidth =
+  960;
+
+
+ const scale =
+  Math.min(
+   1,
+   maxWidth /
+   cameraVideo.videoWidth
+  );
+
+
+ captureCanvas.width =
+  Math.round(
+   cameraVideo.videoWidth *
+   scale
+  );
+
+
+ captureCanvas.height =
+  Math.round(
+   cameraVideo.videoHeight *
+   scale
+  );
+
+
+ const ctx =
+  captureCanvas.getContext(
+   "2d"
+  );
+
+
+ ctx.drawImage(
+  cameraVideo,
+  0,
+  0,
+  captureCanvas.width,
+  captureCanvas.height
+ );
+
+
+ return captureCanvas
+ .toDataURL(
+  "image/jpeg",
+  0.72
+ );
+
+}
+
+
+/* =========================
+ LOCAL SLIDE CHANGE CHECK
+========================= */
+
+function createFingerprint(){
+
+ if(
+  !cameraVideo.videoWidth
+ ){
+  return null;
+ }
+
+
+ const w =
+  32;
+
+ const h =
+  18;
+
+
+ const temp =
+  document.createElement(
+   "canvas"
+  );
+
+
+ temp.width =
+  w;
+
+ temp.height =
+  h;
+
+
+ const ctx =
+  temp.getContext(
+   "2d",
+   {
+    willReadFrequently:true
+   }
+  );
+
+
+ ctx.drawImage(
+  cameraVideo,
+  0,
+  0,
+  w,
+  h
+ );
+
+
+ const data =
+  ctx.getImageData(
+   0,
+   0,
+   w,
+   h
+  ).data;
+
+
+ const result =
+  [];
+
+
+ for(
+  let i=0;
+  i<data.length;
+  i+=4
+ ){
+
+  const gray =
+   (
+    data[i] +
+    data[i+1] +
+    data[i+2]
+   ) / 3;
+
+
+  result.push(
+   gray
+  );
+
+ }
+
+
+ return result;
+
+}
+
+
+function fingerprintDifference(
+ a,
+ b
+){
+
+ if(
+  !a ||
+  !b ||
+  a.length !== b.length
+ ){
+  return 999;
+ }
+
+
+ let total =
+  0;
+
+
+ for(
+  let i=0;
+  i<a.length;
+  i++
+ ){
+
+  total +=
+   Math.abs(
+    a[i] -
+    b[i]
+   );
+
+ }
+
+
+ return total /
+  a.length;
+
+}
+
+
+/* =========================
+ CHECK SLIDE
+========================= */
+
+async function checkSlide(){
+
+ if(
+  !cameraRunning ||
+  slideAnalyzing
+ ){
+  return;
+ }
+
+
+ const fingerprint =
+  createFingerprint();
+
+
+ if(!fingerprint){
+  return;
+ }
+
+
+ const difference =
+  fingerprintDifference(
+   previousFingerprint,
+   fingerprint
+  );
+
+
+ /*
+  初回 または
+  映像の変化が一定以上の時だけ解析
+ */
+
+ if(
+  previousFingerprint &&
+  difference < 12
+ ){
+  return;
+ }
+
+
+ previousFingerprint =
+  fingerprint;
+
+
+ const image =
+  captureFrame();
+
+
+ if(!image){
+  return;
+ }
+
+
+ slideAnalyzing =
+  true;
+
+
+ cameraStatus.textContent =
+  "AI読取中…";
+
+
+ try{
+
+  const result =
+   await analyzeSlideImage(
+    image
+   );
+
+
+  currentSlide =
+   {
+
+    title:
+     result.title || "",
+
+    description:
+     result.description || "",
+
+    keywords:
+     Array.isArray(
+      result.keywords
+     )
+     ? result.keywords
+     : []
+
+   };
+
+
+  slideTitleEl.textContent =
+   currentSlide.title ||
+   "資料";
+
+
+  slideDescriptionEl.textContent =
+   currentSlide.description ||
+   "内容を読み取りました。";
+
+
+  cameraStatus.textContent =
+   "読取済";
+
+
+  /*
+   スライドが変わったら
+   会議AIも再解析
+  */
+
+  lastPredictionTranscript =
+   "";
+
+
+  scheduleAnalysis();
+
+
+ }catch(e){
+
+  console.error(e);
+
+
+  cameraStatus.textContent =
+   "読取エラー";
+
+ }finally{
+
+  slideAnalyzing =
+   false;
+
+ }
+
+}
+
+
+/* =========================
+ QUESTION DETECTION
+========================= */
+
+function detectQuestion(text){
+
+ const t =
+  text.toLowerCase();
 
 
  const detected =
-  /\?|\b(what|when|where|who|why|how|can you|could you|would you|do you|did you|are you|is there|have you|will you)\b/
-  .test(x);
+  /\?|\b(what|when|where|who|why|how|can you|could you|would you|do you|did you|are you|have you|will you)\b/
+  .test(t);
 
 
  if(!detected){
@@ -912,20 +1673,10 @@ function detectQuestion(t){
   "flex";
 
 
- if(
-  /japan|japanese/
-  .test(x)
- ){
-
-  questionAlert.textContent =
-   "❓ Japan QUESTION";
-
- }else{
-
-  questionAlert.textContent =
-   "❓ QUESTION";
-
- }
+ questionAlert.textContent =
+  /japan|japanese/.test(t)
+  ? "❓ Japan QUESTION"
+  : "❓ QUESTION";
 
 
  clearTimeout(
@@ -934,23 +1685,23 @@ function detectQuestion(t){
 
 
  detectQuestion.timer =
- setTimeout(
-  ()=>{
+  setTimeout(
+   ()=>{
 
-   questionAlert.style.display =
-    "none";
+    questionAlert.style.display =
+     "none";
 
-  },
+   },
 
-  8000
+   8000
 
- );
+  );
 
 }
 
 
 /* =========================
-   SPEECH RECOGNITION
+ SPEECH RECOGNITION
 ========================= */
 
 function initRecognition(){
@@ -1006,8 +1757,7 @@ function initRecognition(){
 
 
     if(
-     e.results[i]
-     .isFinal
+     e.results[i].isFinal
     ){
 
      newFinal +=
@@ -1095,7 +1845,7 @@ function initRecognition(){
 
 
 /* =========================
-   TRANSLATION
+ TRANSLATION
 ========================= */
 
 async function translatePending(){
@@ -1112,7 +1862,7 @@ async function translatePending(){
   true;
 
 
- const en =
+ const english =
   pendingEnglish
   .splice(
    0,
@@ -1123,34 +1873,20 @@ async function translatePending(){
 
  try{
 
-  const jp =
+  const japanese =
    (
-    await ai(
+    await callOpenAI(
 `
-Translate this spoken English into natural Japanese.
+Translate the following spoken English
+directly into natural Japanese.
 
 Do not summarize.
 Do not explain.
-
-Keep technical terminology accurate.
-
-The context may involve:
-metallography,
-cutting,
-mounting,
-grinding,
-polishing,
-etching,
-microscopy,
-materials characterization,
-customer samples,
-technical testing.
+Do not add information.
 
 Return ONLY Japanese.
 
-English:
-
-${en}
+${english}
 `
     )
    )
@@ -1158,7 +1894,7 @@ ${en}
 
 
   translationHistory.push(
-   jp
+   japanese
   );
 
 
@@ -1186,7 +1922,7 @@ ${en}
 
 
   div.textContent =
-   jp;
+   japanese;
 
 
   translationEl
@@ -1224,7 +1960,7 @@ ${en}
 
 
 /* =========================
-   ANALYSIS TIMER
+ ANALYSIS
 ========================= */
 
 function scheduleAnalysis(){
@@ -1236,18 +1972,14 @@ function scheduleAnalysis(){
 
  analysisTimer =
   setTimeout(
-   updateAI,
+   updateMeetingAI,
    1200
   );
 
 }
 
 
-/* =========================
-   MEETING AI
-========================= */
-
-async function updateAI(){
+async function updateMeetingAI(){
 
  if(analyzing){
   return;
@@ -1258,8 +1990,12 @@ async function updateAI(){
   transcript.trim();
 
 
+ if(!current){
+  return;
+ }
+
+
  if(
-  !current ||
   current ===
   lastPredictionTranscript
  ){
@@ -1277,7 +2013,7 @@ async function updateAI(){
   );
 
 
- const existing =
+ const existingTopics =
   topicHistory
 
   .map(
@@ -1289,93 +2025,138 @@ async function updateAI(){
 
 
  const first =
-  !topicHistory.length;
+  topicHistory.length === 0;
+
+
+ /*
+  ★ カメラで読んだ資料情報
+ */
+
+ const slideContext =
+`
+CURRENT PRESENTATION SLIDE
+
+Title:
+${currentSlide.title || "Unknown"}
+
+Description:
+${currentSlide.description || "Unknown"}
+
+Keywords:
+${currentSlide.keywords.join(", ") || "Unknown"}
+`;
 
 
  const prompt =
 `
 You are a real-time meeting assistant.
 
-The user is a Japanese application engineer working with
-metallographic sample preparation and materials characterization.
+The user is a Japanese application engineer.
 
-Return ONLY valid JSON.
+Use BOTH:
+
+1. the spoken meeting transcript
+2. the currently visible presentation slide
+
+to understand the meeting context.
 
 
-TASK 1:
+${slideContext}
+
+
+------------------------------
 MEETING OVERVIEW
+------------------------------
 
-The meeting overview is a presentation agenda,
-not a running summary.
+The overview should look like
+a short presentation agenda.
 
 ${first
  ? "You MUST create the first meaningful topic."
- : "Create a new topic only if the major subject clearly changes."
+ : "Create a new topic only when the major subject clearly changes."
 }
 
 Existing topics:
 
-${existing || "None"}
+${existingTopics || "None"}
 
 Current topic:
 
 ${currentTopicTitle || "None"}
 
 
-TASK 2:
+------------------------------
 SPEAKING PREDICTIONS
+------------------------------
 
-Predict up to 5 things the engineer may need to say NEXT.
+Predict up to 5 things
+the engineer may need to say NEXT.
+
+Use the slide information
+to improve the prediction.
 
 Prioritize:
 
-1. Direct questions
-2. Japan or Japanese customers
-3. Test results
-4. Sample preparation conditions
-5. Technical opinions
-6. Useful voluntary comments
-
-English answers must be:
-
-- short
-- easy to pronounce
-- natural
-- immediately usable
-
-Never invent facts.
-
-If information is unknown,
-use safe answers such as:
-
-I need to check the details.
-
-We have not confirmed that yet.
-
-I will check and share the information.
+1 direct questions
+2 Japan / Japanese customers
+3 slide results
+4 test results
+5 sample preparation conditions
+6 technical opinions
 
 
-Return:
+IMPORTANT:
+
+question_jp must be the DIRECT Japanese translation
+of the likely question.
+
+Do NOT describe the situation.
+
+Example:
+
+Correct:
+この結果についてどう思いますか？
+
+Wrong:
+結果に対する意見を求められる
+
+
+answer_short must be:
+
+short
+easy English
+natural
+immediately usable
+
+
+answer_jp must be a DIRECT Japanese translation
+of answer_short.
+
+Do not add explanations.
+
+Do not invent facts.
+
+
+Return ONLY valid JSON:
 
 {
  "topic":{
-   "changed":true,
-   "title":"Short title",
-   "description":"Short Japanese description"
+  "changed":true,
+  "title":"Short title",
+  "description":"Short Japanese description"
  },
  "predictions":[
-   {
-     "chance":"high",
-     "situation":"短い日本語",
-     "question":"Likely English question",
-     "answer_short":"Simple English answer",
-     "answer_jp":"短い日本語訳"
-   }
+  {
+   "chance":"high",
+   "question_jp":"この結果についてどう思いますか？",
+   "answer_short":"The result looks good.",
+   "answer_jp":"結果は良さそうです。"
+  }
  ]
 }
 
 
-Transcript:
+MEETING TRANSCRIPT:
 
 ${recent}
 `;
@@ -1383,14 +2164,14 @@ ${recent}
 
  try{
 
-  const resultText =
-   await ai(
+  const output =
+   await callOpenAI(
     prompt
    );
 
 
   const cleaned =
-   resultText
+   output
 
    .replace(
     /^```json/i,
@@ -1439,12 +2220,9 @@ ${recent}
    );
 
 
-   const best =
-    result.predictions[0];
-
-
    nextSpeakText.textContent =
-    best?.answer_short ||
+    result.predictions[0]
+    ?.answer_short ||
     "—";
 
   }
@@ -1479,16 +2257,17 @@ ${recent}
 
 
 /* =========================
-   TOPIC
+ TOPICS
 ========================= */
 
 function handleTopic(
- t,
+ topic,
  first
 ){
 
  if(
-  !t?.title
+  !topic ||
+  !topic.title
  ){
   return;
  }
@@ -1496,38 +2275,39 @@ function handleTopic(
 
  const title =
   String(
-   t.title
+   topic.title
   )
   .trim();
 
 
  const description =
   String(
-   t.description || ""
+   topic.description || ""
   )
   .trim();
 
 
- const same =
-  currentTopicTitle &&
-  title.toLowerCase() ===
-  currentTopicTitle.toLowerCase();
-
-
  const duplicate =
   topicHistory.some(
-   x =>
-   x.title.toLowerCase() ===
+   t =>
+   t.title.toLowerCase() ===
    title.toLowerCase()
   );
+
+
+ const same =
+  currentTopicTitle &&
+  currentTopicTitle
+  .toLowerCase() ===
+  title.toLowerCase();
 
 
  if(
   first ||
   (
-   t.changed &&
-   !same &&
-   !duplicate
+   topic.changed &&
+   !duplicate &&
+   !same
   )
  ){
 
@@ -1553,10 +2333,6 @@ function handleTopic(
 
 }
 
-
-/* =========================
-   TOPIC DISPLAY
-========================= */
 
 function renderTopics(){
 
@@ -1591,7 +2367,7 @@ ${esc(t.description)}
 
 
 /* =========================
-   PREDICTIONS
+ 3-LINE PREDICTION
 ========================= */
 
 function renderPredictions(
@@ -1643,22 +2419,17 @@ ${i+1}
 可能性 ${label}
 </span>
 
-<span class="situation">
-${esc(p.situation)}
+<span class="question-jp">
+${esc(p.question_jp)}
 </span>
 
-</div>
-
-<div class="question">
-<b>Q:</b>
-${esc(p.question)}
 </div>
 
 <div class="answer">
 ${esc(p.answer_short)}
 </div>
 
-<div class="jp">
+<div class="answer-jp">
 ${esc(p.answer_jp)}
 </div>
 
@@ -1672,11 +2443,6 @@ ${esc(p.answer_jp)}
   .join("");
 
 
- /*
- 発言予測は最重要候補が
- 一番上に見えるようにする
- */
-
  predictionEl.scrollTop =
   0;
 
@@ -1684,15 +2450,14 @@ ${esc(p.answer_jp)}
 
 
 /* =========================
-   COPY NEXT ANSWER
+ COPY NEXT ANSWER
 ========================= */
 
 nextSpeak.onclick =
  async ()=>{
 
   const text =
-   nextSpeakText
-   .textContent;
+   nextSpeakText.textContent;
 
 
   if(
@@ -1738,8 +2503,12 @@ nextSpeak.onclick =
 
 
 /* =========================
-   START
+ BUTTONS
 ========================= */
+
+cameraBtn.onclick =
+ startCamera;
+
 
 startBtn.onclick =
  ()=>{
@@ -1803,10 +2572,6 @@ startBtn.onclick =
  };
 
 
-/* =========================
-   STOP
-========================= */
-
 stopBtn.onclick =
  ()=>{
 
@@ -1851,7 +2616,7 @@ stopBtn.onclick =
    transcript.trim()
   ){
 
-   updateAI();
+   updateMeetingAI();
 
   }
 
@@ -1859,7 +2624,7 @@ stopBtn.onclick =
 
 
 /* =========================
-   DOWNLOAD TXT
+ DOWNLOAD
 ========================= */
 
 function downloadText(
@@ -1929,7 +2694,7 @@ function downloadText(
 
 
 /* =========================
-   FINISH + SAVE
+ FINISH
 ========================= */
 
 finishBtn.onclick =
@@ -1960,6 +2725,9 @@ finishBtn.onclick =
   clearInterval(
    timerInterval
   );
+
+
+  stopCamera();
 
 
   if(recognition){
@@ -1994,13 +2762,15 @@ finishBtn.onclick =
     .join("\n");
 
 
-   const finalPrompt =
+   const report =
+    (
+     await callOpenAI(
 `
 Create a concise Japanese final meeting report.
 
 Do not invent facts.
 
-Use exactly these headings:
+Use these headings:
 
 【会議まとめ】
 
@@ -2010,35 +2780,24 @@ Use exactly these headings:
 
 【確認・未解決事項】
 
+Use the transcript and presentation context.
 
-For Action Items:
+Presentation:
 
-Include owner only if actually stated.
+${currentSlide.title}
 
-Include deadline only if actually stated.
-
-If the information is unknown,
-write 不明.
-
-If there are no relevant items,
-write 特になし.
+${currentSlide.description}
 
 
-Known meeting topics:
+Meeting topics:
 
 ${topics || "なし"}
 
 
-Full transcript:
+Transcript:
 
 ${transcript}
-`;
-
-
-   const report =
-    (
-     await ai(
-      finalPrompt
+`
      )
     )
     .trim();
@@ -2049,39 +2808,20 @@ ${transcript}
 
 
    const stamp =
-    `${now.getFullYear()}-${
-     String(
-      now.getMonth()+1
-     )
-     .padStart(
-      2,
-      "0"
-     )
-    }-${
-     String(
-      now.getDate()
-     )
-     .padStart(
-      2,
-      "0"
-     )
-    }_${
-     String(
-      now.getHours()
-     )
-     .padStart(
-      2,
-      "0"
-     )
-    }-${
-     String(
-      now.getMinutes()
-     )
-     .padStart(
-      2,
-      "0"
-     )
-    }`;
+    now
+    .toISOString()
+    .slice(
+     0,
+     16
+    )
+    .replace(
+     "T",
+     "_"
+    )
+    .replace(
+     ":",
+     "-"
+    );
 
 
    const text =
@@ -2099,10 +2839,24 @@ ${report}
 
 
 ==============================
-会議概要履歴
+会議概要
 ==============================
 
 ${topics || "なし"}
+
+
+==============================
+最後に認識した資料
+==============================
+
+タイトル:
+${currentSlide.title || "なし"}
+
+内容:
+${currentSlide.description || "なし"}
+
+キーワード:
+${currentSlide.keywords.join(", ") || "なし"}
 
 
 ==============================
@@ -2152,7 +2906,7 @@ ${translationHistory.join("\n") || "なし"}
 
 
    finishBtn.textContent =
-    "会議終了・保存";
+    "終了・保存";
 
 
    startBtn.disabled =
