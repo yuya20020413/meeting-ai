@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Meeting AI - NotebookLM Video Practice</title>
+<style>
+:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}*{box-sizing:border-box}body{margin:0;background:#0b0e14;color:#eef2ff}header{position:sticky;top:0;z-index:5;background:#111725;padding:9px 11px;display:flex;gap:7px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #293247}button,.file{background:#202a3c;color:#fff;border:1px solid #3b4863;border-radius:9px;padding:8px 11px;font-weight:700}.file input{display:none}.grow{flex:1}.status{font-size:12px;color:#aab7cf}.grid{display:grid;grid-template-columns:58% 42%;height:calc(100vh - 62px)}.left,.right{padding:9px;overflow:auto}.left{border-right:1px solid #293247}.card{background:#121927;border:1px solid #293247;border-radius:11px;padding:9px;margin-bottom:9px}.title{font-weight:800;margin-bottom:6px}.media{background:#000;min-height:250px;display:grid;place-items:center;border-radius:9px;overflow:hidden}video{width:100%;max-height:44vh;background:#000}.controls{display:flex;gap:6px;align-items:center;margin-top:7px;flex-wrap:wrap}.text{white-space:pre-wrap;line-height:1.45}.muted{color:#91a0ba}.jp{color:#d8e4ff}.item{padding:7px 0;border-bottom:1px solid #273147}.item:last-child{border:0}.q{font-weight:750}.answer{margin-top:4px;color:#b8f1cf}textarea{width:100%;height:120px;background:#0c111b;color:#eef2ff;border:1px solid #34415a;border-radius:8px;padding:8px;font-size:13px}.live{color:#65d18a}.warn{color:#ffcf70}@media(max-width:800px){.grid{grid-template-columns:1fr;height:auto}.left{border-right:0}.media{min-height:190px}}
+</style></head>
+<body>
+<header><b>🎬 Meeting AI / NotebookLM動画練習</b><span class="grow"></span>
+<label class="file">🎬 元動画<input id="videoFile" type="file" accept="video/*"></label>
+<label class="file">📄 TXT<input id="textFile" type="file" accept=".txt,text/plain"></label>
+<button id="pasteBtn">📋 原文貼付</button><button id="keyBtn">🔑 API Key</button>
+<span id="status" class="status">動画＋NotebookLM英語原文を読み込んでください</span></header>
+
+<div class="grid"><main class="left">
+<div class="card"><div class="title">元動画（端末内だけで再生）</div><div class="media"><video id="video" controls playsinline></video></div>
+<div class="controls"><button data-skip="-10">↩︎10秒</button><button id="playBtn">▶︎ / ⏸</button><button data-skip="10">10秒↪︎</button>
+<select id="rate"><option>.75</option><option selected>1</option><option>1.25</option><option>1.5</option></select><span id="clock" class="muted">00:00 / 00:00</span></div></div>
+
+<div class="card"><div class="title">English <span id="sync" class="muted">（NotebookLM原文）</span></div><div id="en" class="text muted">原文を読み込むと表示します。</div></div>
+<div class="card"><div class="title">日本語</div><div id="jp" class="text jp muted">再生位置に合わせて翻訳します。</div></div>
+</main>
+
+<aside class="right">
+<div class="card"><div class="title">NotebookLM 英語原文</div><textarea id="source" placeholder="NotebookLMで作った英語原文をここに貼り付けてもOKです。タイムスタンプ不要。"></textarea>
+<div class="controls"><button id="prepareBtn">✨ 練習データ作成</button><span id="sourceInfo" class="muted">未読込</span></div></div>
+<div class="card"><div class="title">現在の話題</div><div id="topic" class="text muted">—</div></div>
+<div class="card"><div class="title">🔴 質問予測 / 🟢 こちらから質問</div><div id="ai" class="text muted">再生済みの範囲だけを使います。</div></div>
+<div class="card"><div class="title">同期方式</div><div class="text muted">NotebookLM原文にはタイムスタンプがないため、まず文章を動画の総時間に沿って仮配置します。動画再生中は、端末が対応していればマイクで聞こえた英語を手掛かりに原文内の現在位置を補正します。未来の原文は質問予測AIへ渡しません。</div></div>
+</aside></div>
+
+<script>
+const $=id=>document.getElementById(id),video=$('video'),statusEl=$('status');
+let units=[],prepared=false,lastBucket=-1,rec=null,lastMatched=-1;
+function key(){return localStorage.getItem('meeting_ai_key')||''}
+function setStatus(s){statusEl.textContent=s}
+function fmt(s){s=Math.max(0,Math.floor(s||0));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+$('keyBtn').onclick=()=>{const v=prompt('OpenAI API Keyを入力してください。端末内に保存します。',key()?'（保存済み）':'');if(v&&v.startsWith('sk-')){localStorage.setItem('meeting_ai_key',v.trim());setStatus('API Keyを保存しました')}};
+$('videoFile').onchange=e=>{const f=e.target.files[0];if(!f)return;video.src=URL.createObjectURL(f);setStatus('動画を読み込みました。NotebookLM原文を追加してください。')};
+$('textFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;const t=await f.text();$('source').value=t;$('sourceInfo').textContent=`${f.name} / ${t.length.toLocaleString()}文字`;setStatus('NotebookLM原文を読み込みました。練習データ作成を押してください。')};
+$('pasteBtn').onclick=async()=>{try{const t=await navigator.clipboard.readText();if(t){$('source').value=t;$('sourceInfo').textContent=`貼付 / ${t.length.toLocaleString()}文字`;setStatus('原文を貼り付けました。')}}catch(e){$('source').focus();setStatus('下の原文欄に貼り付けてください。')}};
+$('playBtn').onclick=()=>video.paused?video.play():video.pause();
+document.querySelectorAll('[data-skip]').forEach(b=>b.onclick=()=>video.currentTime=Math.max(0,Math.min(video.duration||0,video.currentTime+Number(b.dataset.skip))));
+$('rate').onchange=e=>video.playbackRate=Number(e.target.value);
+
+function splitText(t){
+ t=t.replace(/\r/g,' ').replace(/\n+/g,' ').replace(/\s+/g,' ').trim();
+ let a=t.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[];
+ let out=[],buf='';
+ for(const x of a){buf+=(buf?' ':'')+x.trim();if(buf.length>180){out.push(buf);buf=''}}
+ if(buf)out.push(buf);return out.filter(Boolean)
+}
+$('prepareBtn').onclick=async()=>{
+ const t=$('source').value.trim();if(!t){alert('NotebookLMの英語原文を貼り付けるかTXTを選んでください');return}
+ if(!video.src){alert('先に元動画を選んでください');return}
+ if(!isFinite(video.duration)||!video.duration){await new Promise(r=>video.addEventListener('loadedmetadata',r,{once:true}))}
+ const arr=splitText(t), totalChars=arr.reduce((a,x)=>a+x.length,0),dur=video.duration||1;let acc=0;
+ units=arr.map((text,i)=>{const start=dur*(acc/totalChars);acc+=text.length;const end=dur*(acc/totalChars);return {i,text,start,end,jp:''}});
+ prepared=true;lastMatched=-1;$('en').classList.remove('muted');$('jp').classList.remove('muted');
+ setStatus(`準備完了：${units.length}ブロック。再生すると必要な範囲だけ翻訳します。`);
+ renderAt(video.currentTime);startRecognizer();
+};
+
+function indexAt(t){if(!units.length)return -1;let i=units.findIndex(x=>t<x.end);return i<0?units.length-1:i}
+async function apiJSON(url,opt){const r=await fetch(url,opt),txt=await r.text();if(!r.ok)throw new Error(txt);return JSON.parse(txt)}
+async function ensureTranslations(idx){
+ if(!key()||idx<0)return;
+ const need=[];for(let i=Math.max(0,idx-5);i<=Math.min(units.length-1,idx+2);i++)if(!units[i].jp)need.push(i);
+ if(!need.length)return;
+ try{
+  const body={model:'gpt-5-mini',input:[{role:'system',content:[{type:'input_text',text:'Translate each English meeting passage into natural concise Japanese. Return JSON only: {"translations":["..."]}. Preserve order and count.'}]},{role:'user',content:[{type:'input_text',text:JSON.stringify(need.map(i=>units[i].text))}]}],text:{format:{type:'json_object'}}};
+  const d=await apiJSON('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:`Bearer ${key()}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  let out='';for(const o of d.output||[])for(const c of o.content||[])if(c.type==='output_text')out+=c.text;
+  const arr=JSON.parse(out).translations||[];need.forEach((n,j)=>units[n].jp=arr[j]||'');renderAt(video.currentTime)
+ }catch(e){console.error(e)}
+}
+function renderAt(t){
+ if(!prepared)return;const idx=lastMatched>=0?lastMatched:indexAt(t);if(idx<0)return;ensureTranslations(idx);
+ const tail=units.slice(Math.max(0,idx-5),idx+1);$('en').textContent=tail.map(x=>x.text).join('\n');
+ $('jp').textContent=tail.map(x=>x.jp||'…').join('\n');
+ $('sync').textContent=lastMatched>=0?'（音声で位置補正中）':'（時間で仮同期）'
+}
+video.ontimeupdate=()=>{$('clock').textContent=`${fmt(video.currentTime)} / ${fmt(video.duration)}`;if(!prepared)return;if(lastMatched<0)renderAt(video.currentTime);const b=Math.floor(video.currentTime/20);if(b!==lastBucket){lastBucket=b;updateAI()}};
+video.onseeked=()=>{lastMatched=-1;renderAt(video.currentTime)};
+
+function words(s){return s.toLowerCase().replace(/[^a-z0-9' ]/g,' ').split(/\s+/).filter(x=>x.length>2)}
+function matchTranscript(s){
+ if(!units.length)return;const w=words(s);if(w.length<3)return;
+ const expected=indexAt(video.currentTime),lo=Math.max(0,expected-20),hi=Math.min(units.length-1,expected+35);let best=-1,score=0;
+ for(let i=lo;i<=hi;i++){const set=new Set(words(units[i].text));let n=0;w.forEach(x=>{if(set.has(x))n++});const sc=n/Math.max(3,w.length);if(sc>score){score=sc;best=i}}
+ if(best>=0&&score>=0.34){lastMatched=best;renderAt(video.currentTime)}
+}
+function startRecognizer(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$('sync').textContent='（時間で仮同期）';return}
+ try{rec=new SR();rec.lang='en-US';rec.continuous=true;rec.interimResults=true;rec.onresult=e=>{let s='';for(let i=e.resultIndex;i<e.results.length;i++)s+=' '+e.results[i][0].transcript;matchTranscript(s)};rec.onend=()=>{if(prepared&&!video.paused)try{rec.start()}catch(e){}};video.addEventListener('play',()=>{try{rec.start()}catch(e){}},{passive:true});video.addEventListener('pause',()=>{try{rec.stop()}catch(e){}},{passive:true})}catch(e){}
+}
+async function updateAI(){
+ if(!prepared||!key())return;const idx=lastMatched>=0?lastMatched:indexAt(video.currentTime);if(idx<0)return;
+ const ctx=units.slice(Math.max(0,idx-10),idx+1).map(x=>x.text).join('\n');if(!ctx)return;
+ try{
+ const prompt=`You are assisting a Japanese application engineer during meeting practice. Use ONLY the transcript already heard below. Do not use or infer future transcript. Never invent experience, customer feedback, test results or plans. Predict one question another participant may ask the user and provide a safe simple English answer. Also suggest one useful question the user can ask. Return JSON only with keys current_topic, incoming:{question_jp,question_en,answer_en,answer_jp}, outgoing:{question_jp,question_en}. Heard transcript:\n${ctx}`;
+ const body={model:'gpt-5-mini',input:prompt,text:{format:{type:'json_object'}}};
+ const d=await apiJSON('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:`Bearer ${key()}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+ let out='';for(const o of d.output||[])for(const c of o.content||[])if(c.type==='output_text')out+=c.text;const j=JSON.parse(out);
+ $('topic').textContent=j.current_topic||'—';const inc=j.incoming||{},og=j.outgoing||{};
+ $('ai').innerHTML=`<div class="item"><div class="q">🔴 ${esc(inc.question_jp||'')}</div><div>${esc(inc.question_en||'')}</div><div class="answer">答え: ${esc(inc.answer_en||'')}</div><div>${esc(inc.answer_jp||'')}</div></div><div class="item"><div class="q">🟢 ${esc(og.question_jp||'')}</div><div>${esc(og.question_en||'')}</div></div>`
+ }catch(e){console.error(e)}
+}
+</script></body></html>
