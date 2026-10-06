@@ -1,0 +1,19 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Meeting AI Camera</title>
+<style>html,body{margin:0;background:#080b10;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;height:100%}.wrap{padding:12px}.title{font-size:20px;font-weight:700;margin-bottom:10px}#status{padding:9px;background:#151c25;border-radius:8px;margin-bottom:10px}video{display:block;width:100%;max-height:65vh;background:#000;border-radius:10px}button{width:100%;margin-top:12px;padding:14px;border:0;border-radius:10px;background:#2377ff;color:#fff;font-size:17px;font-weight:700}.note{font-size:12px;color:#aab4c2;margin-top:10px;line-height:1.4}</style>
+<script src="https://unpkg.com/peerjs@1.3.2/dist/peerjs.min.js"></script></head>
+<body><div class="wrap"><div class="title">📷 Meeting AI Camera</div><div id="status">カメラ開始を押してください</div>
+<video id="cam" autoplay playsinline muted></video><button id="start">📷 カメラ開始・iPadへ接続</button>
+<div class="note">iPad miniでMeeting AIを先に開いてください。接続コードは不要です。</div></div>
+<script>(function(){
+var HOST="meetingai-12c179258f70f4f94c782666",video=document.getElementById("cam"),status=document.getElementById("status"),button=document.getElementById("start"),peer=null,stream=null;
+function say(s){status.innerHTML=s;}
+function connect(){say("カメラを起動しています…");
+if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){say("このSafariではカメラAPIを利用できません");return;}
+navigator.mediaDevices.getUserMedia({video:true,audio:false}).then(function(s){stream=s;video.srcObject=s;try{video.play();}catch(e){}
+say("iPad miniを探しています…");peer=new Peer();
+peer.on("open",function(){var conn=peer.connect(HOST,{reliable:true});conn.on("open",function(){say("● LIVE　iPad miniに接続しました");});conn.on("close",function(){say("接続が切れました");});peer.call(HOST,stream,{metadata:{role:"camera"}});});
+peer.on("error",function(e){say("接続待ちです：" + (e.type||"network"));});
+}).catch(function(e){say("カメラを開始できません：" + (e.message||e.name||e));});}
+button.onclick=connect;})();</script></body></html>
