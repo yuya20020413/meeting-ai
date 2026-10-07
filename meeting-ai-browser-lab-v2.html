@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Meeting AI Browser Lab v2</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b1220;color:#e8eef8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{height:58px;padding:8px 10px;display:flex;gap:8px;align-items:center;background:#111b2e;border-bottom:1px solid #2b3952}
+h1{font-size:16px;margin:0 8px 0 0;white-space:nowrap}button,.file{border:1px solid #3b4d6c;background:#17243a;color:#fff;border-radius:8px;padding:8px 10px;font-weight:700;font-size:13px}
+.file input{display:none}.status{font-size:12px;color:#9db0cb;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+main{height:calc(100vh - 58px);display:grid;grid-template-columns:48% 52%;grid-template-rows:58% 42%;gap:1px;background:#29364b}
+.panel{background:#0e1727;min-height:0;overflow:auto;padding:9px}.video{padding:0;display:flex;flex-direction:column}
+video{width:100%;height:calc(100% - 48px);background:#000;object-fit:contain}.controls{height:48px;padding:6px;display:flex;gap:7px;align-items:center;background:#111b2e}
+.seek{flex:1}.title{font-size:12px;font-weight:800;color:#8fb9ff;margin-bottom:7px}.en{font-size:18px;line-height:1.5;font-weight:650}.jp{font-size:15px;line-height:1.55;color:#d8f5dd;margin-top:10px}
+.card{padding:9px;border:1px solid #2e405e;border-radius:9px;margin-bottom:8px}.red{color:#ff7d7d}.green{color:#7fe0a2}.q{font-weight:800;font-size:15px;margin:4px 0}.small{font-size:12px;color:#9db0cb}.log{font-size:12px;white-space:pre-wrap;color:#aebbd0}
+@media(max-width:700px){header{height:78px;flex-wrap:wrap}main{height:calc(100vh - 78px);grid-template-columns:1fr 1fr;grid-template-rows:38% 37% 25%}.video{grid-column:1/3}.trans{grid-column:1/3}.en{font-size:17px}.jp{font-size:14px}}
+</style>
+</head>
+<body>
+<header><h1>🎬 Meeting AI Browser Lab v2</h1>
+<label class="file">動画<input id="file" type="file" accept="video/*,audio/*"></label>
+<button id="models">翻訳準備</button><button id="start">解析開始</button><span id="status" class="status">APIキー不要・音声認識＋翻訳のみ</span></header>
+<main>
+<section class="panel video"><video id="v" controls playsinline></video><div class="controls"><button id="back">−10秒</button><input id="seek" class="seek" type="range" min="0" max="1000" value="0"><button id="fwd">+10秒</button></div></section>
+<section class="panel trans"><div class="title">English / 日本語</div><div id="en" class="en">動画を選択してください。</div><div id="jp" class="jp"></div></section>
+<section class="panel" style="grid-column:1/3"><div class="title">直近の翻訳</div><div id="log" class="log">音声認識した内容をここに蓄積します。</div></section>
+</main>
+<script type="module">
+import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1';
+env.allowLocalModels=false;
+const $=x=>document.getElementById(x),v=$('v');
+let file=null,audio=null,sr=16000,asr=null,tr=null,running=false,lastChunk=-1,history=[];
+const setStatus=x=>$('status').textContent=x;
+$('file').onchange=e=>{file=e.target.files[0];if(!file)return;v.src=URL.createObjectURL(file);setStatus('動画OK。「AI準備」を押してください')};
+$('back').onclick=()=>v.currentTime=Math.max(0,v.currentTime-10);$('fwd').onclick=()=>v.currentTime=Math.min(v.duration||1,v.currentTime+10);
+v.ontimeupdate=()=>{if(v.duration)$('seek').value=1000*v.currentTime/v.duration};
+$('seek').oninput=()=>{if(v.duration)v.currentTime=$('seek').value/1000*v.duration};
+
+async function loadModels(){
+ try{
+  setStatus('① 音声認識モデル読込中…');
+  asr=await pipeline('automatic-speech-recognition','onnx-community/whisper-tiny.en',{dtype:'q8'});
+  setStatus('② 翻訳モデル読込中…');
+  tr=await pipeline('translation','Xenova/opus-mt-en-jap',{dtype:'q8'});
+  setStatus('翻訳準備完了');
+ }catch(e){setStatus('モデル読込エラー: '+e.message);console.error(e)}
+}
+$('models').onclick=loadModels;
+
+async function decode(){
+ if(audio)return;
+ setStatus('動画の音声を準備中…（長時間動画は時間がかかります）');
+ const buf=await file.arrayBuffer();
+ const ac=new (window.AudioContext||window.webkitAudioContext)();
+ const b=await ac.decodeAudioData(buf.slice(0));
+ const len=Math.ceil(b.duration*sr), out=new Float32Array(len);
+ const step=b.sampleRate/sr, ch=b.numberOfChannels;
+ for(let i=0;i<len;i++){const p=Math.min(b.length-1,Math.floor(i*step));let x=0;for(let c=0;c<ch;c++)x+=b.getChannelData(c)[p];out[i]=x/ch}
+ audio=out; setStatus('音声準備完了');
+}
+function sliceAudio(t0,t1){return audio.slice(Math.max(0,Math.floor(t0*sr)),Math.min(audio.length,Math.floor(t1*sr)))}
+async function translate(text){
+ try{const r=await tr(text,{max_new_tokens:180});return r?.[0]?.translation_text||''}catch(e){return '（翻訳エラー）'}
+}
+
+async function processChunk(n){
+ const end=Math.min((n+1)*20,v.duration||1), start=Math.max(0,end-22);
+ setStatus(`音声認識中 ${fmt(start)}–${fmt(end)}`);
+ const r=await asr(sliceAudio(start,end),{return_timestamps:true,chunk_length_s:20,stride_length_s:2});
+ const text=(r.text||'').trim(); if(!text)return;
+ const jp=await translate(text);
+ $('en').textContent=text;$('jp').textContent=jp;
+ history.push({t:end,en:text,jp}); if(history.length>40)history.shift();
+ if(n%2===0) await advise(history.map(x=>x.en).join(' '));
+ setStatus(`解析中・現在 ${fmt(v.currentTime)}`);
+}
+function fmt(x){x=Math.max(0,Math.floor(x||0));return Math.floor(x/60)+':'+String(x%60).padStart(2,'0')}
+async function loop(){
+ if(!running)return;
+ if(!v.paused&&audio&&asr&&tr){
+  const n=Math.floor(v.currentTime/20);
+  if(n!==lastChunk && v.currentTime>3){lastChunk=n;try{await processChunk(n)}catch(e){setStatus('解析エラー: '+e.message)}}
+ }
+ setTimeout(loop,700);
+}
+$('start').onclick=async()=>{
+ if(!file)return setStatus('先に動画を選択してください');
+ if(!asr||!tr)await loadModels();
+ if(!asr||!tr)return;
+ try{await decode();running=true;lastChunk=-1;setStatus('解析開始。動画を再生してください');loop()}catch(e){setStatus('音声を読み込めません: '+e.message);console.error(e)}
+};
+</script></body></html>
