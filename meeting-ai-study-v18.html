@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Meeting AI Study v18</title>
+<style>
+:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0a0e15;color:#eef4ff}
+button,.file,select{background:#1d293b;color:#fff;border:1px solid #3a4a64;border-radius:8px;padding:7px 9px;font-weight:700}
+button.active{background:#315f9b;border-color:#73a8ee}.file input{display:none}
+header{height:54px;display:flex;gap:6px;align-items:center;padding:6px 8px;background:#101827;border-bottom:1px solid #29364c}
+.grow{flex:1}.status{font-size:11px;color:#aab8cf}.ok{color:#6ee7a0}
+.topic{height:32px;padding:6px 10px;background:#151e2e;border-bottom:1px solid #29364c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+main{height:calc(100vh - 86px);display:grid;grid-template-columns:58% 42%;grid-template-rows:56% 44%}
+.panel{min-width:0;min-height:0;border-right:1px solid #29364c;border-bottom:1px solid #29364c;overflow:hidden}
+.videoPanel{display:flex;flex-direction:column;background:#000}
+video{width:100%;height:100%;object-fit:contain;min-height:0}
+.videoWrap{flex:1;min-height:0;display:grid;place-items:center;overflow:hidden}
+.controls{padding:3px 6px;display:flex;gap:4px;align-items:center;background:#0d1420;overflow-x:auto}.controls button,.controls select{padding:4px 6px;font-size:11px;white-space:nowrap}
+.seek{width:100%;height:18px;accent-color:#66a3ff}.seekrow{padding:2px 8px;background:#0d1420}
+.clock{font-size:12px;color:#aab8cf;min-width:94px}
+.transPanel{padding:6px;background:#0d1420;display:flex;flex-direction:column;grid-column:1/3;grid-row:2}
+.agendaPanel{padding:6px;background:#0d1420;display:flex;flex-direction:column;grid-column:2;grid-row:1}
+.videoPanel{grid-column:1;grid-row:1}
+.transHead{display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:12px}
+.transcript{flex:1;min-height:0;overflow:auto;border:1px solid #28364d;border-radius:8px;background:#101827}
+.line{display:grid;grid-template-columns:64px 1fr 1fr;border-bottom:1px solid #253248;cursor:pointer}
+.line.current{background:#1a2941;box-shadow:inset 4px 0 #ffd54a}.speaker{padding:8px 5px;font-size:12px;font-weight:900}
+.en,.jp{padding:9px;font-size:15px;line-height:1.55}.en{font-size:19px;font-weight:700;letter-spacing:.1px;border-left:1px solid #253248;border-right:1px solid #253248}.jp{color:#d9e5f7;font-size:16px}
+.spoken{color:#ffd54a}.spokenJP{color:#7ee787}.dim{opacity:.56}.hiddenText{filter:blur(7px);user-select:none}.tiny{font-size:11px;color:#9badc7}
+.speakerDot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.agendaHead{display:flex;align-items:center;font-size:12px}.agenda{min-height:0;overflow:auto;border:1px solid #28364d;border-radius:8px;background:#101827}.agendaItem{padding:7px;border-bottom:1px solid #253248;cursor:pointer;font-size:12px;display:grid;grid-template-columns:52px 1fr;gap:5px}.agendaItem.current{background:#243a59;box-shadow:inset 4px 0 #ffd54a}.agendaItem.done{opacity:.52}.agendaTitle{font-weight:800}.agendaTime{color:#9badc7}
+.s0{color:#72a7ff}.s1{color:#ff9f7a}.s2{color:#7ee787}.s3{color:#d59cff}.s4{color:#ffd36a}.s5{color:#72e0e8}.s6{color:#ff83c6}.s7{color:#b9d67b}.s8{color:#c5a3ff}
+@media(orientation:portrait){
+ header{height:78px;flex-wrap:wrap}.topic{height:30px}
+ main{height:calc(100vh - 108px);grid-template-columns:62% 38%;grid-template-rows:46% 54%}
+ .videoPanel{grid-column:1;grid-row:1}
+ .videoWrap{display:flex;justify-content:flex-start;align-items:center}
+ video{object-position:left center}
+ .agendaPanel{grid-column:2;grid-row:1}
+ .transPanel{grid-column:1/3;grid-row:2}
+ .line{grid-template-columns:54px 1fr 1fr}
+ .en{font-size:16px}.jp{font-size:14px}
+ .controls button,.controls select{padding:3px 5px;font-size:10px}
+}
+</style>
+</head>
+<body>
+<header>
+<b>🎬 Meeting AI Study v18</b><span class="grow"></span>
+<label class="file">🎬 動画<input id="videoFile" type="file" accept="video/*"></label>
+<label class="file">📚 練習JSON<input id="jsonFile" type="file" accept=".json,application/json"></label>
+<span id="status" class="status">動画＋学習JSONを選択</span>
+</header>
+<div class="topic"><b>現在：</b><span id="nowInfo">—</span></div>
+<main>
+<section class="panel videoPanel">
+ <div class="videoWrap"><video id="video" playsinline preload="metadata"></video></div>
+ <div class="seekrow"><input id="seek" class="seek" type="range" min="0" max="1000" value="0"></div>
+ <div class="controls">
+  <button data-skip="-10">↩10秒</button><button id="play">▶︎/⏸</button><button data-skip="10">10秒↪</button>
+  <button id="repeat">🔁 発言</button>
+  <button id="syncNow">📍ここに同期</button>
+  <button id="syncMinus">−1秒</button><button id="syncPlus">＋1秒</button>
+  <button id="syncReset">同期解除</button>
+  <select id="rate"><option>.75</option><option>.85</option><option selected>1</option><option>1.15</option><option>1.25</option></select>
+  <span id="clock" class="clock">00:00 / 00:00</span>
+ </div>
+</section>
+<section class="panel agendaPanel">
+ <div class="agendaHead"><b>📋 動画概要・アジェンダ</b><span class="grow"></span><span class="tiny">タップで移動</span></div>
+ <div id="agenda" class="agenda"></div>
+</section>
+<section class="panel transPanel">
+ <div class="transHead"><b>English / スラッシュリーディング（左） ｜ 日本語訳（右）</b><span class="tiny">発言をタップ→その区間へ移動</span><span class="grow"></span><button id="toggleJP">日本語 ON</button></div>
+ <div id="transcript" class="transcript"></div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id),v=$('video');
+let items=[], translations=[], agenda=[], current=0, showJP=true, repeatSegment=false, videoURL='', syncOffset=+(localStorage.getItem('meeting_ai_v10_sync_offset')||0);
+const speakerMap=new Map();
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function fmt(s){s=Math.max(0,Math.floor(+s||0));let h=Math.floor(s/3600),m=Math.floor((s%3600)/60),x=s%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`}
+function sec(t){let a=t.split(':').map(Number);return a.length===3?a[0]*3600+a[1]*60+a[2]:a[0]*60+a[1]}
+function status(s,ok=false){$('status').textContent=s;$('status').className='status '+(ok?'ok':'')}
+function spClass(sp){if(!speakerMap.has(sp))speakerMap.set(sp,speakerMap.size%9);return 's'+speakerMap.get(sp)}
+function parseTxt(text){
+ const a=[]; for(const raw of text.split(/\r?\n/)){const line=raw.trim();if(!line)continue;
+ const m=line.match(/^\[(\d{2}:\d{2}:\d{2})\]\s*([^:：]+)[:：]\s*(.+)$/); if(!m)continue;
+ a.push({start:sec(m[1]),time:m[1],speaker:m[2].trim(),english:m[3].trim(),japanese:''});}
+ for(let i=0;i<a.length;i++)a[i].end=a[i+1]?.start??a[i].start+12; return a;
+}
+function loadTranslations(obj){
+ const arr=Array.isArray(obj)?obj:(obj.items||[]);
+ for(const x of arr){
+  let idx=-1;
+  if(x.time) idx=items.findIndex(y=>y.time===x.time && (!x.speaker||y.speaker===x.speaker));
+  if(idx<0 && Number.isFinite(+x.start)) idx=items.findIndex(y=>Math.abs(y.start-(+x.start))<.6);
+  if(idx>=0) items[idx].japanese=x.japanese||x.jp||x.translation||'';
+ }
+}
+$('videoFile').onchange=e=>{let f=e.target.files?.[0];if(!f)return;if(videoURL)URL.revokeObjectURL(videoURL);videoURL=URL.createObjectURL(f);v.src=videoURL;status('動画OK。学習JSONを選択してください。')};
+$('jsonFile').onchange=e=>{let f=e.target.files?.[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{
+ const obj=JSON.parse(r.result),arr=Array.isArray(obj)?obj:(obj.items||obj.practice||[]);
+ items=arr.map(x=>{const c=x.context||{},tm=x.time||x.timestamp||'';return {time:tm,start:Number.isFinite(+x.start)?+x.start:sec(tm||'00:00:00'),end:Number.isFinite(+x.end)?+x.end:null,speaker:x.speaker||c.speaker||'話者',english:x.english||c.utterance||'',english_slash:x.english_slash||x.slash_english||x.english||c.utterance||'',japanese:x.japanese||x.jp||x.translation||'',topic:x.topic||'',incoming:x.incoming||null,outgoing:x.outgoing||null}});
+ for(let i=0;i<items.length;i++)if(!Number.isFinite(items[i].end))items[i].end=items[i+1]?.start??items[i].start+12;
+ agenda=Array.isArray(obj.agenda)?obj.agenda.map(a=>({start:Number.isFinite(+a.start)?+a.start:sec(a.time||a.timestamp||'00:00:00'),title:a.title||a.topic||''})):items.filter(x=>x.topic).map(x=>({start:x.start,title:x.topic}));
+ current=0;renderTranscript(true);renderAgenda();
+ const bad=items.filter(x=>looksUntranslated(x.japanese,x.english)).length;
+ status(bad?`JSON読込：${items.length}発言／⚠ 日本語訳不良 ${bad}件`:`学習JSON OK：${items.length}発言`,!bad);
+}catch(err){status('練習JSONエラー: '+err.message)}};r.readAsText(f,'UTF-8')};
+function idxAt(t){if(!items.length)return 0;t-=syncOffset;let lo=0,hi=items.length-1,ans=0;while(lo<=hi){let mid=(lo+hi)>>1;if(items[mid].start<=t){ans=mid;lo=mid+1}else hi=mid-1}return ans}
+function progress(it){return Math.max(0,Math.min(1,((v.currentTime-syncOffset)-it.start)/Math.max(.1,it.end-it.start)))}
+function wordHighlight(text,p,cls){let parts=String(text||'').split(/(\s+)/),words=parts.filter(x=>x.trim()).length,n=Math.max(1,Math.ceil(words*p)),c=0;return parts.map(x=>!x.trim()?esc(x):(++c<=n?`<span class="${cls}">${esc(x)}</span>`:esc(x))).join('')}
+function renderTranscript(force=false){
+ if(!items.length)return; let idx=idxAt(v.currentTime); if(idx!==current){current=idx;}
+ let from=Math.max(0,current-3),to=Math.min(items.length,current+5);
+ $('transcript').innerHTML=items.slice(from,to).map((x,k)=>{let i=from+k,cur=i===current,c=spClass(x.speaker),jp=x.japanese||'（翻訳JSON未読込）';
+ return `<div class="line ${cur?'current':''}" data-i="${i}"><div class="speaker ${c}"><span class="speakerDot" style="background:currentColor"></span>${esc(x.speaker)}<br><span class="tiny">${fmt(x.start)}</span></div><div class="en">${cur?wordHighlight(x.english_slash||x.english,progress(x),'spoken'):esc(x.english_slash||x.english)}</div><div class="jp ${showJP?'':'hiddenText'}">${esc(jp)}</div></div>`}).join('');
+ document.querySelectorAll('.line').forEach(el=>el.onclick=()=>{current=+el.dataset.i;v.currentTime=items[current].start+syncOffset;renderTranscript();});
+ let it=items[current];$('nowInfo').innerHTML=`<span class="${spClass(it.speaker)}">${esc(it.speaker)}</span>　${fmt(it.start)}　${it.topic?'<b>'+esc(it.topic)+'</b> — ':''}${esc(it.english.slice(0,70))}`;renderAgenda();
+ let el=document.querySelector('.line.current');if(force&&el)el.scrollIntoView({block:'center'});
+}
+
+function renderAgenda(){
+ const box=$('agenda'); if(!box)return;
+ if(!agenda.length){
+   box.innerHTML='<div style="padding:10px;color:#9badc7">アジェンダがありません</div>';
+   return;
+ }
+ const t=v.currentTime-syncOffset;
+ let ai=0;
+ for(let i=0;i<agenda.length;i++) if(agenda[i].start<=t) ai=i;
+ box.innerHTML=agenda.map((a,i)=>`<div class="agendaItem ${i===ai?'current':(i<ai?'done':'')}" data-ai="${i}">
+   <div class="agendaTime">${fmt(a.start)}</div><div class="agendaTitle">${esc(a.title||'')}</div>
+ </div>`).join('');
+ box.querySelectorAll('.agendaItem').forEach(el=>el.onclick=()=>{
+   const a=agenda[+el.dataset.ai]; v.currentTime=Math.max(0,a.start+syncOffset); renderTranscript(true); renderAgenda();
+ });
+ const cur=box.querySelector('.agendaItem.current'); if(cur)cur.scrollIntoView({block:'nearest'});
+}
+function looksUntranslated(jp,en){
+ const j=String(jp||''), e=String(en||'');
+ if(!j.trim())return true;
+ const latin=(j.match(/[A-Za-z]/g)||[]).length, kana=(j.match(/[\u3040-\u30ff\u3400-\u9fff]/g)||[]).length;
+ return e.length>20 && latin>Math.max(20,kana*1.5);
+}
+$('play').onclick=()=>v.paused?v.play():v.pause();
+document.querySelectorAll('[data-skip]').forEach(b=>b.onclick=()=>v.currentTime=Math.max(0,Math.min(v.duration||Infinity,v.currentTime+(+b.dataset.skip))));
+$('rate').onchange=e=>v.playbackRate=+e.target.value;
+$('repeat').onclick=()=>{repeatSegment=!repeatSegment;$('repeat').classList.toggle('active',repeatSegment)};
+$('toggleJP').onclick=()=>{showJP=!showJP;$('toggleJP').textContent='日本語 '+(showJP?'ON':'OFF');renderTranscript()};
+
+function saveSync(){
+ localStorage.setItem('meeting_ai_v10_sync_offset',String(syncOffset));
+ status(`手動同期 ${syncOffset>=0?'+':''}${syncOffset.toFixed(1)}秒`,true);
+ renderTranscript(true);
+}
+$('syncNow').onclick=()=>{
+ if(!items.length)return;
+ // Current video time is declared to be the start of the selected/current transcript utterance.
+ syncOffset=v.currentTime-items[current].start;
+ saveSync();
+};
+$('syncMinus').onclick=()=>{syncOffset-=1;saveSync()};
+$('syncPlus').onclick=()=>{syncOffset+=1;saveSync()};
+$('syncReset').onclick=()=>{syncOffset=0;localStorage.removeItem('meeting_ai_v10_sync_offset');saveSync()};
+$('seek').oninput=e=>{if(v.duration)v.currentTime=(+e.target.value/1000)*v.duration};
+v.ontimeupdate=()=>{if(v.duration){$('seek').value=Math.round(v.currentTime/v.duration*1000);$('clock').textContent=`${fmt(v.currentTime)} / ${fmt(v.duration)}`}
+ if(items.length){let x=items[current];if(v.currentTime>=x.end+syncOffset-.04){
+   if(v.dataset.pauseAtEnd==='1'){delete v.dataset.pauseAtEnd;v.pause();v.currentTime=x.end+syncOffset-.05}
+   else if(v.dataset.repeatCount){let n=+v.dataset.repeatCount-1;if(n>0){v.dataset.repeatCount=String(n);v.currentTime=x.start+syncOffset}else{delete v.dataset.repeatCount;v.pause()}}
+   else if(repeatSegment)v.currentTime=x.start+syncOffset;
+ } renderTranscript();renderAgenda();}
+};
+v.onloadedmetadata=()=>{$('clock').textContent=`00:00 / ${fmt(v.duration)}`};
+
+</script>
+</body></html>
