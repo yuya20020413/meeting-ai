@@ -112,12 +112,12 @@ html.mic-root{height:auto;min-height:100%;overflow:auto;scroll-padding-top:210px
 <p id="spConnection" role="status">未接続</p><p id="spPeer">相手端末：未接続</p><a id="spLink">iPhone用リンク</a>
 <p class="hint">iPhoneで認識開始をタップしてください。iPadの音はイヤホンで聞きます。音声はブラウザの認識サービスで処理される場合があります。英文と認識テキストは中継へ送信します。キーを知る人だけが参加できるため、リンクを公開しないでください。</p></dialog>
 <section id="spPractice" aria-label="スピーキング練習">
-<div class="spSticky"><div class="spTop"><strong>🎙 Speaking v12</strong><button id="spSettings">⚙ 接続</button></div>
+<div class="spSticky"><div class="spTop"><strong>🎙 Speaking v13</strong><button id="spSettings">⚙ 接続</button></div>
 <div id="spBadge">未接続</div><div class="spOptions"><label>練習方式<select id="spMode"><option value="repeat" selected>リピーティング</option><option value="shadow">シャドーイング</option></select></label><label>次へ進む一致率<select id="spThreshold"><option value="0" selected>0%（発話で次へ）</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></label></div>
 <div class="spGame"><div><small>SCORE</small><strong id="spTotal">0</strong></div><strong id="spCombo">0 COMBO</strong><small id="spBest">BEST 0</small></div></div><div id="spCounter">— / — 発言</div><p id="spPhase" role="status">iPadと接続してください</p>
 <div class="spCard"><p id="spTarget">iPadで動画とJSONを選択してください</p><p class="spSwipe">← 次の発言　／　前の発言 →</p></div>
 <div class="spResults"><strong id="spScore" aria-live="polite">一致率 —%</strong><p id="spLiveText">認識テキストがここに表示されます</p></div>
-<div class="spMainButtons"><button id="spStart" class="primary">🎙 練習スタート</button><button id="spStop">■ 停止</button></div><p id="spPermission" role="status">最初に練習スタートを押してください。以後は自動で認識を続けます。</p>
+<div class="spMainButtons"><button id="spStart" class="primary">🎙 練習スタート</button><button id="spStop">⏸ 練習停止</button></div><p id="spPermission" role="status">最初に練習スタートを押してください。練習停止中もマイクは待機します。</p>
 <div class="spNavButtons"><button id="spPrev">◀ 前の発言</button><button id="spNext">次の発言 ▶</button></div>
 <div class="spExtraButtons"><button id="spPlay">↻ 動画をもう一度</button><button id="spPause">⏸ 一時停止</button><button id="spRecover">🎙 マイクを復旧</button><button id="spReset">認識リセット</button><button id="spFinish">練習終了</button></div>
 <details class="spManual"><summary>手入力で確認</summary><textarea id="spText" aria-label="認識テキスト"></textarea><button id="spSend">手入力を同期</button></details>
@@ -147,7 +147,7 @@ let wanted=false,epoch=0,restartTimer=null,resultsCount=0,baseIndex=0,failures=0
 function drawGame(){ $('spTotal').textContent=String(total);$('spCombo').textContent=combo+' COMBO';$('spBest').textContent='BEST '+bestCombo; }
 function readStats(o){if(Number.isFinite(o.total)){total=o.total;combo=o.combo||0;bestCombo=o.bestCombo||0;drawGame();}}
 function savePreference(){preferred={mode:$('spMode').value,threshold:Number($('spThreshold').value)};try{localStorage.setItem('speaking-v10-settings',JSON.stringify(preferred));}catch{}}
-const role=()=>$('spRole').value;
+let retiring=false,retireTimer=null,micLive=false;const role=()=>$('spRole').value;
 const id=()=>Array.from(crypto.getRandomValues(new Uint8Array(16)),x=>x.toString(16).padStart(2,'0')).join('');
 const send=o=>{if(ws?.readyState===1)ws.send(JSON.stringify(o));};
 const words=s=>s.toLowerCase().replace(/’/g,"'").replace(/[^a-z0-9' ]/g,' ').trim().split(/\s+/).filter(Boolean).slice(0,500);
@@ -155,24 +155,24 @@ function score(a,s){const x=words(a),y=words(s);let d=Array.from({length:y.lengt
 function connection(s){$('spConnection').textContent=s;$('spBadge').textContent=peer?'● iPadと接続中':s;}
 function phase(s){$('spPhase').textContent=s;}
 function showText(text,final){$('spText').value=text;$('spLiveText').textContent=text;const n=target?score(target.english,text):0;$('spScore').textContent=text?`一致率 ${n}%${final?'':'（認識中）'}`:'一致率 —%';$('spScore').classList.toggle('passed',!!text&&n>=threshold);}
-function micUI(){ $('spStart').textContent=wanted?'🎙 マイクON・練習を再開':'🎙 練習スタート';$('spStop').disabled=!wanted;}
+function micUI(){ $('spStart').textContent=micLive?'🎙 練習を再開':wanted?'🎙 認識を開始中':'🎙 練習スタート';$('spStop').disabled=!wanted;}
 function canRecognize(){return wanted&&role()==='mic'&&peer&&target&&ws?.readyState===1&&!document.hidden;}
-function releaseRecognition(){clearTimeout(restartTimer);epoch++;const old=rec;rec=null;resultsCount=0;baseIndex=0;if(old){old.onstart=null;old.onresult=null;old.onerror=null;old.onend=null;try{old.abort();}catch{}}}
+function releaseRecognition(){clearTimeout(restartTimer);epoch++;const old=rec;rec=null;micLive=false;resultsCount=0;baseIndex=0;if(old){retiring=true;old.onstart=null;old.onresult=null;old.onerror=null;let settled=false;const settle=()=>{if(settled)return;settled=true;clearTimeout(retireTimer);old.onend=null;retiring=false;if(canRecognize())scheduleRecognition(250);micUI();};old.onend=settle;retireTimer=setTimeout(settle,1500);try{old.abort();}catch{settle();}}micUI();}
 function stop(){wanted=false;releaseRecognition();micUI();$('spPermission').textContent='マイク停止中。練習スタートで再開できます。';}
 function recoverMicrophone(){if(role()!=='mic'||!peer||!target||ws?.readyState!==1){$('spPermission').textContent='先にiPadと接続してください';return;}releaseRecognition();wanted=true;failures=0;micUI();$('spPermission').textContent='マイクを作り直しています';startRecognition();}
 
-function clearRecognition(restart=true){baseIndex=resultsCount;showText('',false);if(!rec&&restart&&canRecognize())scheduleRecognition(120);}
+function clearRecognition(restart=true){baseIndex=0;showText('',false);if(!rec&&restart&&canRecognize())scheduleRecognition(120);}
 function scheduleRecognition(delay=250){clearTimeout(restartTimer);if(canRecognize())restartTimer=setTimeout(startRecognition,delay);}
-function startRecognition(){if(!canRecognize()||rec)return;const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R||!window.isSecureContext){wanted=false;micUI();$('spPermission').textContent='音声認識を利用できません。HTTPSのSafariで開いてください。';return;}
- const r=new R(),version=epoch;rec=r;resultsCount=0;baseIndex=0;r.lang='en-US';r.interimResults=true;r.continuous=true;
- r.onstart=()=>{if(rec===r&&version===epoch){failures=0;$('spPermission').textContent='マイクON。発言が変わっても自動で認識を続けます。';}};
- r.onresult=e=>{if(rec!==r||version!==epoch)return;resultsCount=e.results.length;
-   if(stage==='listening'||stage==='idle'||stage==='paused'||stage==='done'){baseIndex=e.results.length;return;}
+function startRecognition(){if(!canRecognize()||rec||retiring)return;const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R||!window.isSecureContext){wanted=false;micUI();$('spPermission').textContent='音声認識を利用できません。HTTPSのSafariで開いてください。';return;}
+ const r=new R(),version=epoch;rec=r;resultsCount=0;baseIndex=0;r.lang='en-US';r.interimResults=true;r.continuous=false;
+ r.onstart=()=>{if(rec===r&&version===epoch){micLive=true;micUI();$('spPermission').textContent='認識開始を確認しました。発話待ちです。';}};
+ r.onresult=e=>{if(rec!==r||version!==epoch)return;if(e.results.length<resultsCount)baseIndex=0;resultsCount=e.results.length;$('spPermission').textContent='音声認識結果を受信しました';
+   if(stage==='listening'||stage==='idle'||stage==='ready'||stage==='paused'||stage==='done'){baseIndex=0;return;}
    let text='',final=true;for(let i=baseIndex;i<e.results.length;i++){text+=e.results[i][0].transcript+' ';final=final&&e.results[i].isFinal;}
    if(!text.trim())return;showText(text.trim(),final);send({type:'text',attempt,text:text.trim().slice(0,8000),final});if(final)baseIndex=e.results.length;
  };
  r.onerror=e=>{if(rec!==r||version!==epoch)return;if(['not-allowed','service-not-allowed','audio-capture','language-not-supported'].includes(e.error)){wanted=false;$('spPermission').textContent='マイク・音声認識の権限を確認して、練習スタートを押してください。';}else if(e.error==='network'){failures++;if(failures>=3)wanted=false;$('spPermission').textContent=wanted?'音声認識の通信を再試行しています':'通信エラー。接続を確認して練習スタートを押してください。';}else if(e.error==='no-speech')$('spPermission').textContent='音声待ち：マイクを自動再開します。';micUI();};
- r.onend=()=>{if(rec!==r)return;rec=null;if(canRecognize())scheduleRecognition(failures?1500:250);else micUI();};
+ r.onend=()=>{if(rec!==r)return;rec=null;micLive=false;micUI();if(canRecognize())scheduleRecognition(failures?1500:250);else micUI();};
  try{r.start();}catch(e){rec=null;wanted=false;micUI();$('spPermission').textContent='Safariが認識再開を許可しませんでした。練習スタートをもう一度押してください。';}
 }
 function setTarget(o){target=o.target;attempt=o.attempt;passed='';stage=o.stage||'ready';running=o.running===true;if([0,40,50,60,70,80,90,100].includes(o.threshold))threshold=o.threshold;if(['shadow','repeat'].includes(o.mode))$('spMode').value=o.mode;$('spThreshold').value=String(threshold);$('spTarget').textContent=target?.english||'iPadで動画とJSONを選択してください';if(o.counter)$('spCounter').textContent=o.counter;phase(o.phase||'準備できました');clearRecognition();readStats(o);if(preferred&&role()==='mic'){threshold=preferred.threshold;$('spThreshold').value=String(threshold);$('spMode').value=preferred.mode;settingsCommand('threshold');}}
@@ -201,15 +201,15 @@ function connect(){if(location.protocol!=='https:'){connection('HTTPSで開い�
  ws.onerror=()=>connection('通信エラー：同じCloudflare URLから開いてください');ws.onclose=e=>{if(mine!==ws)return;stop();peer=false;$('spPeer').textContent='相手端末：未接続';connection('切断 '+e.code+'／再接続待ち');if(!stopped&&e.code!==1008)reconnect=setTimeout(connect,3000);};}
 $('spOpen').textContent='🎙 接続設定';$('spOpen').onclick=()=>$('spDialog').showModal();$('spSettings').onclick=()=>$('spDialog').showModal();$('spClose').onclick=()=>$('spDialog').close();$('spNew').onclick=()=>$('spKey').value=id();$('spConnect').onclick=connect;$('spDisconnect').onclick=disconnect;$('spRole').onchange=()=>{disconnect();updateRole();};
 function updateRole(){document.body.classList.toggle('mic-only',role()==='mic');document.documentElement.classList.toggle('mic-root',role()==='mic');$('spStart').hidden=role()!=='mic';$('spRecover').hidden=role()!=='mic';$('spStop').hidden=role()!=='mic';$('spText').hidden=role()!=='mic';$('spSend').hidden=role()!=='mic';}
-$('spStart').onclick=()=>{if(!peer||!target||role()!=='mic'){phase('先にiPadと接続してください');return;}recoverMicrophone();settingsCommand('play');};
+$('spStart').onclick=()=>{if(!peer||!target||role()!=='mic'){phase('先にiPadと接続してください');return;}if(!wanted){recoverMicrophone();}else if(!rec&&!retiring){startRecognition();}settingsCommand('play');};
 $('spRecover').onclick=recoverMicrophone;
-$('spStop').onclick=()=>{stop();settingsCommand('hold');phase('停止中。練習スタートで再開します');};
+$('spStop').onclick=()=>{settingsCommand('hold');stage='paused';phase('練習を一時停止しました。再開できます');$('spPermission').textContent='練習停止中：マイクは待機したままです';};
 $('spPlay').onclick=()=>role()==='mic'?settingsCommand('play'):playPractice();
 $('spFinish').onclick=()=>{stop();if(role()==='mic')settingsCommand('finish');else finish();};
 $('spReset').onclick=()=>{clearRecognition();if(role()==='mic')settingsCommand('reset');else publish();};
 $('spPrev').onclick=()=>role()==='mic'?settingsCommand('prev'):navigate(-1);
 $('spNext').onclick=()=>role()==='mic'?settingsCommand('next'):navigate(1);
-$('spPause').onclick=()=>{if(role()==='mic'){if(['paused','idle','ready'].includes(stage))recoverMicrophone();settingsCommand('pause');}else handleCommand({action:'pause',mode:$('spMode').value,threshold,attempt});};
+$('spPause').onclick=()=>{if(role()==='mic'){if(!wanted)recoverMicrophone();settingsCommand('pause');}else handleCommand({action:'pause',mode:$('spMode').value,threshold,attempt});};
 $('spMode').onchange=()=>{savePreference();if(role()==='mic')settingsCommand('mode');else handleCommand({action:'mode',mode:$('spMode').value,threshold,attempt});};
 $('spThreshold').onchange=()=>{threshold=Number($('spThreshold').value);savePreference();if(role()==='mic')settingsCommand('threshold');else sendState();};
 $('spSend').onclick=()=>{if(peer&&target){showText($('spText').value,true);send({type:'text',attempt,text:$('spText').value.slice(0,8000),final:true});}};
