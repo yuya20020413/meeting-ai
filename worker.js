@@ -33,9 +33,10 @@ export class Room {
     if(o.type==='ping'){ws.send('{"type":"pong"}');return;}
     if(typeof o.attempt!=='string'||!/^[a-f0-9]{32}$/.test(o.attempt))return;
     let out;
-    if(a.role==='mic'&&o.type==='command'&&['play','pause','prev','next','reset','finish','mode'].includes(o.action)&&['shadow','repeat'].includes(o.mode))out={type:'command',action:o.action,mode:o.mode,attempt:o.attempt};
-    if(a.role==='pad'&&o.type==='state'&&['shadow','repeat'].includes(o.mode))out={type:'state',mode:o.mode,attempt:o.attempt,counter:String(o.counter||'').slice(0,60),phase:String(o.phase||'').slice(0,200),playing:o.playing===true};
-    if(a.role==='pad'&&o.type==='target'&&(o.target===null||(typeof o.target?.english==='string'&&o.target.english.length<=12000)))out={type:'target',attempt:o.attempt,target:o.target?{english:o.target.english}:null,phase:String(o.phase||'').slice(0,200)};
+    if(a.role==='pad'&&o.type==='complete')out={type:'complete',attempt:o.attempt};
+    if(a.role==='mic'&&o.type==='command'&&['play','pause','prev','next','reset','finish','mode','threshold'].includes(o.action)&&['shadow','repeat'].includes(o.mode)&&[70,80,90,100].includes(o.threshold))out={type:'command',action:o.action,mode:o.mode,threshold:o.threshold,attempt:o.attempt};
+    if(a.role==='pad'&&o.type==='state'&&['shadow','repeat'].includes(o.mode))out={type:'state',mode:o.mode,attempt:o.attempt,threshold:[70,80,90,100].includes(o.threshold)?o.threshold:80,stage:['idle','ready','listening','speaking','done'].includes(o.stage)?o.stage:'idle',running:o.running===true,counter:String(o.counter||'').slice(0,60),phase:String(o.phase||'').slice(0,200),playing:o.playing===true};
+    if(a.role==='pad'&&o.type==='target'&&(o.target===null||(typeof o.target?.english==='string'&&o.target.english.length<=12000)))out={type:'target',attempt:o.attempt,target:o.target?{english:o.target.english}:null,mode:['shadow','repeat'].includes(o.mode)?o.mode:'repeat',threshold:[70,80,90,100].includes(o.threshold)?o.threshold:80,stage:['idle','ready','listening','speaking','done'].includes(o.stage)?o.stage:'ready',running:o.running===true,counter:String(o.counter||'').slice(0,60),phase:String(o.phase||'').slice(0,200)};
     if(a.role==='pad'&&o.type==='phase')out={type:'phase',attempt:o.attempt,phase:String(o.phase||'').slice(0,200)};
     if(a.role==='mic'&&o.type==='text'&&typeof o.text==='string'&&o.text.length<=8000)out={type:'text',attempt:o.attempt,text:o.text,final:o.final===true};
     if(out)for(const s of this.ctx.getWebSockets())if(s!==ws){try{s.send(JSON.stringify(out));}catch{}}
