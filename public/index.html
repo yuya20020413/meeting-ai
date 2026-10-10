@@ -112,17 +112,18 @@ html.mic-root{height:auto;min-height:100%;overflow:auto;scroll-padding-top:210px
 <p id="spConnection" role="status">未接続</p><p id="spPeer">相手端末：未接続</p><a id="spLink">iPhone用リンク</a>
 <p class="hint">iPhoneで認識開始をタップしてください。iPadの音はイヤホンで聞きます。音声はブラウザの認識サービスで処理される場合があります。英文と認識テキストは中継へ送信します。キーを知る人だけが参加できるため、リンクを公開しないでください。</p></dialog>
 <section id="spPractice" aria-label="スピーキング練習">
-<div class="spSticky"><div class="spTop"><strong>🎙 Speaking v13</strong><button id="spSettings">⚙ 接続</button></div>
+<div class="spSticky"><div class="spTop"><strong>🎙 Speaking v15</strong><button id="spSettings">⚙ 接続</button></div>
 <div id="spBadge">未接続</div><div class="spOptions"><label>練習方式<select id="spMode"><option value="repeat" selected>リピーティング</option><option value="shadow">シャドーイング</option></select></label><label>次へ進む一致率<select id="spThreshold"><option value="0" selected>0%（発話で次へ）</option><option value="40">40%</option><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option><option value="90">90%</option><option value="100">100%</option></select></label></div>
 <div class="spGame"><div><small>SCORE</small><strong id="spTotal">0</strong></div><strong id="spCombo">0 COMBO</strong><small id="spBest">BEST 0</small></div></div><div id="spCounter">— / — 発言</div><p id="spPhase" role="status">iPadと接続してください</p>
 <div class="spCard"><p id="spTarget">iPadで動画とJSONを選択してください</p><p class="spSwipe">← 次の発言　／　前の発言 →</p></div>
 <div class="spResults"><strong id="spScore" aria-live="polite">一致率 —%</strong><p id="spLiveText">認識テキストがここに表示されます</p></div>
-<div class="spMainButtons"><button id="spStart" class="primary">🎙 練習スタート</button><button id="spStop">⏸ 練習停止</button></div><p id="spPermission" role="status">最初に練習スタートを押してください。練習停止中もマイクは待機します。</p>
+<div class="spMainButtons"><button id="spStart" class="primary">🎙 練習スタート</button><button id="spStop">⏸ 練習停止</button></div><p id="spPermission" role="status">最初に練習スタートを押してください。練習停止中もマイクは待機します。</p><small id="spMicDiag" aria-live="polite"></small>
 <div class="spNavButtons"><button id="spPrev">◀ 前の発言</button><button id="spNext">次の発言 ▶</button></div>
 <div class="spExtraButtons"><button id="spPlay">↻ 動画をもう一度</button><button id="spPause">⏸ 一時停止</button><button id="spRecover">🎙 マイクを復旧</button><button id="spReset">認識リセット</button><button id="spFinish">練習終了</button></div>
 <details class="spManual"><summary>手入力で確認</summary><textarea id="spText" aria-label="認識テキスト"></textarea><button id="spSend">手入力を同期</button></details>
 <small class="spNote">リピーティングでは動画終了後の確定認識が合格ラインに達すると、自動で次の動画へ進みます。単語一致率であり、発音の評価ではありません。iPadの音はイヤホンで聞いてください。</small>
-</section><script>
+</section><script>window.meetingMicBoot=new URLSearchParams(location.hash.slice(1)).get('role')==='mic'||new URLSearchParams(location.search||'').get('role')==='mic';
+if(!window.meetingMicBoot){
 (()=>{'use strict';const $=id=>document.getElementById(id);let qaTab='translation';let items=[],agenda=[],index=0,mode='ear',showEn=true,showJp=true,showHint=false,repeat=true,onlyWeak=false,marks={},key='',blobUrl=null,manual=false;const v=$('video');const safe=s=>String(s??'');const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));const sec=x=>{if(typeof x==='number')return x;const t=safe(x).split(':').map(Number);return t.length===3?t[0]*3600+t[1]*60+t[2]:t.length===2?t[0]*60+t[1]:Number(x)||0};const time=s=>{s=Math.max(0,Math.floor(s));return `${String(Math.floor(s/3600)).padStart(2,'0')}:${String(Math.floor(s%3600/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`};const esc=s=>safe(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function current(){return items[index]}function off(){return 0}function seek(i,play=false){if(!items.length)return;index=clamp(i,0,items.length-1);if(v.src){v.currentTime=Math.max(0,items[index].start+off());if(play)v.play().catch(()=>{});}render()}function selectByTime(t){if(!items.length)return;const s=t-off();let lo=0,hi=items.length-1;while(lo<=hi){let m=(lo+hi)>>1;if(items[m].start<=s)lo=m+1;else hi=m-1}return clamp(hi,0,items.length-1)}function renderAgenda(){const cur=current()?.start??0;let active=-1;agenda.forEach((a,i)=>{if(a.start<=cur)active=i});$('agenda').innerHTML=agenda.length?agenda.map((a,i)=>`<button class="${i===active?'current':''}" data-agenda="${i}">${esc(time(a.start))}　${esc(a.title)}</button>`).join(''):'<span class="muted">アジェンダなし</span>'}function renderList(){let arr=items.map((x,i)=>({x,i}));if(onlyWeak)arr=arr.filter(o=>['sound','meaning'].includes(marks[o.i]));$('utteranceList').innerHTML=arr.length?arr.map(({x,i})=>`<button class="${i===index?'selected':''}" data-index="${i}">${esc(time(x.start))}　${marks[i]==='sound'?'🔴':marks[i]==='meaning'?'🟠':marks[i]==='mastered'?'🟢':'⚪'} ${esc(x.english.slice(0,80))}</button>`).join(''):'<span class="muted">対象の発言はありません</span>'}function renderStats(){let vals=Object.values(marks);$('stats').textContent=items.length?`全${items.length}発言 · 習得${vals.filter(x=>x==='mastered').length} · 要復習${vals.filter(x=>x==='sound'||x==='meaning').length}`:'データを読み込んでください'}function render(){let x=current();queueMicrotask(()=>window.dispatchEvent(new Event("trainerchange")));$('counter').textContent=x?`${index+1} / ${items.length} 発言`:'—';$('speaker').textContent=x?safe(x.speaker):'';if(x&&showEn&&x.words.length){$('english').innerHTML=x.words.map((w,i)=>`<span class="word pending" data-word="${i}">${esc(w.word)}</span>`).join(' ');updateWordHighlight();}else{$('english').textContent=x?(showEn?(x.english_slash||x.english):'🎧 まず音だけで聞いてみましょう'):'動画とJSONを選ぶと、ここで発言ごとに練習できます。';}$('japanese').textContent=x?safe(x.japanese||'日本語訳がありません'):'';$('japanese').classList.toggle('hidden',qaTab!=='translation'||!showJp);renderQa();$('keyword').textContent=x?'ヒント：'+x.english.split(/\s+/).filter(w=>w.length>=6).slice(0,5).join(' / '):'';$('keyword').classList.toggle('hidden',!showHint);$('toggleEn').textContent=showEn?'英文を隠す':'英文を表示';$('toggleJp').textContent=showJp?'日本語訳を隠す':'日本語訳を表示';$('toggleHint').textContent=showHint?'ヒントを隠す':'キーワードのヒント';$('message').textContent=mode==='ear'?'耳トレ：字幕なしで聞く → 英文を確認 → もう一度聞く':mode==='meaning'?'意味トレ：スラッシュ英文と日本語訳を使って、英語の語順で理解する':'総合テスト：字幕なし・通常速度で意味を理解できるか挑戦';$('saved').textContent=marks[index]==='sound'?'🔴 音の聞き取りを復習':marks[index]==='meaning'?'🟠 意味の理解を復習':marks[index]==='mastered'?'🟢 習得済み':'';document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));renderAgenda();renderList();renderStats()}function updateWordHighlight(){let x=current();if(!x||!showEn)return;let t=v.currentTime-off();let spans=$('english').querySelectorAll('[data-word]');if(spans.length){let active=-1;for(let i=0;i<x.words.length;i++){if(t>=x.words[i].start&&t<x.words[i].end){active=i;break}}if(active<0){for(let i=0;i<x.words.length;i++){if(t>=x.words[i].start)active=i;else break}}spans.forEach((sp,i)=>{sp.classList.toggle('speaking',i===active);sp.classList.toggle('spoken',i<active);sp.classList.toggle('pending',i>active)});}else{$('english').classList.toggle('sentence-active',t>=x.start&&t<=x.end)}}function qaText(value){if(value==null||value==='')return '';if(typeof value==='string'||typeof value==='number')return String(value);if(Array.isArray(value))return value.map((x,i)=>{if(typeof x==='object'&&x!==null){return qaText(x.question??x.answer??x.english??x.text??x.japanese??x)}return qaText(x)}).filter(Boolean).join('\n\n');if(typeof value==='object'){return [value.question,value.answer,value.english,value.japanese,value.text].filter(x=>x!=null&&x!=='').map(qaText).join('\n')||Object.entries(value).map(([k,v])=>k+': '+qaText(v)).join('\n')}return ''}function renderQa(){const x=current();document.querySelectorAll('[data-qa]').forEach(b=>{const on=b.dataset.qa===qaTab;b.classList.toggle('active',on);b.setAttribute('aria-selected',String(on))});const panel=$('qaContent');panel.classList.toggle('hidden',qaTab==='translation');if(qaTab==='translation')return;const val=x?(qaTab==='questions'?x.questions:x.answers):null;panel.textContent=qaText(val)||'この発言の'+(qaTab==='questions'?'質問予測':'回答')+'はJSONに登録されていません。'}function setMode(m){mode=m;showEn=m!=='test';showJp=m!=='test';showHint=false;if(m==='test'){$('speed').value='1';v.playbackRate=1;}render()}function storage(){try{localStorage.setItem('meeting-trainer:'+key,JSON.stringify(marks))}catch(e){console.warn('学習記録を保存できませんでした（プライベートブラウズなど）')}}function mark(m){if(!items.length)return;if(m)marks[index]=m;else delete marks[index];storage();render()}function normalize(data){const raw=Array.isArray(data)?data:(data.items||data.transcript||data.segments||[]);if(!Array.isArray(raw))throw Error('items配列が見つかりません');let out=raw.map((x,i)=>({start:sec(x.start??x.time??x.timestamp),end:x.end==null?null:sec(x.end),speaker:safe(x.speaker||''),english:safe(x.english||x.text||x.en||''),english_slash:safe(x.english_slash||''),japanese:safe(x.japanese||x.jp||x.translation||''),topic:safe(x.topic||''),questions:x.questions??x.predicted_questions??x.question_predictions??x.question_prediction??x.question??x.predicted_question??null,answers:x.answers??x.predicted_answers??x.suggested_answers??x.answer??x.predicted_answer??null,words:Array.isArray(x.words)?x.words.filter(w=>Number.isFinite(Number(w.start))&&Number.isFinite(Number(w.end))).map(w=>({word:safe(w.word),start:Number(w.start),end:Number(w.end)})):[]})).filter(x=>x.english.trim()).sort((a,b)=>a.start-b.start);if(!out.length)throw Error('英文付きの発言がありません');out.forEach((x,i)=>{if(x.end==null||x.end<=x.start)x.end=(out[i+1]?.start??x.start+12);if(out[i+1])x.end=Math.min(x.end,out[i+1].start);if(x.end<=x.start)x.end=x.start+2});return out}function loadData(data,name){items=normalize(data);agenda=(Array.isArray(data.agenda)?data.agenda:[]).map(x=>({start:sec(x.start??x.time),title:safe(x.title||x.topic||'議題')})).sort((a,b)=>a.start-b.start);index=0;key='v1:'+safe(data.title||name)+':'+items.length+':'+items[0].english.slice(0,70);try{marks=JSON.parse(localStorage.getItem('meeting-trainer:'+key)||'{}')}catch(e){marks={}}$('dataName').textContent=name;showEn=true;showJp=true;showHint=false;setMode('ear');showEn=true;showJp=true;render();if(v.src)seek(0)}$('videoFile').addEventListener('change',e=>{let f=e.target.files?.[0];if(!f)return;if(blobUrl)URL.revokeObjectURL(blobUrl);blobUrl=URL.createObjectURL(f);v.src=blobUrl;v.load();});$('jsonFile').addEventListener('change',async e=>{let f=e.target.files?.[0];if(!f)return;try{loadData(JSON.parse(await f.text()),f.name)}catch(err){alert('JSON読み込みエラー：'+err.message)}});$('back').onclick=()=>{if(v.src)v.currentTime=Math.max(0,v.currentTime-5)};$('prev').onclick=()=>seek(index-1,true);$('next').onclick=()=>seek(index+1,true);$('repeat').onclick=()=>{repeat=!repeat;$('repeat').classList.toggle('active',repeat);$('repeat').textContent='🔁 発言リピート '+(repeat?'ON':'OFF')};$('speed').onchange=e=>v.playbackRate=Number(e.target.value);$('toggleEn').onclick=()=>{showEn=!showEn;render()};$('toggleJp').onclick=()=>{showJp=!showJp;qaTab='translation';render()};document.querySelectorAll('[data-qa]').forEach(b=>b.onclick=()=>{qaTab=b.dataset.qa;render()});$('toggleHint').onclick=()=>{showHint=!showHint;render()};document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));$('weakSound').onclick=()=>mark('sound');$('weakMeaning').onclick=()=>mark('meaning');$('mastered').onclick=()=>mark('mastered');$('clearMark').onclick=()=>mark(null);$('onlyWeak').onclick=()=>{onlyWeak=!onlyWeak;$('onlyWeak').textContent='苦手だけ表示：'+(onlyWeak?'ON':'OFF');renderList()};$('reset').onclick=()=>{if(!key||!confirm('このJSONの学習記録を消去しますか？'))return;marks={};storage();render()};$('agenda').onclick=e=>{let b=e.target.closest('[data-agenda]');if(!b)return;let t=agenda[Number(b.dataset.agenda)].start;let i=selectByTime(t+off());seek(i,true)};$('utteranceList').onclick=e=>{let b=e.target.closest('[data-index]');if(b)seek(Number(b.dataset.index),true)};v.addEventListener('timeupdate',()=>{if(!items.length)return;updateWordHighlight();let x=current(),t=v.currentTime-off();if(window.speakingBoundary?.(t,x))return;if(repeat&&!v.paused&&t>=x.end-0.08&&t>=x.start){v.currentTime=Math.max(0,x.start+off());return}if(!repeat){let i=selectByTime(v.currentTime);if(i!==index){index=i;render()}}});v.addEventListener('seeked',()=>{if(!items.length||manual)return;let t=v.currentTime-off(),x=current();if(t<x.start-0.5||t>x.end+0.5){index=selectByTime(v.currentTime);render()}});$('check').onclick=()=>{let x=current();if(!x)return;let typed=$('typed').value.trim();if(!typed){$('result').textContent='聞き取れた英語を入力してください';return}let words=s=>s.toLowerCase().replace(/[^a-z0-9' ]/g,' ').split(/\s+/).filter(Boolean);let a=words(x.english),b=words(typed),cnt={};b.forEach(w=>cnt[w]=(cnt[w]||0)+1);let matched=0;let html=a.map(w=>{if(cnt[w]>0){cnt[w]--;matched++;return `<span class="ok">${esc(w)}</span>`}return `<span class="bad">${esc(w)}</span>`}).join(' ');$('result').innerHTML=`<strong>単語一致 ${Math.round(matched/Math.max(1,a.length)*100)}%</strong><div>${html}</div><small>緑：一致した単語 / 赤：未一致（順序や文法の採点ではありません）</small>`};// v3 iPad landscape: horizontal swipes navigate utterances (right=previous, left=next).
 let swipeStart=null;
 const swipeSurface=document.querySelector('.workspace');
@@ -139,6 +140,9 @@ swipeSurface.addEventListener('touchend',e=>{
 },{passive:true});
 swipeSurface.addEventListener('touchcancel',()=>{swipeStart=null},{passive:true});
 window.trainerBridge={current,seek,getIndex:()=>index,getCount:()=>items.length,getKey:()=>key,video:v};$('typed').addEventListener('input',()=>{$('result').textContent=''});render()})();
+}else{
+document.getElementById('video').remove();const video={paused:true,src:'',pause(){},addEventListener(){},play(){return Promise.resolve();}};
+window.trainerBridge={current:()=>null,getIndex:()=>0,getCount:()=>0,getKey:()=>'',seek(){},video};}
 </script><script>(()=>{'use strict';
 const $=id=>document.getElementById(id),b=window.trainerBridge;
 let ws=null,rec=null,target=null,attempt='',peer=false,stopped=true,reconnect=null,lastSeen=0;
@@ -147,7 +151,6 @@ let wanted=false,epoch=0,restartTimer=null,resultsCount=0,baseIndex=0,failures=0
 function drawGame(){ $('spTotal').textContent=String(total);$('spCombo').textContent=combo+' COMBO';$('spBest').textContent='BEST '+bestCombo; }
 function readStats(o){if(Number.isFinite(o.total)){total=o.total;combo=o.combo||0;bestCombo=o.bestCombo||0;drawGame();}}
 function savePreference(){preferred={mode:$('spMode').value,threshold:Number($('spThreshold').value)};try{localStorage.setItem('speaking-v10-settings',JSON.stringify(preferred));}catch{}}
-let retiring=false,retireTimer=null,micLive=false;const role=()=>$('spRole').value;
 const id=()=>Array.from(crypto.getRandomValues(new Uint8Array(16)),x=>x.toString(16).padStart(2,'0')).join('');
 const send=o=>{if(ws?.readyState===1)ws.send(JSON.stringify(o));};
 const words=s=>s.toLowerCase().replace(/’/g,"'").replace(/[^a-z0-9' ]/g,' ').trim().split(/\s+/).filter(Boolean).slice(0,500);
@@ -155,70 +158,160 @@ function score(a,s){const x=words(a),y=words(s);let d=Array.from({length:y.lengt
 function connection(s){$('spConnection').textContent=s;$('spBadge').textContent=peer?'● iPadと接続中':s;}
 function phase(s){$('spPhase').textContent=s;}
 function showText(text,final){$('spText').value=text;$('spLiveText').textContent=text;const n=target?score(target.english,text):0;$('spScore').textContent=text?`一致率 ${n}%${final?'':'（認識中）'}`:'一致率 —%';$('spScore').classList.toggle('passed',!!text&&n>=threshold);}
-function micUI(){ $('spStart').textContent=micLive?'🎙 練習を再開':wanted?'🎙 認識を開始中':'🎙 練習スタート';$('spStop').disabled=!wanted;}
-function canRecognize(){return wanted&&role()==='mic'&&peer&&target&&ws?.readyState===1&&!document.hidden;}
-function releaseRecognition(){clearTimeout(restartTimer);epoch++;const old=rec;rec=null;micLive=false;resultsCount=0;baseIndex=0;if(old){retiring=true;old.onstart=null;old.onresult=null;old.onerror=null;let settled=false;const settle=()=>{if(settled)return;settled=true;clearTimeout(retireTimer);old.onend=null;retiring=false;if(canRecognize())scheduleRecognition(250);micUI();};old.onend=settle;retireTimer=setTimeout(settle,1500);try{old.abort();}catch{settle();}}micUI();}
-function stop(){wanted=false;releaseRecognition();micUI();$('spPermission').textContent='マイク停止中。練習スタートで再開できます。';}
-function recoverMicrophone(){if(role()!=='mic'||!peer||!target||ws?.readyState!==1){$('spPermission').textContent='先にiPadと接続してください';return;}releaseRecognition();wanted=true;failures=0;micUI();$('spPermission').textContent='マイクを作り直しています';startRecognition();}
-
-function clearRecognition(restart=true){baseIndex=0;showText('',false);if(!rec&&restart&&canRecognize())scheduleRecognition(120);}
-function scheduleRecognition(delay=250){clearTimeout(restartTimer);if(canRecognize())restartTimer=setTimeout(startRecognition,delay);}
-function startRecognition(){if(!canRecognize()||rec||retiring)return;const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R||!window.isSecureContext){wanted=false;micUI();$('spPermission').textContent='音声認識を利用できません。HTTPSのSafariで開いてください。';return;}
- const r=new R(),version=epoch;rec=r;resultsCount=0;baseIndex=0;r.lang='en-US';r.interimResults=true;r.continuous=false;
- r.onstart=()=>{if(rec===r&&version===epoch){micLive=true;micUI();$('spPermission').textContent='認識開始を確認しました。発話待ちです。';}};
- r.onresult=e=>{if(rec!==r||version!==epoch)return;if(e.results.length<resultsCount)baseIndex=0;resultsCount=e.results.length;$('spPermission').textContent='音声認識結果を受信しました';
-   if(stage==='listening'||stage==='idle'||stage==='ready'||stage==='paused'||stage==='done'){baseIndex=0;return;}
-   let text='',final=true;for(let i=baseIndex;i<e.results.length;i++){text+=e.results[i][0].transcript+' ';final=final&&e.results[i].isFinal;}
-   if(!text.trim())return;showText(text.trim(),final);send({type:'text',attempt,text:text.trim().slice(0,8000),final});if(final)baseIndex=e.results.length;
- };
- r.onerror=e=>{if(rec!==r||version!==epoch)return;if(['not-allowed','service-not-allowed','audio-capture','language-not-supported'].includes(e.error)){wanted=false;$('spPermission').textContent='マイク・音声認識の権限を確認して、練習スタートを押してください。';}else if(e.error==='network'){failures++;if(failures>=3)wanted=false;$('spPermission').textContent=wanted?'音声認識の通信を再試行しています':'通信エラー。接続を確認して練習スタートを押してください。';}else if(e.error==='no-speech')$('spPermission').textContent='音声待ち：マイクを自動再開します。';micUI();};
- r.onend=()=>{if(rec!==r)return;rec=null;micLive=false;micUI();if(canRecognize())scheduleRecognition(failures?1500:250);else micUI();};
- try{r.start();}catch(e){rec=null;wanted=false;micUI();$('spPermission').textContent='Safariが認識再開を許可しませんでした。練習スタートをもう一度押してください。';}
+// Recognition owns one native session at a time. Video controls never abort it.
+let retiring=false,retireTimer=null,micLive=false,startTimer=null,errorTimer=null;
+let lastMicEvent=0,lastResultAt=0,watchRestarts=0,micEvents=0,micResults=0,micSession=0;
+let ignoredInterim=-1,lastInterimIndex=-1,interimTimer=null,pendingInterim=null,lastTextSent=0;
+let finalHistory=[],lastResultSignature='';
+const role=()=>$('spRole').value;
+function micPhase(){if(role()==='mic'&&running&&stage==='speaking')phase(!wanted?'マイク停止中。復旧ボタンで再開できます':!micLive||retiring?'マイク準備中…表示が変わってから話してください':$('spMode').value==='shadow'?'動画に合わせて話してください':'② 英文を話してください');}
+function micStatus(message){$('spPermission').textContent=message;const el=$('spMicDiag');if(el)el.textContent=`開始 ${micSession} · 結果 ${micResults} · 通知 ${micEvents}`;micPhase();}
+function micEvent(message){lastMicEvent=Date.now();micEvents++;if(message)micStatus(message);}
+function micUI(){
+ $('spStart').textContent=!wanted?'🎙 練習スタート':retiring?'🎙 マイクを再起動中':micLive?'🎙 練習を再開':'🎙 認識を開始中';
+ $('spStop').disabled=!wanted;
+ micPhase();
 }
-function setTarget(o){target=o.target;attempt=o.attempt;passed='';stage=o.stage||'ready';running=o.running===true;if([0,40,50,60,70,80,90,100].includes(o.threshold))threshold=o.threshold;if(['shadow','repeat'].includes(o.mode))$('spMode').value=o.mode;$('spThreshold').value=String(threshold);$('spTarget').textContent=target?.english||'iPadで動画とJSONを選択してください';if(o.counter)$('spCounter').textContent=o.counter;phase(o.phase||'準備できました');clearRecognition();readStats(o);if(preferred&&role()==='mic'){threshold=preferred.threshold;$('spThreshold').value=String(threshold);$('spMode').value=preferred.mode;settingsCommand('threshold');}}
+function canRecognize(){return wanted&&role()==='mic'&&peer&&target&&stage!=='done'&&ws?.readyState===1&&!document.hidden;}
+function cancelText(){clearTimeout(interimTimer);interimTimer=null;pendingInterim=null;}
+function emitText(text,final){
+ cancelText();const message={type:'text',attempt,text:text.slice(0,8000),final};
+ if(final||Date.now()-lastTextSent>=180){lastTextSent=Date.now();send(message);return;}
+ pendingInterim=message;interimTimer=setTimeout(()=>{const p=pendingInterim;pendingInterim=null;interimTimer=null;if(p&&p.attempt===attempt&&stage==='speaking'&&canRecognize()){lastTextSent=Date.now();send(p);}},180);
+}
+function releaseRecognition(){
+ clearTimeout(restartTimer);clearTimeout(startTimer);clearTimeout(errorTimer);cancelText();epoch++;
+ const old=rec;rec=null;micLive=false;resultsCount=0;baseIndex=0;ignoredInterim=-1;lastInterimIndex=-1;finalHistory=[];
+ if(old){
+  retiring=true;old.onstart=null;old.onresult=null;old.onerror=null;old.onaudiostart=null;old.onspeechstart=null;old.onaudioend=null;old.onspeechend=null;
+  let settled=false;
+  const settle=()=>{if(settled)return;settled=true;clearTimeout(retireTimer);old.onend=null;retiring=false;micUI();if(canRecognize())scheduleRecognition(450);};
+  old.onend=settle;retireTimer=setTimeout(settle,1800);
+  try{old.abort();}catch{settle();}
+ }
+ micUI();
+}
+function stop(){wanted=false;releaseRecognition();micStatus('マイク停止中。練習スタートで再開できます。');}
+function recoverMicrophone(){
+ if(role()!=='mic'||!peer||!target||ws?.readyState!==1){micStatus('先にiPadと接続してください');return;}
+ wanted=true;failures=0;watchRestarts=0;releaseRecognition();micStatus('マイクを再起動しています');if(!retiring)startRecognition();
+}
+function armMicrophone(){
+ if(!peer||!target||role()!=='mic'){phase('先にiPadと接続してください');return false;}
+ wanted=true;failures=0;watchRestarts=0;
+ if(!rec&&!retiring)startRecognition();micUI();return true;
+}
+function clearRecognition(restart=true){
+ cancelText();baseIndex=resultsCount;lastResultAt=Date.now();lastResultSignature='';
+ // An interim utterance heard before the video ended belongs to the old phase.
+ ignoredInterim=lastInterimIndex;showText('',false);
+ // An unfinished native result cannot be assigned reliably to a new prompt.
+ // Retire only that session; normal final-result navigation keeps the mic alive.
+ if(lastInterimIndex>=0&&restart&&canRecognize()){releaseRecognition();micStatus('前の未確定音声を区切り、認識を再開しています');return;}
+ if(!rec&&!retiring&&restart&&canRecognize())scheduleRecognition(120);
+ micPhase();
+}
+function scheduleRecognition(delay=450){clearTimeout(restartTimer);if(canRecognize()&&!retiring)restartTimer=setTimeout(startRecognition,delay);}
+function retryRecognition(message){
+ if(!canRecognize())return;
+ if(++watchRestarts>4){wanted=false;releaseRecognition();micStatus(message+'。「マイクを復旧」で再試行できます。接続は維持しています。');return;}
+ releaseRecognition();micStatus(message+`。再起動 ${watchRestarts}/4`);
+}
+function startRecognition(){
+ if(!canRecognize()||rec||retiring)return;
+ const R=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!R||!window.isSecureContext){wanted=false;micUI();micStatus('音声認識を利用できません。HTTPSのSafariで開いてください。');return;}
+ let r;try{r=new R();}catch{wanted=false;micUI();micStatus('音声認識を作成できません。「マイクを復旧」で再試行してください。');return;}
+ const version=++epoch;rec=r;micSession++;resultsCount=0;baseIndex=0;ignoredInterim=-1;lastInterimIndex=-1;finalHistory=[];
+ r.lang='en-US';r.interimResults=true;r.continuous=true;micLive=false;lastMicEvent=Date.now();lastResultAt=Date.now();lastResultSignature='';micUI();micStatus('音声認識の開始を待っています');
+ const valid=()=>rec===r&&version===epoch;
+ r.onstart=()=>{if(!valid())return;clearTimeout(startTimer);micLive=true;micEvent('認識開始の通知を受信。音声を待っています。');micUI();};
+ r.onaudiostart=()=>{if(valid())micEvent('マイク入力開始の通知を受信。英文を話してください。');};
+ r.onspeechstart=()=>{if(valid())micEvent('発話を検出しました。認識結果を待っています。');};
+ r.onspeechend=()=>{if(valid())micEvent();};r.onaudioend=()=>{if(valid())micEvent('マイク入力が終了しました。認識の再開を待っています。');};
+ r.onresult=e=>{
+  if(!valid())return;micResults++;micEvent();
+  const list=Array.from(e.results);let finals=0;while(finals<list.length&&list[finals].isFinal)finals++;
+  if(list.length<baseIndex||finals<resultsCount||finalHistory.some((t,i)=>list[i]?.[0]?.transcript!==t)){baseIndex=0;ignoredInterim=-1;}
+  if(ignoredInterim>=list.length)ignoredInterim=-1;
+  finalHistory=list.slice(0,finals).map(x=>x[0].transcript);
+  resultsCount=finals;lastInterimIndex=finals<list.length?finals:-1;
+  if(stage!=='speaking'||!running){baseIndex=finals;ignoredInterim=lastInterimIndex;micStatus('認識結果を受信。動画の終了／練習の再開を待っています。');return;}
+  let from=baseIndex;
+  if(ignoredInterim>=from){from=ignoredInterim+1;if(finals>ignoredInterim)ignoredInterim=-1;}
+  let text='',final=true;for(let i=from;i<list.length;i++){text+=list[i][0].transcript+' ';final=final&&list[i].isFinal;}
+  if(!text.trim()){baseIndex=Math.max(baseIndex,finals);micStatus('前の発話の結果を除外しました。今の英文を話してください。');return;}
+  text=text.trim();const signature=attempt+':'+from+':'+text;
+  if(signature!==lastResultSignature){lastResultSignature=signature;lastResultAt=Date.now();watchRestarts=0;failures=0;clearTimeout(errorTimer);}
+  showText(text,final);emitText(text,final);micStatus(final?'音声の確定結果を受信しました':'音声を認識しています');
+  if(final)baseIndex=finals;
+ };
+ r.onerror=e=>{
+  if(!valid())return;clearTimeout(startTimer);micLive=false;micEvent();
+  if(['not-allowed','service-not-allowed','language-not-supported'].includes(e.error)){
+   wanted=false;releaseRecognition();micStatus('音声認識の権限・言語を確認し、「マイクを復旧」を押してください。');return;
+  }
+  if(e.error==='no-speech'){micStatus('音声を待っています。自動で認識を再開します。');}
+  else {failures++;if(failures>=4){wanted=false;releaseRecognition();micStatus('認識エラーが続いています：'+e.error+'。通信・権限を確認し「マイクを復旧」で再試行してください。');return;}micStatus('認識を再試行します：'+e.error);}
+  micUI();errorTimer=setTimeout(()=>{if(valid())retryRecognition('認識の終了通知が届きません');},2200);
+ };
+ r.onend=()=>{
+  if(!valid())return;clearTimeout(startTimer);clearTimeout(errorTimer);cancelText();rec=null;micLive=false;micEvent('認識が終了しました。自動で再開します。');micUI();if(canRecognize())scheduleRecognition(failures?1200:450);
+ };
+ startTimer=setTimeout(()=>{if(valid()&&!micLive)retryRecognition('認識の開始通知が届きません');},5000);
+ try{r.start();}catch(e){clearTimeout(startTimer);retryRecognition('音声認識を開始できません');}
+}
+setInterval(()=>{
+ if(!canRecognize()||retiring)return;
+ if(!rec){scheduleRecognition();return;}
+ if(stage==='speaking'&&running&&Date.now()-lastResultAt>20000)retryRecognition('認識結果が20秒間届いていません');
+},2000);
+
+function setTarget(o){target=o.target;attempt=o.attempt;passed='';stage=o.stage||'ready';running=o.running===true;if([0,40,50,60,70,80,90,100].includes(o.threshold))threshold=o.threshold;if(['shadow','repeat'].includes(o.mode))$('spMode').value=o.mode;$('spThreshold').value=String(threshold);$('spTarget').textContent=target?.english||'iPadで動画とJSONを選択してください';if(o.counter)$('spCounter').textContent=o.counter;phase(o.phase||'準備できました');clearRecognition();readStats(o);if(canRecognize()&&!rec&&!retiring)scheduleRecognition(120);if(preferred&&role()==='mic'){threshold=preferred.threshold;$('spThreshold').value=String(threshold);$('spMode').value=preferred.mode;if(o.threshold!==preferred.threshold||o.mode!==preferred.mode)settingsCommand('threshold');}}
 function snapshot(){return {attempt,total,combo,bestCombo,mode:$('spMode').value,threshold,stage,running,counter:`${b.getIndex()+1} / ${b.getCount()} 発言`,phase:$('spPhase').textContent,playing:!b.video.paused};}
-function sendState(){if(role()==='pad')send({type:'state',...snapshot()});}
+let stateTimer=null;function sendState(){if(role()!=='pad')return;clearTimeout(stateTimer);stateTimer=setTimeout(()=>{stateTimer=null;if(role()==='pad')send({type:'state',...snapshot()});},12);}
 function publish(){if(role()!=='pad')return;const x=b.current();attempt=id();selection=b.getKey()+':'+b.getIndex();target=x?{english:x.english}:null;passed='';award=0;lastGraded='';showText('',false);send({type:'target',target,...snapshot()});sendState();}
-function playPractice(){if(role()!=='pad')return;if(!b.current()||!b.video.src){phase('iPadで動画とJSONを選択してください');sendState();return;}running=true;active=true;stage=$('spMode').value==='repeat'?'listening':'speaking';phase(stage==='listening'?'① 動画を聞いてください':'動画に続いて話してください');publish();b.video.currentTime=b.current().start;b.video.play().catch(()=>{active=false;running=false;stage='ready';phase('iPadで一度、動画の再生ボタンを押してください');sendState();});}
+function playPractice(){if(role()!=='pad')return;if(!b.current()||!b.video.src){phase('iPadで動画とJSONを選択してください');sendState();return;}running=true;active=true;stage=$('spMode').value==='repeat'?'listening':'speaking';phase(stage==='listening'?'① 動画を聞いてください':'動画に続いて話してください');publish();const playingAttempt=attempt;b.video.currentTime=b.current().start;b.video.play().catch(()=>{if(attempt!==playingAttempt)return;active=false;running=false;stage='ready';phase('iPadで一度、動画の再生ボタンを押してください');sendState();});}
 function finish(){running=false;active=false;stage='idle';if(role()==='pad'){b.video.pause();phase('練習を終了しました');publish();}else stop();}
 window.addEventListener('trainerchange',()=>{if(role()==='pad'&&selection!==b.getKey()+':'+b.getIndex()){active=false;running=false;stage='ready';phase('準備できました');publish();}});
 window.speakingBoundary=(t,x)=>{if(role()!=='pad'||!active||!x)return false;if(t>=x.end-.08&&!b.video.paused){active=false;stage='speaking';phase('② 英文を話してください');b.video.pause();sendState();return true;}return false;};
 function settingsCommand(action){if(!peer||ws?.readyState!==1){$('spPermission').textContent='接続設定でiPadと接続してください';return;}send({type:'command',action,mode:$('spMode').value,threshold:Number($('spThreshold').value),attempt});}
 function navigate(delta,autoplay=false){const n=b.getIndex()+delta;if(n<0||n>=b.getCount()){if(autoplay){running=false;active=false;stage='done';phase('すべての発言が終了しました');sendState();send({type:'complete',attempt});}return;}active=false;b.video.pause();b.seek(n,false);selection=b.getKey()+':'+b.getIndex();stage='ready';running=false;phase('準備できました');if(autoplay)playPractice();else publish();}
-function handleCommand(o){if(!['shadow','repeat'].includes(o.mode)||![0,40,50,60,70,80,90,100].includes(o.threshold))return;if(o.attempt!==attempt)return;threshold=o.threshold;$('spThreshold').value=String(threshold);$('spMode').value=o.mode;
- if(o.action==='play')playPractice();else if(o.action==='next')navigate(1);else if(o.action==='prev')navigate(-1);else if(o.action==='reset'){showText('',false);publish();}else if(o.action==='finish')finish();else if(o.action==='hold'){running=false;active=false;stage='paused';phase('停止中。練習スタートで再開します');b.video.pause();}else if(o.action==='pause'){if(b.video.paused){if(!running||stage==='paused'||stage==='idle'||stage==='ready')playPractice();else{active=true;b.video.play().catch(()=>{phase('iPadで動画の再生を許可してください');sendState();});}}else{running=false;active=false;stage='paused';phase('停止中。再開できます');b.video.pause();}}else if(o.action==='mode'){active=false;running=false;b.video.pause();stage='ready';phase('方式を変更しました。練習スタートを押してください');publish();}sendState();}
+function handleCommand(o){if(!['shadow','repeat'].includes(o.mode)||![0,40,50,60,70,80,90,100].includes(o.threshold))return;threshold=o.threshold;$('spThreshold').value=String(threshold);$('spMode').value=o.mode;
+ if(o.action==='play')playPractice();else if(o.action==='next')navigate(1,running);else if(o.action==='prev')navigate(-1,running);else if(o.action==='reset'){if(running)playPractice();else{showText('',false);publish();}}else if(o.action==='finish')finish();else if(o.action==='hold'){running=false;active=false;stage='paused';phase('停止中。練習スタートで再開します');b.video.pause();}else if(o.action==='pause'){if(b.video.paused)playPractice();else{running=false;active=false;stage='paused';phase('一時停止中。再開できます');b.video.pause();}}else if(o.action==='mode'){if(running)playPractice();else{active=false;b.video.pause();stage='ready';phase('方式を変更しました。練習スタートを押してください');publish();}}sendState();}
 function receivedText(o){if(o.attempt!==attempt||!target)return;showText(o.text,o.final);if(!running||stage!=='speaking'||!o.final||!words(o.text).length||o.text===lastGraded)return;lastGraded=o.text;const n=score(target.english,o.text),points=Math.max(1,n);total+=Math.max(0,points-award);award=Math.max(award,points);if(n>=threshold&&passed!==attempt){passed=attempt;combo++;bestCombo=Math.max(bestCombo,combo);total+=Math.min(combo,20)*10;drawGame();sendState();if($('spMode').value==='repeat'){phase('合格！ 次の発言へ');navigate(1,true);}}else if(n<threshold){combo=0;drawGame();sendState();}}
 function disconnect(){stopped=true;clearTimeout(reconnect);stop();if(ws){ws.onclose=null;ws.close();ws=null;}peer=false;connection('切断');$('spPeer').textContent='相手端末：未接続';}
-function connect(){if(location.protocol!=='https:'){connection('HTTPSで開いてください');return;}let u;try{u=new URL($('spUrl').value);if(u.protocol!=='https:'||u.username||u.password)throw Error();}catch{connection('中継のHTTPS URLを入力してください');return;}const k=$('spKey').value.trim();if(!/^[a-f0-9]{32}$/.test(k)){connection('iPadでキーを作成してください');return;}disconnect();stopped=false;connection('接続中');u.protocol='wss:';u.pathname='/ws';u.hash='';u.search=new URLSearchParams({key:k,role:role()});ws=new WebSocket(u);const mine=ws;
- ws.onopen=()=>{if(mine!==ws)return;lastSeen=Date.now();connection('中継接続済み');const l=new URL(location.href);l.hash=new URLSearchParams({role:'mic',relay:$('spUrl').value,key:k});$('spLink').href=l.href;$('spLink').textContent='iPhone用リンク（長押しで共有）';};
- ws.onmessage=e=>{let o;try{o=JSON.parse(e.data);}catch{return;}lastSeen=Date.now();if(o.type==='presence'){const previous=peer;peer=o.roles.includes(role()==='pad'?'mic':'pad');$('spPeer').textContent=peer?'相手端末：接続済み':'相手端末：未接続';connection('中継接続済み');if(peer){$('spDialog').close();if(role()==='pad'&&!previous)publish();}else stop();}
+function connect(resume=false){if(location.protocol!=='https:'){connection('HTTPSで開いてください');return;}let u;try{u=new URL($('spUrl').value);if(u.protocol!=='https:'||u.username||u.password)throw Error();}catch{connection('中継のHTTPS URLを入力してください');return;}const k=$('spKey').value.trim();if(!/^[a-f0-9]{32}$/.test(k)){connection('iPadでキーを作成してください');return;}const resumeMic=resume&&wanted;disconnect();wanted=resumeMic;stopped=false;connection('接続中');u.protocol='wss:';u.pathname='/ws';u.hash='';u.search=new URLSearchParams({key:k,role:role()});ws=new WebSocket(u);const mine=ws;
+ ws.onopen=()=>{if(mine!==ws)return;lastSeen=Date.now();connection('中継接続済み');const l=new URL(location.href);l.searchParams.set('role','mic');l.hash=new URLSearchParams({role:'mic',relay:$('spUrl').value,key:k});$('spLink').href=l.href;$('spLink').textContent='iPhone用リンク（長押しで共有）';};
+ ws.onmessage=e=>{if(mine!==ws)return;let o;try{o=JSON.parse(e.data);}catch{return;}if(!o||typeof o!=='object'||Array.isArray(o))return;lastSeen=Date.now();if(o.type==='presence'){const previous=peer;peer=o.roles.includes(role()==='pad'?'mic':'pad');$('spPeer').textContent=peer?'相手端末：接続済み':'相手端末：未接続';connection('中継接続済み');if(peer){$('spDialog').close();if(role()==='pad')publish();else if(canRecognize())scheduleRecognition();}else{releaseRecognition();micStatus('相手端末の接続を待っています');}}
   if(o.type==='target'&&role()==='mic')setTarget(o);
   if(o.type==='command'&&role()==='pad')handleCommand(o);
   if(o.type==='text'&&role()==='pad')receivedText(o);
   if(o.type==='complete'&&role()==='mic'&&o.attempt===attempt){stop();stage='done';phase('すべての発言が終了しました');}
   if(o.type==='state'&&role()==='mic'&&o.attempt===attempt){readStats(o);const before=stage;stage=o.stage;running=o.running;threshold=preferred?preferred.threshold:o.threshold;$('spMode').value=preferred?preferred.mode:o.mode;$('spThreshold').value=String(threshold);$('spCounter').textContent=o.counter;phase(o.phase);$('spPause').textContent=o.playing?'⏸ 一時停止':'▶ 再開';if(before!==stage&&stage==='speaking')clearRecognition();if(stage==='done')stop();}
  };
- ws.onerror=()=>connection('通信エラー：同じCloudflare URLから開いてください');ws.onclose=e=>{if(mine!==ws)return;stop();peer=false;$('spPeer').textContent='相手端末：未接続';connection('切断 '+e.code+'／再接続待ち');if(!stopped&&e.code!==1008)reconnect=setTimeout(connect,3000);};}
+ ws.onerror=()=>connection('通信エラー：同じCloudflare URLから開いてください');ws.onclose=e=>{if(mine!==ws)return;releaseRecognition();peer=false;$('spPeer').textContent='相手端末：未接続';connection('切断 '+e.code+'／再接続待ち');if(!stopped&&e.code!==1008&&e.code!==4001)reconnect=setTimeout(()=>connect(true),3000);else if(e.code===4001){wanted=false;micUI();connection('同じ端末の別画面に接続が移りました');}};}
 $('spOpen').textContent='🎙 接続設定';$('spOpen').onclick=()=>$('spDialog').showModal();$('spSettings').onclick=()=>$('spDialog').showModal();$('spClose').onclick=()=>$('spDialog').close();$('spNew').onclick=()=>$('spKey').value=id();$('spConnect').onclick=connect;$('spDisconnect').onclick=disconnect;$('spRole').onchange=()=>{disconnect();updateRole();};
-function updateRole(){document.body.classList.toggle('mic-only',role()==='mic');document.documentElement.classList.toggle('mic-root',role()==='mic');$('spStart').hidden=role()!=='mic';$('spRecover').hidden=role()!=='mic';$('spStop').hidden=role()!=='mic';$('spText').hidden=role()!=='mic';$('spSend').hidden=role()!=='mic';}
-$('spStart').onclick=()=>{if(!peer||!target||role()!=='mic'){phase('先にiPadと接続してください');return;}if(!wanted){recoverMicrophone();}else if(!rec&&!retiring){startRecognition();}settingsCommand('play');};
+function updateRole(){if(role()==='mic'){b.video.pause();if(b.video.removeAttribute){b.video.removeAttribute('src');b.video.load();}}else if(window.meetingMicBoot){location.assign(location.origin+location.pathname);return;}document.body.classList.toggle('mic-only',role()==='mic');document.documentElement.classList.toggle('mic-root',role()==='mic');$('spStart').hidden=role()!=='mic';$('spRecover').hidden=role()!=='mic';$('spStop').hidden=role()!=='mic';$('spText').hidden=role()!=='mic';$('spSend').hidden=role()!=='mic';}
+
+$('spStart').onclick=()=>{if(armMicrophone())settingsCommand('play');};
 $('spRecover').onclick=recoverMicrophone;
-$('spStop').onclick=()=>{settingsCommand('hold');stage='paused';phase('練習を一時停止しました。再開できます');$('spPermission').textContent='練習停止中：マイクは待機したままです';};
-$('spPlay').onclick=()=>role()==='mic'?settingsCommand('play'):playPractice();
+$('spStop').onclick=()=>{cancelText();settingsCommand('hold');stage='paused';running=false;clearRecognition(false);phase('練習を一時停止しました。再開できます');micStatus('練習停止中：マイクは待機しています');};
+$('spPlay').onclick=()=>{if(role()==='mic'){if(armMicrophone())settingsCommand('play');}else playPractice();};
 $('spFinish').onclick=()=>{stop();if(role()==='mic')settingsCommand('finish');else finish();};
-$('spReset').onclick=()=>{clearRecognition();if(role()==='mic')settingsCommand('reset');else publish();};
-$('spPrev').onclick=()=>role()==='mic'?settingsCommand('prev'):navigate(-1);
-$('spNext').onclick=()=>role()==='mic'?settingsCommand('next'):navigate(1);
-$('spPause').onclick=()=>{if(role()==='mic'){if(!wanted)recoverMicrophone();settingsCommand('pause');}else handleCommand({action:'pause',mode:$('spMode').value,threshold,attempt});};
+$('spReset').onclick=()=>{clearRecognition();if(role()==='mic'){if(wanted)recoverMicrophone();settingsCommand('reset');}else{if(running)playPractice();else publish();}};
+$('spPrev').onclick=()=>role()==='mic'?settingsCommand('prev'):navigate(-1,running);
+$('spNext').onclick=()=>role()==='mic'?settingsCommand('next'):navigate(1,running);
+$('spPause').onclick=()=>{if(role()==='mic'){if(armMicrophone())settingsCommand('pause');}else handleCommand({action:'pause',mode:$('spMode').value,threshold,attempt});};
 $('spMode').onchange=()=>{savePreference();if(role()==='mic')settingsCommand('mode');else handleCommand({action:'mode',mode:$('spMode').value,threshold,attempt});};
 $('spThreshold').onchange=()=>{threshold=Number($('spThreshold').value);savePreference();if(role()==='mic')settingsCommand('threshold');else sendState();};
 $('spSend').onclick=()=>{if(peer&&target){showText($('spText').value,true);send({type:'text',attempt,text:$('spText').value.slice(0,8000),final:true});}};
 let touch=null;$('spPractice').addEventListener('touchstart',e=>{if(role()!=='mic'||e.touches.length!==1||e.target.closest('button,input,textarea,select,a'))return;const t=e.touches[0];touch={x:t.clientX,y:t.clientY,time:Date.now()};},{passive:true});
 $('spPractice').addEventListener('touchend',e=>{if(!touch||e.changedTouches.length!==1)return;const t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y,ms=Date.now()-touch.time;touch=null;if(Math.abs(dx)>65&&Math.abs(dx)>Math.abs(dy)*1.5&&ms<1100)settingsCommand(dx<0?'next':'prev');},{passive:true});$('spPractice').addEventListener('touchcancel',()=>touch=null,{passive:true});
-document.addEventListener('visibilitychange',()=>{if(document.hidden){stop();$('spPermission').textContent='画面を離れたため停止しました。練習スタートで再開します。';}});window.addEventListener('pagehide',disconnect);
+document.addEventListener('visibilitychange',()=>{if(document.hidden){releaseRecognition();micStatus('画面を離れたため認識を休止中です');}else if(canRecognize()){scheduleRecognition(450);micStatus('画面に戻ったため認識を再開します');}});window.addEventListener('pagehide',disconnect);
 setInterval(()=>{if(ws?.readyState===1){send({type:'ping'});if(Date.now()-lastSeen>30000)ws.close();}},10000);
 b.video.addEventListener('play',sendState);b.video.addEventListener('pause',sendState);
 $('spUrl').value=location.origin;
-const p=new URLSearchParams(location.hash.slice(1));if(p.get('role')==='mic'){$('spRole').value='mic';$('spUrl').value=p.get('relay')||location.origin;$('spKey').value=p.get('key')||'';$('spDialog').showModal();history.replaceState(null,'',location.pathname+location.search);}try{const saved=JSON.parse(localStorage.getItem('speaking-v10-settings')||'null');if(saved&&[0,40,50,60,70,80,90,100].includes(saved.threshold)&&['repeat','shadow'].includes(saved.mode)){preferred=saved;threshold=saved.threshold;$('spThreshold').value=String(threshold);$('spMode').value=saved.mode;}}catch{}updateRole();micUI();drawGame();window.speakingScore=score;
+if(window.meetingMicBoot)$('spRole').value='mic';const p=new URLSearchParams(location.hash.slice(1));if(p.get('role')==='mic'){$('spRole').value='mic';$('spUrl').value=p.get('relay')||location.origin;$('spKey').value=p.get('key')||'';$('spDialog').showModal();const clean=new URL(location.href);clean.hash='';clean.searchParams.set('role','mic');history.replaceState(null,'',clean.pathname+clean.search);}try{const saved=JSON.parse(localStorage.getItem('speaking-v10-settings')||'null');if(saved&&[0,40,50,60,70,80,90,100].includes(saved.threshold)&&['repeat','shadow'].includes(saved.mode)){preferred=saved;threshold=saved.threshold;$('spThreshold').value=String(threshold);$('spMode').value=saved.mode;}}catch{}updateRole();micUI();drawGame();window.speakingScore=score;
 })();
 </script></body></html>
